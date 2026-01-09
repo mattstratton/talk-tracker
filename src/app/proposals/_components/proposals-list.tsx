@@ -111,8 +111,8 @@ export function ProposalsList({
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     createProposal.mutate({
-      talkId: parseInt(selectedTalkId),
-      eventId: parseInt(selectedEventId),
+      talkId: parseInt(selectedTalkId, 10),
+      eventId: parseInt(selectedEventId, 10),
       status: selectedStatus as
         | "draft"
         | "submitted"
