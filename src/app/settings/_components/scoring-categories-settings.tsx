@@ -197,13 +197,27 @@ export function ScoringCategoriesSettings({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((w) => (
-                          <SelectItem key={w} value={w.toString()}>
-                            {w}
-                          </SelectItem>
-                        ))}
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((w) => {
+                          const isUsed = categories.some(
+                            (c) =>
+                              c.weight === w &&
+                              c.id !== editingCategory?.id,
+                          );
+                          return (
+                            <SelectItem
+                              key={w}
+                              value={w.toString()}
+                              disabled={isUsed}
+                            >
+                              {w} {isUsed ? "(in use)" : ""}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
+                    <p className="mt-1 text-gray-600 text-xs">
+                      Each weight can only be used once
+                    </p>
                   </div>
 
                   <div>

@@ -106,7 +106,7 @@ export const scoringCategories = createTable(
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity(),
     name: text("name").notNull(),
-    weight: integer("weight").notNull(),
+    weight: integer("weight").notNull().unique(),
     displayOrder: integer("display_order").notNull(),
     score9Description: text("score_9_description").notNull(),
     score3Description: text("score_3_description").notNull(),
