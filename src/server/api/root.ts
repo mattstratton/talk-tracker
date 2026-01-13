@@ -1,5 +1,8 @@
+import { appSettingsRouter } from "~/server/api/routers/appSettings";
 import { eventRouter } from "~/server/api/routers/event";
+import { eventScoreRouter } from "~/server/api/routers/eventScore";
 import { proposalRouter } from "~/server/api/routers/proposal";
+import { scoringCategoryRouter } from "~/server/api/routers/scoringCategory";
 import { talkRouter } from "~/server/api/routers/talk";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
@@ -12,6 +15,9 @@ export const appRouter = createTRPCRouter({
   event: eventRouter,
   talk: talkRouter,
   proposal: proposalRouter,
+  scoringCategory: scoringCategoryRouter,
+  eventScore: eventScoreRouter,
+  appSettings: appSettingsRouter,
 });
 
 // export type definition of API

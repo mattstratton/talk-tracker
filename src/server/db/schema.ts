@@ -100,6 +100,72 @@ export const proposals = createTable(
   ],
 );
 
+// Scoring Categories table (Six Sigma matrix categories)
+export const scoringCategories = createTable(
+  "scoring_category",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    name: text("name").notNull(),
+    weight: integer("weight").notNull(),
+    displayOrder: integer("display_order").notNull(),
+    score9Description: text("score_9_description").notNull(),
+    score3Description: text("score_3_description").notNull(),
+    score1Description: text("score_1_description").notNull(),
+    score0Description: text("score_0_description").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => [index("scoring_category_display_order_idx").on(t.displayOrder)],
+);
+
+// Event Scores table (scores for events using the scoring matrix)
+export const eventScores = createTable(
+  "event_score",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    eventId: integer("event_id")
+      .notNull()
+      .references(() => events.id, { onDelete: "cascade" }),
+    categoryId: integer("category_id")
+      .notNull()
+      .references(() => scoringCategories.id, { onDelete: "cascade" }),
+    score: integer("score").notNull(),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => ({
+    eventScoreEventIdx: index("event_score_event_idx").on(t.eventId),
+    eventScoreCategoryIdx: index("event_score_category_idx").on(t.categoryId),
+  }),
+);
+
+// App Settings table (global configuration key-value store)
+export const appSettings = createTable(
+  "app_setting",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    key: text("key").notNull().unique(),
+    value: text("value").notNull(),
+    description: text("description"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => [index("app_setting_key_idx").on(t.key)],
+);
+
 // Better Auth tables
 export const user = createTable("user", {
   id: text("id").primaryKey(),
@@ -179,6 +245,7 @@ export const sessionRelations = relations(session, ({ one }) => ({
 
 export const eventsRelations = relations(events, ({ many }) => ({
   proposals: many(proposals),
+  scores: many(eventScores),
 }));
 
 export const talksRelations = relations(talks, ({ one, many }) => ({
@@ -201,5 +268,23 @@ export const proposalsRelations = relations(proposals, ({ one }) => ({
   user: one(user, {
     fields: [proposals.userId],
     references: [user.id],
+  }),
+}));
+
+export const scoringCategoriesRelations = relations(
+  scoringCategories,
+  ({ many }) => ({
+    eventScores: many(eventScores),
+  }),
+);
+
+export const eventScoresRelations = relations(eventScores, ({ one }) => ({
+  event: one(events, {
+    fields: [eventScores.eventId],
+    references: [events.id],
+  }),
+  category: one(scoringCategories, {
+    fields: [eventScores.categoryId],
+    references: [scoringCategories.id],
   }),
 }));

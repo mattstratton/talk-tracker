@@ -19,6 +19,7 @@ const navItems = [
   { href: "/proposals", label: "Proposals" },
   { href: "/analytics", label: "Analytics" },
   { href: "/calendar", label: "Calendar" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function Nav() {

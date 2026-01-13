@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { EventScoring } from "./_components/event-scoring";
 
 export default async function EventDetailPage({
   params,
@@ -142,6 +143,10 @@ export default async function EventDetailPage({
                 </div>
               </CardContent>
             </Card>
+          </div>
+
+          <div className="mb-8">
+            <EventScoring eventId={eventId} eventName={event.name} />
           </div>
 
           <Card className="border-gray-200">
