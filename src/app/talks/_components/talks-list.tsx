@@ -13,7 +13,9 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { TagBadge } from "~/components/tag-badge";
 import { api } from "~/trpc/react";
+import { TagSelector } from "./tag-selector";
 
 interface Talk {
   id: number;
@@ -54,21 +56,32 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
   const [title, setTitle] = useState("");
   const [abstract, setAbstract] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const utils = api.useUtils();
 
   const { data: talks = initialTalks } = api.talk.getAll.useQuery(undefined, {
     initialData: initialTalks,
   });
 
+  const setTags = api.talkTagAssignment.setTags.useMutation();
+
   const resetForm = () => {
     setEditingTalk(null);
     setTitle("");
     setAbstract("");
     setDescription("");
+    setSelectedTagIds([]);
   };
 
   const createTalk = api.talk.create.useMutation({
-    onSuccess: () => {
+    onSuccess: (newTalk) => {
+      // Save tags for the new talk
+      if (newTalk) {
+        void setTags.mutateAsync({
+          talkId: newTalk.id,
+          tagIds: selectedTagIds,
+        });
+      }
       void utils.talk.getAll.invalidate();
       setOpen(false);
       resetForm();
@@ -76,7 +89,14 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
   });
 
   const updateTalk = api.talk.update.useMutation({
-    onSuccess: () => {
+    onSuccess: (updatedTalk) => {
+      // Update tags for the talk
+      if (updatedTalk) {
+        void setTags.mutateAsync({
+          talkId: updatedTalk.id,
+          tagIds: selectedTagIds,
+        });
+      }
       void utils.talk.getAll.invalidate();
       setOpen(false);
       resetForm();
@@ -94,6 +114,7 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
     setTitle(talk.title);
     setAbstract(talk.abstract);
     setDescription(talk.description ?? "");
+    setSelectedTagIds(talk.talkTagAssignments.map((a) => a.tagId));
     setOpen(true);
   };
 
@@ -173,6 +194,10 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
                   value={description}
                 />
               </div>
+              <TagSelector
+                selectedTagIds={selectedTagIds}
+                onChange={setSelectedTagIds}
+              />
               <Button className="w-full" type="submit">
                 {editingTalk ? "Update Talk" : "Create Talk"}
               </Button>
@@ -203,6 +228,13 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
                     <p className="mt-2 text-muted-foreground text-sm">
                       {talk.description}
                     </p>
+                  )}
+                  {talk.talkTagAssignments.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {talk.talkTagAssignments.map((assignment) => (
+                        <TagBadge key={assignment.id} tag={assignment.tag} />
+                      ))}
+                    </div>
                   )}
                 </Link>
                 <div className="flex flex-shrink-0 gap-2">
