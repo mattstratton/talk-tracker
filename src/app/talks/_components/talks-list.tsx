@@ -74,10 +74,10 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
   };
 
   const createTalk = api.talk.create.useMutation({
-    onSuccess: (newTalk) => {
+    onSuccess: async (newTalk) => {
       // Save tags for the new talk
       if (newTalk) {
-        void setTags.mutateAsync({
+        await setTags.mutateAsync({
           talkId: newTalk.id,
           tagIds: selectedTagIds,
         });
@@ -89,10 +89,10 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
   });
 
   const updateTalk = api.talk.update.useMutation({
-    onSuccess: (updatedTalk) => {
+    onSuccess: async (updatedTalk) => {
       // Update tags for the talk
       if (updatedTalk) {
-        void setTags.mutateAsync({
+        await setTags.mutateAsync({
           talkId: updatedTalk.id,
           tagIds: selectedTagIds,
         });
