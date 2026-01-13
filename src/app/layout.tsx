@@ -54,7 +54,12 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+  },
 };
 
 const geist = Geist({
