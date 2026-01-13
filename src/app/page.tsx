@@ -23,7 +23,7 @@ export default async function Home() {
 
   const [proposals, events] = await Promise.all([
     api.proposal.getAll(),
-    api.event.getAll(),
+    api.event.getAllWithScores(),
   ]);
 
   // Calculate CFP deadline urgency
@@ -153,7 +153,25 @@ export default async function Home() {
                         }}
                       >
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-gray-900 text-sm">{event.name}</h3>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="font-medium text-gray-900 text-sm">{event.name}</h3>
+                            {event.scoreInfo &&
+                              event.scoreInfo.completionCount > 0 && (
+                                <span
+                                  className={`rounded-full px-2 py-0.5 font-semibold text-xs ${
+                                    event.scoreInfo.meetsThreshold
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-gray-100 text-gray-700"
+                                  }`}
+                                >
+                                  {event.scoreInfo.meetsThreshold
+                                    ? "✓"
+                                    : ""}
+                                  {event.scoreInfo.totalScore}/
+                                  {event.scoreInfo.maxScore}
+                                </span>
+                              )}
+                          </div>
                           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-gray-600 text-xs">
                             {event.location && (
                               <span className="truncate">

@@ -17,7 +17,7 @@ export default async function EventsPage() {
     redirect("/");
   }
 
-  const events = await api.event.getAll();
+  const events = await api.event.getAllWithScores();
 
   return (
     <HydrateClient>

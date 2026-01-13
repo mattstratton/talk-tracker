@@ -24,6 +24,15 @@ interface Event {
   cfpDeadline: string | null;
   createdAt: Date;
   updatedAt: Date | null;
+  scoreInfo?: {
+    totalScore: number;
+    maxScore: number;
+    completionCount: number;
+    totalCategories: number;
+    isComplete: boolean;
+    meetsThreshold: boolean;
+    threshold: number;
+  };
 }
 
 export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
@@ -36,12 +45,7 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
   const [cfpDeadline, setCfpDeadline] = useState("");
   const utils = api.useUtils();
 
-  const { data: events = initialEvents } = api.event.getAll.useQuery(
-    undefined,
-    {
-      initialData: initialEvents,
-    },
-  );
+  const { data: events = initialEvents } = api.event.getAllWithScores.useQuery();
 
   const resetForm = () => {
     setEditingEvent(null);
@@ -242,7 +246,7 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                     className="flex-1 transition-colors hover:text-gray-600"
                     href={`/events/${event.id}`}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-semibold text-lg">{event.name}</h3>
                       {urgency && (
                         <span
@@ -251,6 +255,26 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                           {urgency.label}
                         </span>
                       )}
+                      {event.scoreInfo &&
+                        event.scoreInfo.completionCount > 0 && (
+                          <>
+                            <span
+                              className={`rounded-full px-2 py-1 font-semibold text-xs ${
+                                event.scoreInfo.meetsThreshold
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-gray-100 text-gray-700"
+                              }`}
+                            >
+                              {event.scoreInfo.meetsThreshold
+                                ? "Recommended"
+                                : "Below Threshold"}
+                            </span>
+                            <span className="text-gray-600 text-xs">
+                              Score: {event.scoreInfo.totalScore}/
+                              {event.scoreInfo.maxScore}
+                            </span>
+                          </>
+                        )}
                     </div>
                     <div className="mt-2 space-y-1 text-muted-foreground text-sm">
                       {event.date && <p>Date: {event.date}</p>}

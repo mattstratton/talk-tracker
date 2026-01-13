@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { events } from "~/server/db/schema";
+import { events, eventScores, scoringCategories } from "~/server/db/schema";
 
 export const eventRouter = createTRPCRouter({
   create: protectedProcedure
@@ -69,4 +69,51 @@ export const eventRouter = createTRPCRouter({
         where: eq(events.id, input.id),
       });
     }),
+
+  getAllWithScores: protectedProcedure.query(async ({ ctx }) => {
+    // Get all events
+    const allEvents = await ctx.db.query.events.findMany({
+      orderBy: (events, { desc }) => [desc(events.date)],
+    });
+
+    // Get all categories to calculate max score
+    const categories = await ctx.db.query.scoringCategories.findMany();
+    const maxScore = categories.reduce((sum, cat) => sum + 9 * cat.weight, 0);
+
+    // Get threshold setting
+    const thresholdSetting = await ctx.db.query.appSettings.findFirst({
+      where: (settings, { eq }) => eq(settings.key, "score_threshold"),
+    });
+    const threshold = thresholdSetting
+      ? parseInt(thresholdSetting.value)
+      : 70;
+
+    // Get all event scores
+    const allScores = await ctx.db.query.eventScores.findMany({
+      with: {
+        category: true,
+      },
+    });
+
+    // Map events to include score information
+    return allEvents.map((event) => {
+      const scores = allScores.filter((s) => s.eventId === event.id);
+      const totalScore = scores.reduce((sum, score) => {
+        return sum + score.score * score.category.weight;
+      }, 0);
+
+      return {
+        ...event,
+        scoreInfo: {
+          totalScore,
+          maxScore,
+          completionCount: scores.length,
+          totalCategories: categories.length,
+          isComplete: scores.length === categories.length,
+          meetsThreshold: totalScore >= threshold,
+          threshold,
+        },
+      };
+    });
+  }),
 });
