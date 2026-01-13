@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { Nav } from "~/components/nav";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { TagBadge } from "~/components/tag-badge";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
@@ -107,6 +108,13 @@ export default async function TalkDetailPage({
               {talk.title}
             </h2>
             <p className="text-gray-600 text-sm">by {talk.createdBy.name}</p>
+            {talk.talkTagAssignments.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {talk.talkTagAssignments.map((assignment) => (
+                  <TagBadge key={assignment.id} tag={assignment.tag} />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
