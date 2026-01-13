@@ -47,8 +47,7 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
     }
   };
 
-  const handleCreateTag = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCreateTag = async () => {
     if (newTagName.trim()) {
       await createTag.mutateAsync({
         name: newTagName.trim(),
@@ -85,7 +84,7 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
       )}
 
       {isCreating ? (
-        <form onSubmit={handleCreateTag} className="space-y-3 rounded border p-3">
+        <div className="space-y-3 rounded border p-3">
           <div>
             <Label htmlFor="newTagName">New Tag Name *</Label>
             <Input
@@ -121,9 +120,10 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
 
           <div className="flex gap-2">
             <Button
-              type="submit"
+              type="button"
               size="sm"
               disabled={createTag.isPending || !newTagName.trim()}
+              onClick={handleCreateTag}
             >
               {createTag.isPending ? "Creating..." : "Create Tag"}
             </Button>
@@ -140,7 +140,7 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
               Cancel
             </Button>
           </div>
-        </form>
+        </div>
       ) : (
         <Button
           type="button"

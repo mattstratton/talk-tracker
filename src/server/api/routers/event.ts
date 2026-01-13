@@ -9,10 +9,14 @@ export const eventRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1),
-        date: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
         location: z.string().optional(),
         description: z.string().optional(),
         cfpDeadline: z.string().optional(),
+        cfpUrl: z.string().optional(),
+        conferenceWebsite: z.string().optional(),
+        notes: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -20,10 +24,14 @@ export const eventRouter = createTRPCRouter({
         .insert(events)
         .values({
           name: input.name,
-          date: input.date ?? null,
+          startDate: input.startDate ?? null,
+          endDate: input.endDate ?? null,
           location: input.location ?? null,
           description: input.description ?? null,
           cfpDeadline: input.cfpDeadline ?? null,
+          cfpUrl: input.cfpUrl ?? null,
+          conferenceWebsite: input.conferenceWebsite ?? null,
+          notes: input.notes ?? null,
         })
         .returning();
       return result[0];
@@ -34,10 +42,14 @@ export const eventRouter = createTRPCRouter({
       z.object({
         id: z.number(),
         name: z.string().min(1).optional(),
-        date: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
         location: z.string().optional(),
         description: z.string().optional(),
         cfpDeadline: z.string().optional(),
+        cfpUrl: z.string().optional(),
+        conferenceWebsite: z.string().optional(),
+        notes: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -58,7 +70,7 @@ export const eventRouter = createTRPCRouter({
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.query.events.findMany({
-      orderBy: (events, { desc }) => [desc(events.date)],
+      orderBy: (events, { desc }) => [desc(events.startDate)],
     });
   }),
 
@@ -73,7 +85,7 @@ export const eventRouter = createTRPCRouter({
   getAllWithScores: protectedProcedure.query(async ({ ctx }) => {
     // Get all events
     const allEvents = await ctx.db.query.events.findMany({
-      orderBy: (events, { desc }) => [desc(events.date)],
+      orderBy: (events, { desc }) => [desc(events.startDate)],
     });
 
     // Get all categories to calculate max score

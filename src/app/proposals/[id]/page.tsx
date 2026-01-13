@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { EditProposalButton } from "./_components/edit-proposal-button";
 
 export default async function ProposalDetailPage({
   params,
@@ -87,12 +88,13 @@ export default async function ProposalDetailPage({
         </div>
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
-          <div className="mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <Link href="/proposals">
               <Button size="sm" variant="ghost">
                 ← Back to Proposals
               </Button>
             </Link>
+            <EditProposalButton proposal={proposal} />
           </div>
 
           <div className="mb-6 sm:mb-8">
@@ -168,11 +170,14 @@ export default async function ProposalDetailPage({
                     </div>
                   </Link>
                 </div>
-                {proposal.event.date && (
+                {proposal.event.startDate && (
                   <div>
                     <div className="text-gray-600 text-xs">Event Date</div>
                     <div className="text-gray-900 text-sm">
-                      {proposal.event.date}
+                      {proposal.event.endDate &&
+                      proposal.event.endDate !== proposal.event.startDate
+                        ? `${proposal.event.startDate} - ${proposal.event.endDate}`
+                        : proposal.event.startDate}
                     </div>
                   </div>
                 )}

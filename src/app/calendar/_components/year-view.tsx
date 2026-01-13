@@ -9,12 +9,14 @@ import {
   format,
   isSameMonth,
   setMonth,
+  parseISO,
 } from "date-fns";
 
 type Event = {
   id: number;
   name: string;
-  date: string | null;
+  startDate: string | null;
+  endDate: string | null;
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;
@@ -33,15 +35,23 @@ export function YearView({
 }: YearViewProps) {
   const months = Array.from({ length: 12 }, (_, i) => i);
 
-  // Group events by date
+  // Group events by date, including spanning events
   const eventsByDate = new Map<string, Event[]>();
   events.forEach((event) => {
-    if (event.date) {
-      const dateKey = format(new Date(event.date), "yyyy-MM-dd");
-      if (!eventsByDate.has(dateKey)) {
-        eventsByDate.set(dateKey, []);
-      }
-      eventsByDate.get(dateKey)!.push(event);
+    if (event.startDate) {
+      const start = parseISO(event.startDate);
+      const end = event.endDate ? parseISO(event.endDate) : start;
+
+      // Generate all dates this event spans
+      const eventDates = eachDayOfInterval({ start, end });
+
+      eventDates.forEach((date) => {
+        const dateKey = format(date, "yyyy-MM-dd");
+        if (!eventsByDate.has(dateKey)) {
+          eventsByDate.set(dateKey, []);
+        }
+        eventsByDate.get(dateKey)!.push(event);
+      });
     }
   });
 
@@ -51,16 +61,23 @@ export function YearView({
     const monthEnd = endOfMonth(monthDate);
 
     let count = 0;
+    const uniqueEvents = new Set<number>();
+
     events.forEach((event) => {
-      if (event.date) {
-        const eventDate = new Date(event.date);
-        if (eventDate >= monthStart && eventDate <= monthEnd) {
-          count++;
+      if (event.startDate) {
+        const eventStart = new Date(event.startDate);
+        const eventEnd = event.endDate
+          ? new Date(event.endDate)
+          : eventStart;
+
+        // Check if event overlaps with this month
+        if (eventStart <= monthEnd && eventEnd >= monthStart) {
+          uniqueEvents.add(event.id);
         }
       }
     });
 
-    return count;
+    return uniqueEvents.size;
   };
 
   const renderMiniMonth = (monthIndex: number) => {

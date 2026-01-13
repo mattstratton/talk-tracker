@@ -9,6 +9,7 @@ import { TagBadge } from "~/components/tag-badge";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { EditTalkButton } from "./_components/edit-talk-button";
 
 export default async function TalkDetailPage({
   params,
@@ -95,12 +96,13 @@ export default async function TalkDetailPage({
         </div>
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
-          <div className="mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <Link href="/talks">
               <Button size="sm" variant="ghost">
                 ← Back to Talks
               </Button>
             </Link>
+            <EditTalkButton talk={talk} />
           </div>
 
           <div className="mb-6 sm:mb-8">

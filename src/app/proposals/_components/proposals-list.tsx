@@ -46,10 +46,14 @@ interface Proposal {
   event: {
     id: number;
     name: string;
-    date: string | null;
+    startDate: string | null;
+    endDate: string | null;
     location: string | null;
     description: string | null;
     cfpDeadline: string | null;
+    cfpUrl: string | null;
+    conferenceWebsite: string | null;
+    notes: string | null;
     createdAt: Date;
     updatedAt: Date | null;
   };

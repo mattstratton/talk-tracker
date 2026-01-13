@@ -5,7 +5,8 @@ import { format, isToday } from "date-fns";
 type Event = {
   id: number;
   name: string;
-  date: string | null;
+  startDate: string | null;
+  endDate: string | null;
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;

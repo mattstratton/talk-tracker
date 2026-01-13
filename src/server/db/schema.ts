@@ -20,10 +20,14 @@ export const events = createTable(
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity(),
     name: text("name").notNull(),
-    date: date("date"),
+    startDate: date("start_date"),
+    endDate: date("end_date"),
     location: text("location"),
     description: text("description"),
     cfpDeadline: date("cfp_deadline"),
+    cfpUrl: text("cfp_url"),
+    conferenceWebsite: text("conference_website"),
+    notes: text("notes"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),
@@ -33,7 +37,7 @@ export const events = createTable(
   },
   (t) => [
     index("event_name_idx").on(t.name),
-    index("event_date_idx").on(t.date),
+    index("event_start_date_idx").on(t.startDate),
   ],
 );
 

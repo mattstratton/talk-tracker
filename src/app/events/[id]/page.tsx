@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { EditEventButton } from "./_components/edit-event-button";
 import { EventScoring } from "./_components/event-scoring";
 
 export default async function EventDetailPage({
@@ -89,12 +90,13 @@ export default async function EventDetailPage({
         </div>
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
-          <div className="mb-6">
+          <div className="mb-6 flex items-center justify-between">
             <Link href="/events">
               <Button size="sm" variant="ghost">
                 ← Back to Events
               </Button>
             </Link>
+            <EditEventButton event={event} />
           </div>
 
           <div className="mb-6 sm:mb-8">
@@ -106,12 +108,16 @@ export default async function EventDetailPage({
             )}
           </div>
 
-          <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {event.date && (
+          <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {event.startDate && (
               <Card className="border-gray-200">
                 <CardContent className="p-4">
                   <div className="text-gray-600 text-xs">Event Date</div>
-                  <div className="font-medium text-gray-900">{event.date}</div>
+                  <div className="font-medium text-gray-900">
+                    {event.endDate && event.endDate !== event.startDate
+                      ? `${event.startDate} - ${event.endDate}`
+                      : event.startDate}
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -135,6 +141,42 @@ export default async function EventDetailPage({
                 </CardContent>
               </Card>
             )}
+            {event.cfpUrl && (
+              <Card className="border-gray-200">
+                <CardContent className="p-4">
+                  <div className="text-gray-600 text-xs">CFP URL</div>
+                  <div className="font-medium text-gray-900">
+                    <a
+                      href={event.cfpUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      Submit Proposal →
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {event.conferenceWebsite && (
+              <Card className="border-gray-200">
+                <CardContent className="p-4">
+                  <div className="text-gray-600 text-xs">
+                    Conference Website
+                  </div>
+                  <div className="font-medium text-gray-900">
+                    <a
+                      href={event.conferenceWebsite}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      Visit Site →
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             <Card className="border-gray-200">
               <CardContent className="p-4">
                 <div className="text-gray-600 text-xs">Total Proposals</div>
@@ -144,6 +186,19 @@ export default async function EventDetailPage({
               </CardContent>
             </Card>
           </div>
+
+          {event.notes && (
+            <Card className="mb-8 border-gray-200">
+              <CardHeader>
+                <CardTitle className="text-base text-gray-900">Notes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="whitespace-pre-wrap text-gray-700 text-sm">
+                  {event.notes}
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           <div className="mb-8">
             <EventScoring eventId={eventId} eventName={event.name} />

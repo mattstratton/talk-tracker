@@ -18,10 +18,14 @@ import { api } from "~/trpc/react";
 interface Event {
   id: number;
   name: string;
-  date: string | null;
+  startDate: string | null;
+  endDate: string | null;
   location: string | null;
   description: string | null;
   cfpDeadline: string | null;
+  cfpUrl: string | null;
+  conferenceWebsite: string | null;
+  notes: string | null;
   createdAt: Date;
   updatedAt: Date | null;
   scoreInfo?: {
@@ -39,10 +43,14 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
   const [open, setOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [name, setName] = useState("");
-  const [date, setDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [cfpDeadline, setCfpDeadline] = useState("");
+  const [cfpUrl, setCfpUrl] = useState("");
+  const [conferenceWebsite, setConferenceWebsite] = useState("");
+  const [notes, setNotes] = useState("");
   const utils = api.useUtils();
 
   const { data: events = initialEvents } = api.event.getAllWithScores.useQuery();
@@ -50,10 +58,14 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
   const resetForm = () => {
     setEditingEvent(null);
     setName("");
-    setDate("");
+    setStartDate("");
+    setEndDate("");
     setLocation("");
     setDescription("");
     setCfpDeadline("");
+    setCfpUrl("");
+    setConferenceWebsite("");
+    setNotes("");
   };
 
   const createEvent = api.event.create.useMutation({
@@ -81,10 +93,14 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
   const handleEdit = (event: Event) => {
     setEditingEvent(event);
     setName(event.name);
-    setDate(event.date ?? "");
+    setStartDate(event.startDate ?? "");
+    setEndDate(event.endDate ?? "");
     setLocation(event.location ?? "");
     setDescription(event.description ?? "");
     setCfpDeadline(event.cfpDeadline ?? "");
+    setCfpUrl(event.cfpUrl ?? "");
+    setConferenceWebsite(event.conferenceWebsite ?? "");
+    setNotes(event.notes ?? "");
     setOpen(true);
   };
 
@@ -101,18 +117,26 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
       updateEvent.mutate({
         id: editingEvent.id,
         name: name || undefined,
-        date: date || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
         location: location || undefined,
         description: description || undefined,
         cfpDeadline: cfpDeadline || undefined,
+        cfpUrl: cfpUrl || undefined,
+        conferenceWebsite: conferenceWebsite || undefined,
+        notes: notes || undefined,
       });
     } else {
       createEvent.mutate({
         name,
-        date: date || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
         location: location || undefined,
         description: description || undefined,
         cfpDeadline: cfpDeadline || undefined,
+        cfpUrl: cfpUrl || undefined,
+        conferenceWebsite: conferenceWebsite || undefined,
+        notes: notes || undefined,
       });
     }
   };
@@ -185,15 +209,27 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                   value={name}
                 />
               </div>
-              <div>
-                <Label htmlFor="date">Date</Label>
-                <Input
-                  id="date"
-                  name="date"
-                  onChange={(e) => setDate(e.target.value)}
-                  type="date"
-                  value={date}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    name="startDate"
+                    onChange={(e) => setStartDate(e.target.value)}
+                    type="date"
+                    value={startDate}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="endDate">End Date</Label>
+                  <Input
+                    id="endDate"
+                    name="endDate"
+                    onChange={(e) => setEndDate(e.target.value)}
+                    type="date"
+                    value={endDate}
+                  />
+                </div>
               </div>
               <div>
                 <Label htmlFor="location">Location</Label>
@@ -215,12 +251,43 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                 />
               </div>
               <div>
+                <Label htmlFor="cfpUrl">CFP URL</Label>
+                <Input
+                  id="cfpUrl"
+                  name="cfpUrl"
+                  onChange={(e) => setCfpUrl(e.target.value)}
+                  type="url"
+                  value={cfpUrl}
+                  placeholder="https://..."
+                />
+              </div>
+              <div>
+                <Label htmlFor="conferenceWebsite">Conference Website</Label>
+                <Input
+                  id="conferenceWebsite"
+                  name="conferenceWebsite"
+                  onChange={(e) => setConferenceWebsite(e.target.value)}
+                  type="url"
+                  value={conferenceWebsite}
+                  placeholder="https://..."
+                />
+              </div>
+              <div>
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
                   name="description"
                   onChange={(e) => setDescription(e.target.value)}
                   value={description}
+                />
+              </div>
+              <div>
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  onChange={(e) => setNotes(e.target.value)}
+                  value={notes}
                 />
               </div>
               <Button className="w-full" type="submit">
@@ -277,7 +344,14 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                         )}
                     </div>
                     <div className="mt-2 space-y-1 text-muted-foreground text-sm">
-                      {event.date && <p>Date: {event.date}</p>}
+                      {event.startDate && (
+                        <p>
+                          Date:{" "}
+                          {event.endDate && event.endDate !== event.startDate
+                            ? `${event.startDate} - ${event.endDate}`
+                            : event.startDate}
+                        </p>
+                      )}
                       {event.location && <p>Location: {event.location}</p>}
                       {event.cfpDeadline && (
                         <p>CFP Deadline: {event.cfpDeadline}</p>

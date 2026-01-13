@@ -7,7 +7,8 @@ import { Card, CardContent } from "~/components/ui/card";
 type Event = {
   id: number;
   name: string;
-  date: string | null;
+  startDate: string | null;
+  endDate: string | null;
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;
@@ -31,15 +32,15 @@ export function TimelineView({ events, proposals }: TimelineViewProps) {
   const eventsByQuarter = new Map<string, Event[]>();
 
   const sortedEvents = events
-    .filter((e) => e.date)
+    .filter((e) => e.startDate)
     .sort((a, b) => {
-      const dateA = new Date(a.date!);
-      const dateB = new Date(b.date!);
+      const dateA = new Date(a.startDate!);
+      const dateB = new Date(b.startDate!);
       return dateA.getTime() - dateB.getTime();
     });
 
   sortedEvents.forEach((event) => {
-    const eventDate = new Date(event.date!);
+    const eventDate = new Date(event.startDate!);
     const year = eventDate.getFullYear();
     const quarter = Math.floor(eventDate.getMonth() / 3) + 1;
     const key = `${year} Q${quarter}`;
@@ -51,7 +52,7 @@ export function TimelineView({ events, proposals }: TimelineViewProps) {
   });
 
   const getEventStatus = (event: Event) => {
-    const eventDate = new Date(event.date!);
+    const eventDate = new Date(event.startDate!);
     eventDate.setHours(0, 0, 0, 0);
 
     if (eventDate < today) {
@@ -146,15 +147,21 @@ export function TimelineView({ events, proposals }: TimelineViewProps) {
                       <div className="flex items-start gap-3 sm:gap-4">
                         <div className="flex-shrink-0 w-16 sm:w-20 text-center">
                           <div className="font-semibold text-gray-900 text-xl sm:text-2xl">
-                            {new Date(event.date!).getDate()}
+                            {new Date(event.startDate!).getDate()}
+                            {event.endDate &&
+                              event.endDate !== event.startDate &&
+                              `-${new Date(event.endDate).getDate()}`}
                           </div>
                           <div className="text-gray-600 text-xs sm:text-sm">
-                            {new Date(event.date!).toLocaleDateString("en-US", {
-                              month: "short",
-                            })}
+                            {new Date(event.startDate!).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                              },
+                            )}
                           </div>
                           <div className="text-gray-500 text-xs">
-                            {new Date(event.date!).getFullYear()}
+                            {new Date(event.startDate!).getFullYear()}
                           </div>
                         </div>
                         <div className="min-w-0 flex-1">

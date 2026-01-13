@@ -185,9 +185,13 @@ export default async function Home() {
                                 {event.location}
                               </span>
                             )}
-                            {event.date && (
+                            {event.startDate && (
                               <span>
-                                • {event.date}
+                                •{" "}
+                                {event.endDate &&
+                                event.endDate !== event.startDate
+                                  ? `${event.startDate} - ${event.endDate}`
+                                  : event.startDate}
                               </span>
                             )}
                           </div>
