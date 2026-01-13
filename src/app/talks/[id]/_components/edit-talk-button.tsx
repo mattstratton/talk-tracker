@@ -121,7 +121,7 @@ export function EditTalkButton({ talk }: EditTalkButtonProps) {
             <Label>Tags</Label>
             <TagSelector
               selectedTagIds={selectedTagIds}
-              onTagsChange={setSelectedTagIds}
+              onChange={setSelectedTagIds}
             />
           </div>
           <Button className="w-full" type="submit">
