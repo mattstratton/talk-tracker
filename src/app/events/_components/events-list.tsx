@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -236,8 +237,11 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
             const urgency = getCFPUrgency(event.cfpDeadline);
             return (
               <div className="rounded-lg border p-4" key={event.id}>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
+                <div className="flex items-start justify-between gap-4">
+                  <Link
+                    className="flex-1 transition-colors hover:text-gray-600"
+                    href={`/events/${event.id}`}
+                  >
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-lg">{event.name}</h3>
                       {urgency && (
@@ -258,8 +262,8 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                         <p className="mt-2">{event.description}</p>
                       )}
                     </div>
-                  </div>
-                  <div className="flex gap-2">
+                  </Link>
+                  <div className="flex flex-shrink-0 gap-2">
                     <Button
                       onClick={() => handleEdit(event)}
                       size="sm"

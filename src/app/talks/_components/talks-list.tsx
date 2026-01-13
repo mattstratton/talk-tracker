@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -174,8 +175,11 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
         <div className="space-y-4">
           {talks.map((talk) => (
             <div className="rounded-lg border p-4" key={talk.id}>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
+              <div className="flex items-start justify-between gap-4">
+                <Link
+                  className="flex-1 transition-colors hover:text-gray-600"
+                  href={`/talks/${talk.id}`}
+                >
                   <h3 className="font-semibold text-lg">{talk.title}</h3>
                   <p className="mt-1 text-muted-foreground text-sm">
                     by {talk.createdBy.name}
@@ -186,8 +190,8 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
                       {talk.description}
                     </p>
                   )}
-                </div>
-                <div className="flex gap-2">
+                </Link>
+                <div className="flex flex-shrink-0 gap-2">
                   <Button
                     onClick={() => handleEdit(talk)}
                     size="sm"
