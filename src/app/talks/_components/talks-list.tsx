@@ -32,6 +32,20 @@ interface Talk {
     createdAt: Date;
     updatedAt: Date;
   };
+  talkTagAssignments: Array<{
+    id: number;
+    talkId: number;
+    tagId: number;
+    createdAt: Date;
+    tag: {
+      id: number;
+      name: string;
+      color: string | null;
+      description: string | null;
+      createdAt: Date;
+      updatedAt: Date | null;
+    };
+  }>;
 }
 
 export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {

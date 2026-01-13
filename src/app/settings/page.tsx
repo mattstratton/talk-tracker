@@ -8,6 +8,7 @@ import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { ScoringCategoriesSettings } from "./_components/scoring-categories-settings";
+import { TalkTagsSettings } from "./_components/talk-tags-settings";
 import { ThresholdSettings } from "./_components/threshold-settings";
 
 export const metadata: Metadata = {
@@ -24,9 +25,10 @@ export default async function SettingsPage() {
   }
 
   // Prefetch data
-  const [categories, threshold] = await Promise.all([
+  const [categories, threshold, tags] = await Promise.all([
     api.scoringCategory.getAll(),
     api.appSettings.getThreshold(),
+    api.talkTag.getAll(),
   ]);
 
   return (
@@ -79,6 +81,7 @@ export default async function SettingsPage() {
           <div className="space-y-8">
             <ThresholdSettings initialThreshold={threshold} />
             <ScoringCategoriesSettings initialCategories={categories} />
+            <TalkTagsSettings initialTags={tags} />
           </div>
         </div>
       </main>

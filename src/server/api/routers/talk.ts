@@ -56,6 +56,11 @@ export const talkRouter = createTRPCRouter({
       orderBy: (talks, { desc }) => [desc(talks.createdAt)],
       with: {
         createdBy: true,
+        talkTagAssignments: {
+          with: {
+            tag: true,
+          },
+        },
       },
     });
   }),
@@ -67,6 +72,11 @@ export const talkRouter = createTRPCRouter({
         where: eq(talks.id, input.id),
         with: {
           createdBy: true,
+          talkTagAssignments: {
+            with: {
+              tag: true,
+            },
+          },
         },
       });
     }),

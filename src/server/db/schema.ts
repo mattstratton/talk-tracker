@@ -166,6 +166,45 @@ export const appSettings = createTable(
   (t) => [index("app_setting_key_idx").on(t.key)],
 );
 
+// Talk Tags table (tag definitions for categorizing talks)
+export const talkTags = createTable(
+  "talk_tag",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    name: text("name").notNull().unique(),
+    color: text("color"),
+    description: text("description"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => [index("talk_tag_name_idx").on(t.name)],
+);
+
+// Talk Tag Assignments table (many-to-many join table for talks and tags)
+export const talkTagAssignments = createTable(
+  "talk_tag_assignment",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    talkId: integer("talk_id")
+      .notNull()
+      .references(() => talks.id, { onDelete: "cascade" }),
+    tagId: integer("tag_id")
+      .notNull()
+      .references(() => talkTags.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("talk_tag_assignment_talk_idx").on(t.talkId),
+    index("talk_tag_assignment_tag_idx").on(t.tagId),
+  ],
+);
+
 // Better Auth tables
 export const user = createTable("user", {
   id: text("id").primaryKey(),
@@ -254,6 +293,7 @@ export const talksRelations = relations(talks, ({ one, many }) => ({
     references: [user.id],
   }),
   proposals: many(proposals),
+  talkTagAssignments: many(talkTagAssignments),
 }));
 
 export const proposalsRelations = relations(proposals, ({ one }) => ({
@@ -288,3 +328,21 @@ export const eventScoresRelations = relations(eventScores, ({ one }) => ({
     references: [scoringCategories.id],
   }),
 }));
+
+export const talkTagsRelations = relations(talkTags, ({ many }) => ({
+  talkTagAssignments: many(talkTagAssignments),
+}));
+
+export const talkTagAssignmentsRelations = relations(
+  talkTagAssignments,
+  ({ one }) => ({
+    talk: one(talks, {
+      fields: [talkTagAssignments.talkId],
+      references: [talks.id],
+    }),
+    tag: one(talkTags, {
+      fields: [talkTagAssignments.tagId],
+      references: [talkTags.id],
+    }),
+  }),
+);
