@@ -82,7 +82,7 @@ export const eventRouter = createTRPCRouter({
 
     // Get threshold setting
     const thresholdSetting = await ctx.db.query.appSettings.findFirst({
-      where: (settings, { eq }) => eq(settings.key, "score_threshold"),
+      where: (settings, { eq }) => eq(settings.key, "scoring_threshold"),
     });
     const threshold = thresholdSetting
       ? parseInt(thresholdSetting.value)
