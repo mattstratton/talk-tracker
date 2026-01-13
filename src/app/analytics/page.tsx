@@ -137,97 +137,99 @@ export default async function AnalyticsPage() {
           ) : (
             <div className="space-y-4">
               {sortedTalkStats.map((talk) => (
-                <Card className="border-gray-200" key={talk.id}>
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-gray-900 text-lg">{talk.title}</CardTitle>
-                        <p className="mt-1 text-gray-600 text-sm">
-                          by {talk.createdBy.name}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        {talk.totalSubmissions > 0 ? (
-                          <>
-                            <div
-                              className={`mb-1 font-semibold text-2xl ${getAcceptanceRateColor(talk.acceptanceRate)}`}
-                            >
-                              {talk.acceptanceRate.toFixed(0)}%
-                            </div>
-                            <p className="text-gray-600 text-xs">
-                              acceptance rate
-                            </p>
-                          </>
-                        ) : (
-                          <p className="text-gray-600 text-sm">
-                            Not submitted yet
+                <Link key={talk.id} href={`/talks/${talk.id}`}>
+                  <Card className="border-gray-200 transition-shadow hover:shadow-md">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <CardTitle className="text-gray-900 text-lg">{talk.title}</CardTitle>
+                          <p className="mt-1 text-gray-600 text-sm">
+                            by {talk.createdBy.name}
                           </p>
-                        )}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-4 grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-4">
-                      <div>
-                        <p className="text-gray-600 text-xs">
-                          Total Submissions
-                        </p>
-                        <p className="font-semibold text-gray-900 text-lg sm:text-xl">
-                          {talk.totalSubmissions}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600 text-xs">
-                          Accepted
-                        </p>
-                        <p className="font-semibold text-green-600 text-lg sm:text-xl">
-                          {talk.acceptedCount}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600 text-xs">
-                          Rejected
-                        </p>
-                        <p className="font-semibold text-red-600 text-lg sm:text-xl">
-                          {
-                            talk.events.filter((e) => e.status === "rejected")
-                              .length
-                          }
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600 text-xs">Pending</p>
-                        <p className="font-semibold text-blue-600 text-lg sm:text-xl">
-                          {
-                            talk.events.filter(
-                              (e) =>
-                                e.status === "submitted" ||
-                                e.status === "draft",
-                            ).length
-                          }
-                        </p>
-                      </div>
-                    </div>
-
-                    {talk.events.length > 0 && (
-                      <div>
-                        <h4 className="mb-2 font-medium text-gray-900 text-sm">
-                          Submitted to:
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {talk.events.map((event, idx) => (
-                            <span
-                              className={`rounded px-2 py-1 text-xs ${getStatusColor(event.status)}`}
-                              key={idx}
-                            >
-                              {event.name} • {event.status}
-                            </span>
-                          ))}
+                        </div>
+                        <div className="text-right">
+                          {talk.totalSubmissions > 0 ? (
+                            <>
+                              <div
+                                className={`mb-1 font-semibold text-2xl ${getAcceptanceRateColor(talk.acceptanceRate)}`}
+                              >
+                                {talk.acceptanceRate.toFixed(0)}%
+                              </div>
+                              <p className="text-gray-600 text-xs">
+                                acceptance rate
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-gray-600 text-sm">
+                              Not submitted yet
+                            </p>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="mb-4 grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-4">
+                        <div>
+                          <p className="text-gray-600 text-xs">
+                            Total Submissions
+                          </p>
+                          <p className="font-semibold text-gray-900 text-lg sm:text-xl">
+                            {talk.totalSubmissions}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600 text-xs">
+                            Accepted
+                          </p>
+                          <p className="font-semibold text-green-600 text-lg sm:text-xl">
+                            {talk.acceptedCount}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600 text-xs">
+                            Rejected
+                          </p>
+                          <p className="font-semibold text-red-600 text-lg sm:text-xl">
+                            {
+                              talk.events.filter((e) => e.status === "rejected")
+                                .length
+                            }
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-600 text-xs">Pending</p>
+                          <p className="font-semibold text-blue-600 text-lg sm:text-xl">
+                            {
+                              talk.events.filter(
+                                (e) =>
+                                  e.status === "submitted" ||
+                                  e.status === "draft",
+                              ).length
+                            }
+                          </p>
+                        </div>
+                      </div>
+
+                      {talk.events.length > 0 && (
+                        <div>
+                          <h4 className="mb-2 font-medium text-gray-900 text-sm">
+                            Submitted to:
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            {talk.events.map((event, idx) => (
+                              <span
+                                className={`rounded px-2 py-1 text-xs ${getStatusColor(event.status)}`}
+                                key={idx}
+                              >
+                                {event.name} • {event.status}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           )}

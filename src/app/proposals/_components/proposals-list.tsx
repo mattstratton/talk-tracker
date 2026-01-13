@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -498,30 +499,32 @@ export function ProposalsList({
       ) : (
         <div className="space-y-4">
           {filteredProposals.map((proposal) => (
-            <div className="rounded-lg border p-4" key={proposal.id}>
+            <div className="rounded-lg border p-4 transition-shadow hover:shadow-md" key={proposal.id}>
               <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-lg">
-                      {proposal.talk.title}
-                    </h3>
-                    <Badge className={getStatusColor(proposal.status)}>
-                      {proposal.status}
-                    </Badge>
-                  </div>
-                  <p className="mt-1 text-muted-foreground text-sm">
-                    {proposal.event.name} • {proposal.user.name} •{" "}
-                    {proposal.talkType}
-                  </p>
-                  {proposal.submissionDate && (
+                <Link className="flex-1" href={`/proposals/${proposal.id}`}>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-lg">
+                        {proposal.talk.title}
+                      </h3>
+                      <Badge className={getStatusColor(proposal.status)}>
+                        {proposal.status}
+                      </Badge>
+                    </div>
                     <p className="mt-1 text-muted-foreground text-sm">
-                      Submitted: {proposal.submissionDate}
+                      {proposal.event.name} • {proposal.user.name} •{" "}
+                      {proposal.talkType}
                     </p>
-                  )}
-                  {proposal.notes && (
-                    <p className="mt-2 text-sm">{proposal.notes}</p>
-                  )}
-                </div>
+                    {proposal.submissionDate && (
+                      <p className="mt-1 text-muted-foreground text-sm">
+                        Submitted: {proposal.submissionDate}
+                      </p>
+                    )}
+                    {proposal.notes && (
+                      <p className="mt-2 text-sm">{proposal.notes}</p>
+                    )}
+                  </div>
+                </Link>
                 <Button
                   onClick={() => handleEdit(proposal)}
                   size="sm"

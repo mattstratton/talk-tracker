@@ -182,75 +182,77 @@ export default async function CalendarPage() {
                         const proposalCount = getProposalCount(event.id);
 
                         return (
-                          <Card className="border-gray-200" key={event.id}>
-                            <CardContent className="p-3 sm:p-4">
-                              <div className="flex items-start gap-3 sm:gap-4">
-                                <div className="flex-shrink-0 w-16 sm:w-20 text-center">
-                                  <div className="font-semibold text-gray-900 text-xl sm:text-2xl">
-                                    {new Date(event.date!).getDate()}
+                          <Link key={event.id} href={`/events/${event.id}`}>
+                            <Card className="border-gray-200 transition-shadow hover:shadow-md">
+                              <CardContent className="p-3 sm:p-4">
+                                <div className="flex items-start gap-3 sm:gap-4">
+                                  <div className="flex-shrink-0 w-16 sm:w-20 text-center">
+                                    <div className="font-semibold text-gray-900 text-xl sm:text-2xl">
+                                      {new Date(event.date!).getDate()}
+                                    </div>
+                                    <div className="text-gray-600 text-xs sm:text-sm">
+                                      {new Date(event.date!).toLocaleDateString(
+                                        "en-US",
+                                        { month: "short" },
+                                      )}
+                                    </div>
+                                    <div className="text-gray-500 text-xs">
+                                      {new Date(event.date!).getFullYear()}
+                                    </div>
                                   </div>
-                                  <div className="text-gray-600 text-xs sm:text-sm">
-                                    {new Date(event.date!).toLocaleDateString(
-                                      "en-US",
-                                      { month: "short" },
-                                    )}
-                                  </div>
-                                  <div className="text-gray-500 text-xs">
-                                    {new Date(event.date!).getFullYear()}
-                                  </div>
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <div className="mb-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                                    <h4 className="font-semibold text-gray-900 text-sm sm:text-base">
-                                      {event.name}
-                                    </h4>
-                                    <span
-                                      className={`rounded px-2 py-0.5 text-xs ${status.color}`}
-                                    >
-                                      {status.label}
-                                    </span>
-                                    {cfpStatus && (
+                                  <div className="min-w-0 flex-1">
+                                    <div className="mb-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                      <h4 className="font-semibold text-gray-900 text-sm sm:text-base">
+                                        {event.name}
+                                      </h4>
                                       <span
-                                        className={`rounded px-2 py-0.5 text-xs ${cfpStatus.color}`}
+                                        className={`rounded px-2 py-0.5 text-xs ${status.color}`}
                                       >
-                                        {cfpStatus.label}
+                                        {status.label}
                                       </span>
-                                    )}
-                                  </div>
-                                  <div className="space-y-1 text-gray-600 text-xs sm:text-sm">
-                                    {event.location && (
-                                      <p className="truncate">{event.location}</p>
-                                    )}
-                                    {event.cfpDeadline && (
-                                      <p>
-                                        CFP Deadline:{" "}
-                                        {new Date(
-                                          event.cfpDeadline,
-                                        ).toLocaleDateString("en-US", {
-                                          month: "short",
-                                          day: "numeric",
-                                          year: "numeric",
-                                        })}
-                                      </p>
-                                    )}
-                                    {proposalCount > 0 && (
-                                      <p>
-                                        {proposalCount === 1
-                                          ? "1 proposal"
-                                          : `${proposalCount} proposals`}{" "}
-                                        submitted
-                                      </p>
-                                    )}
-                                    {event.description && (
-                                      <p className="mt-2">
-                                        {event.description}
-                                      </p>
-                                    )}
+                                      {cfpStatus && (
+                                        <span
+                                          className={`rounded px-2 py-0.5 text-xs ${cfpStatus.color}`}
+                                        >
+                                          {cfpStatus.label}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="space-y-1 text-gray-600 text-xs sm:text-sm">
+                                      {event.location && (
+                                        <p className="truncate">{event.location}</p>
+                                      )}
+                                      {event.cfpDeadline && (
+                                        <p>
+                                          CFP Deadline:{" "}
+                                          {new Date(
+                                            event.cfpDeadline,
+                                          ).toLocaleDateString("en-US", {
+                                            month: "short",
+                                            day: "numeric",
+                                            year: "numeric",
+                                          })}
+                                        </p>
+                                      )}
+                                      {proposalCount > 0 && (
+                                        <p>
+                                          {proposalCount === 1
+                                            ? "1 proposal"
+                                            : `${proposalCount} proposals`}{" "}
+                                          submitted
+                                        </p>
+                                      )}
+                                      {event.description && (
+                                        <p className="mt-2">
+                                          {event.description}
+                                        </p>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
+                          </Link>
                         );
                       })}
                     </div>

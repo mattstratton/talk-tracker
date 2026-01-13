@@ -137,42 +137,46 @@ export default async function Home() {
               <CardContent>
                 <div className="space-y-3">
                   {eventsWithDeadlines.slice(0, 5).map((event) => (
-                    <div
-                      className="flex flex-col gap-2 border-l-2 py-3 pl-3 sm:flex-row sm:items-center sm:justify-between sm:pl-4"
+                    <Link
                       key={event.id}
-                      style={{
-                        borderLeftColor:
-                          event.daysUntil <= 7
-                            ? "#dc2626"
-                            : event.daysUntil <= 30
-                              ? "#f59e0b"
-                              : "#10b981",
-                      }}
+                      href={`/events/${event.id}`}
                     >
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 text-sm">{event.name}</h3>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-gray-600 text-xs">
-                          {event.location && (
-                            <span className="truncate">
-                              {event.location}
-                            </span>
-                          )}
-                          {event.date && (
-                            <span>
-                              • {event.date}
-                            </span>
-                          )}
+                      <div
+                        className="flex flex-col gap-2 border-l-2 py-3 pl-3 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between sm:pl-4"
+                        style={{
+                          borderLeftColor:
+                            event.daysUntil <= 7
+                              ? "#dc2626"
+                              : event.daysUntil <= 30
+                                ? "#f59e0b"
+                                : "#10b981",
+                        }}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-gray-900 text-sm">{event.name}</h3>
+                          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-gray-600 text-xs">
+                            {event.location && (
+                              <span className="truncate">
+                                {event.location}
+                              </span>
+                            )}
+                            {event.date && (
+                              <span>
+                                • {event.date}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-left sm:text-right">
+                          <div className="font-medium text-gray-900 text-sm">
+                            {getUrgencyLabel(event.daysUntil)}
+                          </div>
+                          <div className="text-gray-500 text-xs">
+                            {event.cfpDeadline}
+                          </div>
                         </div>
                       </div>
-                      <div className="text-left sm:text-right">
-                        <div className="font-medium text-gray-900 text-sm">
-                          {getUrgencyLabel(event.daysUntil)}
-                        </div>
-                        <div className="text-gray-500 text-xs">
-                          {event.cfpDeadline}
-                        </div>
-                      </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
                 {eventsWithDeadlines.length > 5 && (
@@ -214,34 +218,38 @@ export default async function Home() {
               ) : (
                 <div className="space-y-3">
                   {proposals.slice(0, 10).map((proposal) => (
-                    <div
-                      className="flex flex-col gap-2 border-b py-3 last:border-0 sm:flex-row sm:items-center sm:justify-between"
+                    <Link
                       key={proposal.id}
+                      href={`/proposals/${proposal.id}`}
                     >
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 text-sm">
-                          {proposal.talk.title}
-                        </h3>
-                        <p className="mt-0.5 text-gray-600 text-xs">
-                          {proposal.event.name} • {proposal.user.name} • {proposal.talkType}
-                        </p>
+                      <div
+                        className="flex flex-col gap-2 border-b py-3 last:border-0 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-gray-900 text-sm">
+                            {proposal.talk.title}
+                          </h3>
+                          <p className="mt-0.5 text-gray-600 text-xs">
+                            {proposal.event.name} • {proposal.user.name} • {proposal.talkType}
+                          </p>
+                        </div>
+                        <div className="self-start sm:self-auto">
+                          <span
+                            className={`inline-block rounded px-2 py-1 text-xs whitespace-nowrap ${
+                              proposal.status === "accepted"
+                                ? "bg-green-100 text-green-700"
+                                : proposal.status === "rejected"
+                                  ? "bg-red-100 text-red-700"
+                                  : proposal.status === "submitted"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "bg-gray-100 text-gray-700"
+                            }`}
+                          >
+                            {proposal.status}
+                          </span>
+                        </div>
                       </div>
-                      <div className="self-start sm:self-auto">
-                        <span
-                          className={`inline-block rounded px-2 py-1 text-xs whitespace-nowrap ${
-                            proposal.status === "accepted"
-                              ? "bg-green-100 text-green-700"
-                              : proposal.status === "rejected"
-                                ? "bg-red-100 text-red-700"
-                                : proposal.status === "submitted"
-                                  ? "bg-blue-100 text-blue-700"
-                                  : "bg-gray-100 text-gray-700"
-                          }`}
-                        >
-                          {proposal.status}
-                        </span>
-                      </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}
