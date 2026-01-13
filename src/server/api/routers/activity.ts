@@ -256,6 +256,18 @@ export const activityRouter = createTRPCRouter({
               },
             },
           },
+          event: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
+          talk: {
+            columns: {
+              id: true,
+              title: true,
+            },
+          },
           mentions: {
             with: {
               mentionedUser: {
@@ -307,6 +319,18 @@ export const activityRouter = createTRPCRouter({
                   name: true,
                 },
               },
+            },
+          },
+          event: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
+          talk: {
+            columns: {
+              id: true,
+              title: true,
             },
           },
           mentions: {

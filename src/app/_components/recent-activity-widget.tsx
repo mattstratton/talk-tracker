@@ -27,6 +27,36 @@ export function RecentActivityWidget() {
     limit: 5,
   });
 
+  // Helper to get the link for an activity
+  const getActivityLink = (activity: any) => {
+    if (activity.proposal) return `/proposals/${activity.proposal.id}`;
+    if (activity.event) return `/events/${activity.event.id}`;
+    if (activity.talk) return `/talks/${activity.talk.id}`;
+    return "#";
+  };
+
+  // Helper to get the entity description
+  const getEntityDescription = (activity: any) => {
+    if (activity.proposal) {
+      return `${activity.proposal.talk.title} • ${activity.proposal.event.name}`;
+    }
+    if (activity.event) {
+      return `Event: ${activity.event.name}`;
+    }
+    if (activity.talk) {
+      return `Talk: ${activity.talk.title}`;
+    }
+    return "";
+  };
+
+  // Helper to get comment context
+  const getCommentContext = (activity: any) => {
+    if (activity.proposal) return "proposal";
+    if (activity.event) return "event";
+    if (activity.talk) return "talk";
+    return "item";
+  };
+
   return (
     <Card className="border-gray-200">
       <CardHeader>
@@ -54,10 +84,7 @@ export function RecentActivityWidget() {
         ) : (
           <div className="space-y-3">
             {activities.map((activity) => (
-              <Link
-                key={activity.id}
-                href={`/proposals/${activity.proposal.id}`}
-              >
+              <Link key={activity.id} href={getActivityLink(activity)}>
                 <div className="border-b pb-3 last:border-0 transition-colors hover:bg-gray-50">
                   <div className="flex items-start gap-2">
                     <div className="flex-shrink-0">
@@ -88,8 +115,7 @@ export function RecentActivityWidget() {
                             </span>
                           </p>
                           <p className="mt-0.5 text-xs text-gray-600">
-                            {activity.proposal.talk.title} •{" "}
-                            {activity.proposal.event.name}
+                            {getEntityDescription(activity)}
                           </p>
                         </>
                       ) : (
@@ -98,11 +124,10 @@ export function RecentActivityWidget() {
                             <span className="font-medium">
                               {activity.user.name}
                             </span>{" "}
-                            commented on proposal
+                            commented on {getCommentContext(activity)}
                           </p>
                           <p className="mt-0.5 text-xs text-gray-600">
-                            {activity.proposal.talk.title} •{" "}
-                            {activity.proposal.event.name}
+                            {getEntityDescription(activity)}
                           </p>
                         </>
                       )}
