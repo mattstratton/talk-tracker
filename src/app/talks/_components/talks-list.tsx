@@ -35,55 +35,131 @@ interface Talk {
 
 export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
   const [open, setOpen] = useState(false);
+  const [editingTalk, setEditingTalk] = useState<Talk | null>(null);
+  const [title, setTitle] = useState("");
+  const [abstract, setAbstract] = useState("");
+  const [description, setDescription] = useState("");
   const utils = api.useUtils();
 
   const { data: talks = initialTalks } = api.talk.getAll.useQuery(undefined, {
     initialData: initialTalks,
   });
 
+  const resetForm = () => {
+    setEditingTalk(null);
+    setTitle("");
+    setAbstract("");
+    setDescription("");
+  };
+
   const createTalk = api.talk.create.useMutation({
     onSuccess: () => {
       void utils.talk.getAll.invalidate();
       setOpen(false);
+      resetForm();
     },
   });
 
+  const updateTalk = api.talk.update.useMutation({
+    onSuccess: () => {
+      void utils.talk.getAll.invalidate();
+      setOpen(false);
+      resetForm();
+    },
+  });
+
+  const deleteTalk = api.talk.delete.useMutation({
+    onSuccess: () => {
+      void utils.talk.getAll.invalidate();
+    },
+  });
+
+  const handleEdit = (talk: Talk) => {
+    setEditingTalk(talk);
+    setTitle(talk.title);
+    setAbstract(talk.abstract);
+    setDescription(talk.description ?? "");
+    setOpen(true);
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Are you sure you want to delete this talk?")) {
+      deleteTalk.mutate({ id });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    createTalk.mutate({
-      title: formData.get("title") as string,
-      abstract: formData.get("abstract") as string,
-      description: formData.get("description") as string,
-    });
+
+    if (editingTalk) {
+      updateTalk.mutate({
+        id: editingTalk.id,
+        title: title || undefined,
+        abstract: abstract || undefined,
+        description: description || undefined,
+      });
+    } else {
+      createTalk.mutate({
+        title,
+        abstract,
+        description: description || undefined,
+      });
+    }
   };
 
   return (
     <div>
       <div className="mb-4">
-        <Dialog onOpenChange={setOpen} open={open}>
+        <Dialog
+          onOpenChange={(isOpen) => {
+            setOpen(isOpen);
+            if (!isOpen) {
+              resetForm();
+            }
+          }}
+          open={open}
+        >
           <DialogTrigger asChild>
             <Button type="button">Add Talk</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Talk</DialogTitle>
+              <DialogTitle>
+                {editingTalk ? "Edit Talk" : "Add New Talk"}
+              </DialogTitle>
             </DialogHeader>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <Label htmlFor="title">Title *</Label>
-                <Input id="title" name="title" required />
+                <Input
+                  id="title"
+                  name="title"
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  value={title}
+                />
               </div>
               <div>
                 <Label htmlFor="abstract">Abstract *</Label>
-                <Textarea id="abstract" name="abstract" required />
+                <Textarea
+                  id="abstract"
+                  name="abstract"
+                  onChange={(e) => setAbstract(e.target.value)}
+                  required
+                  value={abstract}
+                />
               </div>
               <div>
                 <Label htmlFor="description">Full Description</Label>
-                <Textarea id="description" name="description" />
+                <Textarea
+                  id="description"
+                  name="description"
+                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}
+                />
               </div>
               <Button className="w-full" type="submit">
-                Create Talk
+                {editingTalk ? "Update Talk" : "Create Talk"}
               </Button>
             </form>
           </DialogContent>
@@ -110,6 +186,22 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
                       {talk.description}
                     </p>
                   )}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => handleEdit(talk)}
+                    size="sm"
+                    variant="outline"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDelete(talk.id)}
+                    size="sm"
+                    variant="destructive"
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Nav } from "~/components/nav";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
@@ -20,68 +21,54 @@ export default async function EventsPage() {
 
   return (
     <HydrateClient>
-      <main className="min-h-screen bg-background">
-        <div className="border-b bg-background">
-          <div className="container mx-auto flex h-16 items-center justify-between px-4">
-            <div className="flex items-center gap-6">
-              <h1 className="font-bold text-xl">Talk Tracker</h1>
-              <nav className="flex gap-4">
-                <Link href="/">
-                  <Button type="button" variant="ghost">
-                    Dashboard
+      <main className="min-h-screen bg-gray-50">
+        <div className="border-b bg-white">
+          <div className="container mx-auto px-4">
+            <div className="flex h-16 items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Nav />
+                <h1 className="font-semibold text-gray-900 text-lg sm:text-xl">
+                  Talk Tracker
+                </h1>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-4">
+                <span className="hidden text-gray-600 text-sm sm:inline">
+                  {session.user.name}
+                </span>
+                <form>
+                  <Button
+                    formAction={async () => {
+                      "use server";
+                      await auth.api.signOut({
+                        headers: await headers(),
+                      });
+                      redirect("/");
+                    }}
+                    size="sm"
+                    type="submit"
+                    variant="outline"
+                  >
+                    Sign out
                   </Button>
-                </Link>
-                <Link href="/events">
-                  <Button type="button" variant="ghost">
-                    Events
-                  </Button>
-                </Link>
-                <Link href="/talks">
-                  <Button type="button" variant="ghost">
-                    Talks
-                  </Button>
-                </Link>
-                <Link href="/proposals">
-                  <Button type="button" variant="ghost">
-                    Proposals
-                  </Button>
-                </Link>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-muted-foreground text-sm">
-                {session.user.name}
-              </span>
-              <form>
-                <Button
-                  formAction={async () => {
-                    "use server";
-                    await auth.api.signOut({
-                      headers: await headers(),
-                    });
-                    redirect("/");
-                  }}
-                  type="submit"
-                  variant="outline"
-                >
-                  Sign out
-                </Button>
-              </form>
+                </form>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h2 className="mb-2 font-bold text-3xl">Events & Conferences</h2>
-            <p className="text-muted-foreground">
+        <div className="container mx-auto px-4 py-6 sm:py-8">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="mb-1 font-semibold text-xl sm:text-2xl text-gray-900">
+              Events & Conferences
+            </h2>
+            <p className="text-gray-600 text-sm">
               Manage the conferences and events you're targeting
             </p>
           </div>
 
-          <Card>
+          <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle>All Events</CardTitle>
+              <CardTitle className="text-base sm:text-lg text-gray-900">All Events</CardTitle>
             </CardHeader>
             <CardContent>
               <EventsList initialEvents={events} />

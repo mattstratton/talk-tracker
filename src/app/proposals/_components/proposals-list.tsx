@@ -77,16 +77,29 @@ export function ProposalsList({
   initialProposals,
   events,
   talks,
+  currentUserId,
 }: {
   initialProposals: Proposal[];
   events: Event[];
   talks: Talk[];
+  currentUserId: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [editingProposal, setEditingProposal] = useState<Proposal | null>(null);
   const [selectedTalkId, setSelectedTalkId] = useState<string>("");
   const [selectedEventId, setSelectedEventId] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("draft");
   const [selectedTalkType, setSelectedTalkType] = useState<string>("regular");
+  const [submissionDate, setSubmissionDate] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
+
+  // Filters
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterEvent, setFilterEvent] = useState<string>("all");
+  const [filterTalkType, setFilterTalkType] = useState<string>("all");
+  const [filterUser, setFilterUser] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("date-desc");
+
   const utils = api.useUtils();
 
   const { data: proposals = initialProposals } = api.proposal.getAll.useQuery(
@@ -96,37 +109,115 @@ export function ProposalsList({
     },
   );
 
+  // Get unique users from proposals
+  const users = Array.from(
+    new Set(proposals.map((p) => JSON.stringify({ id: p.user.id, name: p.user.name })))
+  ).map((u) => JSON.parse(u) as { id: string; name: string });
+
+  // Apply filters and sorting
+  const filteredProposals = proposals
+    .filter((proposal) => {
+      if (filterStatus !== "all" && proposal.status !== filterStatus) return false;
+      if (filterEvent !== "all" && proposal.eventId.toString() !== filterEvent) return false;
+      if (filterTalkType !== "all" && proposal.talkType !== filterTalkType) return false;
+      if (filterUser !== "all" && proposal.userId !== filterUser) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "date-desc":
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case "date-asc":
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case "status":
+          return a.status.localeCompare(b.status);
+        case "event":
+          return a.event.name.localeCompare(b.event.name);
+        case "talk":
+          return a.talk.title.localeCompare(b.talk.title);
+        default:
+          return 0;
+      }
+    });
+
+  const resetForm = () => {
+    setEditingProposal(null);
+    setSelectedTalkId("");
+    setSelectedEventId("");
+    setSelectedStatus("draft");
+    setSelectedTalkType("regular");
+    setSubmissionDate("");
+    setNotes("");
+  };
+
   const createProposal = api.proposal.create.useMutation({
     onSuccess: () => {
       void utils.proposal.getAll.invalidate();
       setOpen(false);
-      setSelectedTalkId("");
-      setSelectedEventId("");
-      setSelectedStatus("draft");
-      setSelectedTalkType("regular");
+      resetForm();
     },
   });
 
+  const updateProposal = api.proposal.update.useMutation({
+    onSuccess: () => {
+      void utils.proposal.getAll.invalidate();
+      setOpen(false);
+      resetForm();
+    },
+  });
+
+  const handleEdit = (proposal: Proposal) => {
+    setEditingProposal(proposal);
+    setSelectedTalkId(proposal.talkId.toString());
+    setSelectedEventId(proposal.eventId.toString());
+    setSelectedStatus(proposal.status);
+    setSelectedTalkType(proposal.talkType);
+    setSubmissionDate(proposal.submissionDate ?? "");
+    setNotes(proposal.notes ?? "");
+    setOpen(true);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    createProposal.mutate({
-      talkId: parseInt(selectedTalkId, 10),
-      eventId: parseInt(selectedEventId, 10),
-      status: selectedStatus as
-        | "draft"
-        | "submitted"
-        | "accepted"
-        | "rejected"
-        | "confirmed",
-      talkType: selectedTalkType as
-        | "keynote"
-        | "regular"
-        | "lightning"
-        | "workshop",
-      submissionDate: (formData.get("submissionDate") as string) || undefined,
-      notes: (formData.get("notes") as string) || undefined,
-    });
+
+    if (editingProposal) {
+      updateProposal.mutate({
+        id: editingProposal.id,
+        talkId: parseInt(selectedTalkId, 10),
+        eventId: parseInt(selectedEventId, 10),
+        status: selectedStatus as
+          | "draft"
+          | "submitted"
+          | "accepted"
+          | "rejected"
+          | "confirmed",
+        talkType: selectedTalkType as
+          | "keynote"
+          | "regular"
+          | "lightning"
+          | "workshop",
+        submissionDate: submissionDate || undefined,
+        notes: notes || undefined,
+      });
+    } else {
+      createProposal.mutate({
+        talkId: parseInt(selectedTalkId, 10),
+        eventId: parseInt(selectedEventId, 10),
+        status: selectedStatus as
+          | "draft"
+          | "submitted"
+          | "accepted"
+          | "rejected"
+          | "confirmed",
+        talkType: selectedTalkType as
+          | "keynote"
+          | "regular"
+          | "lightning"
+          | "workshop",
+        submissionDate: submissionDate || undefined,
+        notes: notes || undefined,
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -146,14 +237,152 @@ export function ProposalsList({
 
   return (
     <div>
+      {/* Filters Section */}
+      <div className="mb-6 rounded-lg border bg-muted/50 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="font-semibold text-sm">Filters & Sorting</h3>
+          <Button
+            onClick={() => {
+              if (filterUser === currentUserId) {
+                setFilterUser("all");
+              } else {
+                setFilterUser(currentUserId);
+              }
+            }}
+            size="sm"
+            variant={filterUser === currentUserId ? "default" : "outline"}
+          >
+            {filterUser === currentUserId ? "Showing My Proposals" : "Show My Proposals"}
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-5">
+          <div>
+            <Label className="text-xs" htmlFor="filterStatus">
+              Status
+            </Label>
+            <Select onValueChange={setFilterStatus} value={filterStatus}>
+              <SelectTrigger className="h-9" id="filterStatus">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="submitted">Submitted</SelectItem>
+                <SelectItem value="accepted">Accepted</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs" htmlFor="filterEvent">
+              Event
+            </Label>
+            <Select onValueChange={setFilterEvent} value={filterEvent}>
+              <SelectTrigger className="h-9" id="filterEvent">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Events</SelectItem>
+                {events.map((event) => (
+                  <SelectItem key={event.id} value={event.id.toString()}>
+                    {event.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs" htmlFor="filterTalkType">
+              Talk Type
+            </Label>
+            <Select onValueChange={setFilterTalkType} value={filterTalkType}>
+              <SelectTrigger className="h-9" id="filterTalkType">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="keynote">Keynote</SelectItem>
+                <SelectItem value="regular">Regular Session</SelectItem>
+                <SelectItem value="lightning">Lightning Talk</SelectItem>
+                <SelectItem value="workshop">Workshop</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs" htmlFor="filterUser">
+              Team Member
+            </Label>
+            <Select onValueChange={setFilterUser} value={filterUser}>
+              <SelectTrigger className="h-9" id="filterUser">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Members</SelectItem>
+                {users.map((user) => (
+                  <SelectItem key={user.id} value={user.id}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs" htmlFor="sortBy">
+              Sort By
+            </Label>
+            <Select onValueChange={setSortBy} value={sortBy}>
+              <SelectTrigger className="h-9" id="sortBy">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date-desc">Newest First</SelectItem>
+                <SelectItem value="date-asc">Oldest First</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+                <SelectItem value="event">Event Name</SelectItem>
+                <SelectItem value="talk">Talk Title</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        {(filterStatus !== "all" ||
+          filterEvent !== "all" ||
+          filterTalkType !== "all" ||
+          filterUser !== "all") && (
+          <Button
+            className="mt-3"
+            onClick={() => {
+              setFilterStatus("all");
+              setFilterEvent("all");
+              setFilterTalkType("all");
+              setFilterUser("all");
+            }}
+            size="sm"
+            variant="outline"
+          >
+            Clear Filters
+          </Button>
+        )}
+      </div>
+
       <div className="mb-4">
-        <Dialog onOpenChange={setOpen} open={open}>
+        <Dialog
+          onOpenChange={(isOpen) => {
+            setOpen(isOpen);
+            if (!isOpen) {
+              resetForm();
+            }
+          }}
+          open={open}
+        >
           <DialogTrigger asChild>
             <Button type="button">Add Proposal</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Proposal</DialogTitle>
+              <DialogTitle>
+                {editingProposal ? "Edit Proposal" : "Add New Proposal"}
+              </DialogTitle>
             </DialogHeader>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
@@ -229,18 +458,29 @@ export function ProposalsList({
               </div>
               <div>
                 <Label htmlFor="submissionDate">Submission Date</Label>
-                <Input id="submissionDate" name="submissionDate" type="date" />
+                <Input
+                  id="submissionDate"
+                  name="submissionDate"
+                  onChange={(e) => setSubmissionDate(e.target.value)}
+                  type="date"
+                  value={submissionDate}
+                />
               </div>
               <div>
                 <Label htmlFor="notes">Notes</Label>
-                <Textarea id="notes" name="notes" />
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  onChange={(e) => setNotes(e.target.value)}
+                  value={notes}
+                />
               </div>
               <Button
                 className="w-full"
                 disabled={!selectedTalkId || !selectedEventId}
                 type="submit"
               >
-                Create Proposal
+                {editingProposal ? "Update Proposal" : "Create Proposal"}
               </Button>
             </form>
           </DialogContent>
@@ -251,9 +491,13 @@ export function ProposalsList({
         <p className="py-8 text-center text-muted-foreground">
           No proposals yet. Click &quot;Add Proposal&quot; to create one.
         </p>
+      ) : filteredProposals.length === 0 ? (
+        <p className="py-8 text-center text-muted-foreground">
+          No proposals match the current filters.
+        </p>
       ) : (
         <div className="space-y-4">
-          {proposals.map((proposal) => (
+          {filteredProposals.map((proposal) => (
             <div className="rounded-lg border p-4" key={proposal.id}>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -278,6 +522,13 @@ export function ProposalsList({
                     <p className="mt-2 text-sm">{proposal.notes}</p>
                   )}
                 </div>
+                <Button
+                  onClick={() => handleEdit(proposal)}
+                  size="sm"
+                  variant="outline"
+                >
+                  Edit
+                </Button>
               </div>
             </div>
           ))}
