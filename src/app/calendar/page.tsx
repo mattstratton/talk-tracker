@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
@@ -8,6 +9,12 @@ import { Card, CardContent } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Calendar",
+  description:
+    "View your conference events in timeline format. See upcoming events, CFP deadlines, and proposal counts at a glance.",
+};
 
 export default async function CalendarPage() {
   const session = await getSession();

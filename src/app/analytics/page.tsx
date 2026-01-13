@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
@@ -8,6 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Analytics",
+  description:
+    "Track acceptance rates per talk, submission statistics, and identify which talks perform best at conferences.",
+};
 
 export default async function AnalyticsPage() {
   const session = await getSession();

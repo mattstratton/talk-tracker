@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { SignInForm } from "~/components/auth/sign-in-form";
@@ -9,6 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description:
+    "View your conference speaking dashboard with upcoming CFP deadlines, recent proposals, and acceptance statistics.",
+};
 
 export default async function Home() {
   const session = await getSession();

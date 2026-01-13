@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
@@ -8,6 +9,12 @@ import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { ScoringCategoriesSettings } from "./_components/scoring-categories-settings";
 import { ThresholdSettings } from "./_components/threshold-settings";
+
+export const metadata: Metadata = {
+  title: "Settings",
+  description:
+    "Configure your Six Sigma scoring matrix categories, weights, and threshold. Customize how you evaluate conference speaking opportunities.",
+};
 
 export default async function SettingsPage() {
   const session = await getSession();

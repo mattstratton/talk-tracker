@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
@@ -9,6 +10,12 @@ import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { TalksList } from "./_components/talks-list";
+
+export const metadata: Metadata = {
+  title: "Talk Library",
+  description:
+    "Create and manage your reusable talk content library. Store titles, abstracts, and descriptions that can be used for multiple conference submissions.",
+};
 
 export default async function TalksPage() {
   const session = await getSession();

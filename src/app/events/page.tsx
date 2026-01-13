@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
@@ -9,6 +10,12 @@ import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { EventsList } from "./_components/events-list";
+
+export const metadata: Metadata = {
+  title: "Events & Conferences",
+  description:
+    "Manage the conferences and events you're targeting. Score events using the Six Sigma matrix to identify which ones are worth submitting to.",
+};
 
 export default async function EventsPage() {
   const session = await getSession();

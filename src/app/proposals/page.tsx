@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
@@ -9,6 +10,12 @@ import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { ProposalsList } from "./_components/proposals-list";
+
+export const metadata: Metadata = {
+  title: "Proposals",
+  description:
+    "Track your conference talk proposals. Link talks to events and monitor submission status from draft through acceptance.",
+};
 
 export default async function ProposalsPage() {
   const session = await getSession();
