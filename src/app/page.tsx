@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { RecentActivityWidget } from "~/app/_components/recent-activity-widget";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -221,7 +222,9 @@ export default async function Home() {
             </Card>
           )}
 
-          <Card className="border-gray-200">
+          <RecentActivityWidget />
+
+          <Card className="mb-6 sm:mb-8 border-gray-200">
             <CardHeader>
               <CardTitle className="text-base sm:text-lg text-gray-900">
                 Recent Proposals

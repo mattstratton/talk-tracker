@@ -10,6 +10,7 @@ import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { EditTalkButton } from "./_components/edit-talk-button";
+import { TalkActivityFeed } from "./_components/talk-activity-feed";
 
 export default async function TalkDetailPage({
   params,
@@ -230,6 +231,20 @@ export default async function TalkDetailPage({
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-base sm:text-lg text-gray-900">
+                Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TalkActivityFeed
+                talkId={talkId}
+                currentUserId={session.user.id}
+              />
             </CardContent>
           </Card>
         </div>

@@ -9,6 +9,7 @@ import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { EditProposalButton } from "./_components/edit-proposal-button";
+import { ProposalActivityFeed } from "./_components/proposal-activity-feed";
 
 export default async function ProposalDetailPage({
   params,
@@ -239,6 +240,20 @@ export default async function ProposalDetailPage({
               </CardContent>
             </Card>
           )}
+
+          <Card className="border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-base sm:text-lg text-gray-900">
+                Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ProposalActivityFeed
+                proposalId={proposalId}
+                currentUserId={session.user.id}
+              />
+            </CardContent>
+          </Card>
         </div>
       </main>
     </HydrateClient>

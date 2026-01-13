@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { proposals } from "~/server/db/schema";
+import { activities, proposals } from "~/server/db/schema";
 
 const statusEnum = z.enum([
   "draft",
@@ -55,12 +55,43 @@ export const proposalRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
+
+      // If status is being updated, fetch the existing proposal first
+      let oldStatus: string | undefined;
+      if (input.status) {
+        const existing = await ctx.db.query.proposals.findFirst({
+          where: eq(proposals.id, id),
+          columns: { status: true },
+        });
+        oldStatus = existing?.status;
+      }
+
+      // Update the proposal
       const result = await ctx.db
         .update(proposals)
         .set(data)
         .where(eq(proposals.id, id))
         .returning();
-      return result[0];
+
+      const updatedProposal = result[0];
+
+      // Create status change activity if status changed
+      if (
+        input.status &&
+        oldStatus &&
+        oldStatus !== input.status &&
+        updatedProposal
+      ) {
+        await ctx.db.insert(activities).values({
+          proposalId: updatedProposal.id,
+          userId: ctx.session.user.id,
+          activityType: "status_change",
+          oldStatus,
+          newStatus: input.status,
+        });
+      }
+
+      return updatedProposal;
     }),
 
   delete: protectedProcedure

@@ -209,6 +209,77 @@ export const talkTagAssignments = createTable(
   ],
 );
 
+// Activity tracking for comments and status changes
+// Can be attached to proposals, events, or talks (exactly one must be set)
+export const activities = createTable(
+  "activity",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    // Entity references (exactly one must be set)
+    proposalId: integer("proposal_id").references(() => proposals.id, {
+      onDelete: "cascade",
+    }),
+    eventId: integer("event_id").references(() => events.id, {
+      onDelete: "cascade",
+    }),
+    talkId: integer("talk_id").references(() => talks.id, {
+      onDelete: "cascade",
+    }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    activityType: text("activity_type", {
+      enum: ["comment", "status_change"],
+    }).notNull(),
+    // For comments
+    content: text(),
+    isEdited: boolean("is_edited").default(false).notNull(),
+    editedAt: timestamp("edited_at", { withTimezone: true }),
+    // For status changes (only applicable to proposals)
+    oldStatus: text("old_status", {
+      enum: ["draft", "submitted", "accepted", "rejected", "confirmed"],
+    }),
+    newStatus: text("new_status", {
+      enum: ["draft", "submitted", "accepted", "rejected", "confirmed"],
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => [
+    index("activity_proposal_idx").on(t.proposalId),
+    index("activity_event_idx").on(t.eventId),
+    index("activity_talk_idx").on(t.talkId),
+    index("activity_user_idx").on(t.userId),
+    index("activity_type_idx").on(t.activityType),
+    index("activity_created_idx").on(t.createdAt),
+  ],
+);
+
+// @mentions in comments
+export const mentions = createTable(
+  "mention",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    activityId: integer("activity_id")
+      .notNull()
+      .references(() => activities.id, { onDelete: "cascade" }),
+    mentionedUserId: text("mentioned_user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("mention_activity_idx").on(t.activityId),
+    index("mention_user_idx").on(t.mentionedUserId),
+  ],
+);
+
 // Better Auth tables
 export const user = createTable("user", {
   id: text("id").primaryKey(),
@@ -276,6 +347,8 @@ export const userRelations = relations(user, ({ many }) => ({
   session: many(session),
   talks: many(talks),
   proposals: many(proposals),
+  activities: many(activities),
+  mentions: many(mentions),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -289,6 +362,7 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const eventsRelations = relations(events, ({ many }) => ({
   proposals: many(proposals),
   scores: many(eventScores),
+  activities: many(activities),
 }));
 
 export const talksRelations = relations(talks, ({ one, many }) => ({
@@ -298,9 +372,10 @@ export const talksRelations = relations(talks, ({ one, many }) => ({
   }),
   proposals: many(proposals),
   talkTagAssignments: many(talkTagAssignments),
+  activities: many(activities),
 }));
 
-export const proposalsRelations = relations(proposals, ({ one }) => ({
+export const proposalsRelations = relations(proposals, ({ one, many }) => ({
   talk: one(talks, {
     fields: [proposals.talkId],
     references: [talks.id],
@@ -313,6 +388,7 @@ export const proposalsRelations = relations(proposals, ({ one }) => ({
     fields: [proposals.userId],
     references: [user.id],
   }),
+  activities: many(activities),
 }));
 
 export const scoringCategoriesRelations = relations(
@@ -350,3 +426,34 @@ export const talkTagAssignmentsRelations = relations(
     }),
   }),
 );
+
+export const activitiesRelations = relations(activities, ({ one, many }) => ({
+  proposal: one(proposals, {
+    fields: [activities.proposalId],
+    references: [proposals.id],
+  }),
+  event: one(events, {
+    fields: [activities.eventId],
+    references: [events.id],
+  }),
+  talk: one(talks, {
+    fields: [activities.talkId],
+    references: [talks.id],
+  }),
+  user: one(user, {
+    fields: [activities.userId],
+    references: [user.id],
+  }),
+  mentions: many(mentions),
+}));
+
+export const mentionsRelations = relations(mentions, ({ one }) => ({
+  activity: one(activities, {
+    fields: [mentions.activityId],
+    references: [activities.id],
+  }),
+  mentionedUser: one(user, {
+    fields: [mentions.mentionedUserId],
+    references: [user.id],
+  }),
+}));

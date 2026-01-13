@@ -10,6 +10,7 @@ import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { EditEventButton } from "./_components/edit-event-button";
 import { EventScoring } from "./_components/event-scoring";
+import { EventActivityFeed } from "./_components/event-activity-feed";
 
 export default async function EventDetailPage({
   params,
@@ -248,6 +249,20 @@ export default async function EventDetailPage({
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-base sm:text-lg text-gray-900">
+                Activity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EventActivityFeed
+                eventId={eventId}
+                currentUserId={session.user.id}
+              />
             </CardContent>
           </Card>
         </div>
