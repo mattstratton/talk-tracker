@@ -28,14 +28,14 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
   const { data: allTags = [] } = api.talkTag.getAll.useQuery();
 
   const createTag = api.talkTag.create.useMutation({
-    onSuccess: (newTag) => {
+    onSuccess: async (newTag) => {
       if (newTag) {
         onChange([...selectedTagIds, newTag.id]);
       }
       setIsCreating(false);
       setNewTagName("");
       setNewTagColor("#2563eb");
-      void utils.talkTag.getAll.invalidate();
+      await utils.talkTag.getAll.invalidate();
     },
   });
 
@@ -47,10 +47,10 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
     }
   };
 
-  const handleCreateTag = (e: React.FormEvent) => {
+  const handleCreateTag = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newTagName.trim()) {
-      createTag.mutate({
+      await createTag.mutateAsync({
         name: newTagName.trim(),
         color: newTagColor,
       });
