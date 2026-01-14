@@ -1,4 +1,4 @@
-import { and, desc, eq, gt, sql } from "drizzle-orm";
+import { and, desc, eq, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -57,7 +57,9 @@ export const notificationRouter = createTRPCRouter({
       }
 
       if (input.cursor) {
-        whereConditions.push(gt(notifications.id, input.cursor));
+        // Using lt because we're ordering by desc(createdAt)
+        // We want notifications with ID less than cursor (older notifications)
+        whereConditions.push(lt(notifications.id, input.cursor));
       }
 
       const items = await ctx.db.query.notifications.findMany({
@@ -82,7 +84,7 @@ export const notificationRouter = createTRPCRouter({
       }
 
       return {
-        items,
+        notifications: items,
         nextCursor,
       };
     }),
