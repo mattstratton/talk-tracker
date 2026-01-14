@@ -12,7 +12,9 @@ import {
 } from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { createNotification } from "~/server/services/notification";
-import type { Database } from "~/server/db";
+import { db } from "~/server/db";
+
+type Database = typeof db;
 
 const activityTypeEnum = z.enum(["comment", "status_change"]);
 const statusEnum = z.enum([
@@ -576,8 +578,13 @@ export const activityRouter = createTRPCRouter({
           );
 
           // Create notifications for mentioned users
-          const entityName = await getEntityName(ctx.db, input);
-          const linkUrl = getActivityLink(input);
+          const entityIds = {
+            ...(input.proposalId && { proposalId: input.proposalId }),
+            ...(input.eventId && { eventId: input.eventId }),
+            ...(input.talkId && { talkId: input.talkId }),
+          };
+          const entityName = await getEntityName(ctx.db, entityIds);
+          const linkUrl = getActivityLink(entityIds);
 
           for (const mentionedUser of mentionedUsers) {
             mentionedUserIds.push(mentionedUser.id);
@@ -596,15 +603,20 @@ export const activityRouter = createTRPCRouter({
       }
 
       // Create comment notification for entity owner (if different from commenter and not mentioned)
-      const ownerId = await getEntityOwnerId(ctx.db, input);
+      const entityIds = {
+        ...(input.proposalId && { proposalId: input.proposalId }),
+        ...(input.eventId && { eventId: input.eventId }),
+        ...(input.talkId && { talkId: input.talkId }),
+      };
+      const ownerId = await getEntityOwnerId(ctx.db, entityIds);
       if (
         ownerId &&
         ownerId !== ctx.session.user.id &&
         !mentionedUserIds.includes(ownerId)
       ) {
-        const entityType = getEntityType(input);
-        const entityName = await getEntityName(ctx.db, input);
-        const linkUrl = getActivityLink(input);
+        const entityType = getEntityType(entityIds);
+        const entityName = await getEntityName(ctx.db, entityIds);
+        const linkUrl = getActivityLink(entityIds);
 
         await createNotification({
           db: ctx.db,

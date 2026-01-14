@@ -1,6 +1,8 @@
 import { eq } from "drizzle-orm";
-import type { Database } from "~/server/db";
+import { db } from "~/server/db";
 import { notifications, notificationPreferences } from "~/server/db/schema";
+
+type Database = typeof db;
 
 export interface CreateNotificationParams {
   db: Database;

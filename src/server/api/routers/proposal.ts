@@ -105,7 +105,7 @@ export const proposalRouter = createTRPCRouter({
             },
           });
 
-          if (proposalDetails) {
+          if (proposalDetails && statusActivity[0]) {
             await createNotification({
               db: ctx.db,
               userId: updatedProposal.userId,
@@ -114,7 +114,7 @@ export const proposalRouter = createTRPCRouter({
               message: `Changed status from ${oldStatus} to ${input.status} for "${proposalDetails.talk.title}" at ${proposalDetails.event.name}`,
               linkUrl: `/proposals/${updatedProposal.id}`,
               actorId: ctx.session.user.id,
-              activityId: statusActivity[0]?.id,
+              activityId: statusActivity[0].id,
             });
           }
         }
