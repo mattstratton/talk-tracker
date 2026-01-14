@@ -45,7 +45,7 @@ export function ActivityItem({
       <CommentActivity
         activity={activity}
         currentUserId={currentUserId}
-        onUpdate={onUpdate}
+        {...(onUpdate && { onUpdate })}
       />
     );
   }
