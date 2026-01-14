@@ -2,8 +2,17 @@ import { and, desc, eq, gt, like, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { activities, mentions, user } from "~/server/db/schema";
+import {
+  activities,
+  events,
+  mentions,
+  proposals,
+  talks,
+  user,
+} from "~/server/db/schema";
 import { TRPCError } from "@trpc/server";
+import { createNotification } from "~/server/services/notification";
+import type { Database } from "~/server/db";
 
 const activityTypeEnum = z.enum(["comment", "status_change"]);
 const statusEnum = z.enum([
@@ -37,6 +46,92 @@ async function findUsersByEmailPrefix(
     .select({ id: user.id, email: user.email })
     .from(user)
     .where(sql`${sql.join(conditions, sql` OR `)}`);
+}
+
+// Helper function to get entity owner ID
+async function getEntityOwnerId(
+  db: Database,
+  input: { proposalId?: number; eventId?: number; talkId?: number },
+): Promise<string | null> {
+  if (input.proposalId) {
+    const proposal = await db.query.proposals.findFirst({
+      where: eq(proposals.id, input.proposalId),
+      columns: { userId: true },
+    });
+    return proposal?.userId ?? null;
+  }
+
+  if (input.talkId) {
+    const talk = await db.query.talks.findFirst({
+      where: eq(talks.id, input.talkId),
+      columns: { createdById: true },
+    });
+    return talk?.createdById ?? null;
+  }
+
+  // Events don't have a specific owner
+  return null;
+}
+
+// Helper function to get entity type for notifications
+function getEntityType(input: {
+  proposalId?: number;
+  eventId?: number;
+  talkId?: number;
+}): string {
+  if (input.proposalId) return "proposal";
+  if (input.eventId) return "event";
+  if (input.talkId) return "talk";
+  return "item";
+}
+
+// Helper function to get entity name for notifications
+async function getEntityName(
+  db: Database,
+  input: { proposalId?: number; eventId?: number; talkId?: number },
+): Promise<string> {
+  if (input.proposalId) {
+    const proposal = await db.query.proposals.findFirst({
+      where: eq(proposals.id, input.proposalId),
+      with: {
+        talk: { columns: { title: true } },
+        event: { columns: { name: true } },
+      },
+    });
+    return proposal
+      ? `${proposal.talk.title} at ${proposal.event.name}`
+      : "proposal";
+  }
+
+  if (input.eventId) {
+    const event = await db.query.events.findFirst({
+      where: eq(events.id, input.eventId),
+      columns: { name: true },
+    });
+    return event?.name ?? "event";
+  }
+
+  if (input.talkId) {
+    const talk = await db.query.talks.findFirst({
+      where: eq(talks.id, input.talkId),
+      columns: { title: true },
+    });
+    return talk?.title ?? "talk";
+  }
+
+  return "item";
+}
+
+// Helper function to get activity link URL
+function getActivityLink(input: {
+  proposalId?: number;
+  eventId?: number;
+  talkId?: number;
+}): string {
+  if (input.proposalId) return `/proposals/${input.proposalId}`;
+  if (input.eventId) return `/events/${input.eventId}`;
+  if (input.talkId) return `/talks/${input.talkId}`;
+  return "/activity";
 }
 
 export const activityRouter = createTRPCRouter({
@@ -464,6 +559,8 @@ export const activityRouter = createTRPCRouter({
 
       // Parse @mentions and create mention records
       const usernames = extractMentions(input.content);
+      const mentionedUserIds: string[] = [];
+
       if (usernames.length > 0) {
         const mentionedUsers = await findUsersByEmailPrefix(
           ctx.db,
@@ -477,7 +574,48 @@ export const activityRouter = createTRPCRouter({
               mentionedUserId: mentionedUser.id,
             })),
           );
+
+          // Create notifications for mentioned users
+          const entityName = await getEntityName(ctx.db, input);
+          const linkUrl = getActivityLink(input);
+
+          for (const mentionedUser of mentionedUsers) {
+            mentionedUserIds.push(mentionedUser.id);
+            await createNotification({
+              db: ctx.db,
+              userId: mentionedUser.id,
+              notificationType: "mention",
+              title: `${ctx.session.user.name} mentioned you`,
+              message: `in a comment on ${entityName}`,
+              linkUrl,
+              actorId: ctx.session.user.id,
+              activityId: activity.id,
+            });
+          }
         }
+      }
+
+      // Create comment notification for entity owner (if different from commenter and not mentioned)
+      const ownerId = await getEntityOwnerId(ctx.db, input);
+      if (
+        ownerId &&
+        ownerId !== ctx.session.user.id &&
+        !mentionedUserIds.includes(ownerId)
+      ) {
+        const entityType = getEntityType(input);
+        const entityName = await getEntityName(ctx.db, input);
+        const linkUrl = getActivityLink(input);
+
+        await createNotification({
+          db: ctx.db,
+          userId: ownerId,
+          notificationType: "comment",
+          title: `${ctx.session.user.name} commented`,
+          message: `on your ${entityType}: ${entityName}`,
+          linkUrl,
+          actorId: ctx.session.user.id,
+          activityId: activity.id,
+        });
       }
 
       return activity;

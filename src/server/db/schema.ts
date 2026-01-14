@@ -280,6 +280,110 @@ export const mentions = createTable(
   ],
 );
 
+// Notifications table
+export const notifications = createTable(
+  "notification",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    notificationType: text("notification_type", {
+      enum: ["mention", "status_change", "comment", "cfp_deadline"],
+    }).notNull(),
+    // Entity references (at most one should be set)
+    activityId: integer("activity_id").references(() => activities.id, {
+      onDelete: "cascade",
+    }),
+    eventId: integer("event_id").references(() => events.id, {
+      onDelete: "cascade",
+    }),
+    // Denormalized content (remains readable even if source deleted)
+    title: text("title").notNull(),
+    message: text("message").notNull(),
+    linkUrl: text("link_url").notNull(),
+    // Actor (null for system-generated like CFP deadlines)
+    actorId: text("actor_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    // State
+    isRead: boolean("is_read").default(false).notNull(),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    // Future email/Slack support
+    deliveryMethod: text("delivery_method", {
+      enum: ["in_app", "email", "slack"],
+    })
+      .default("in_app")
+      .notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (t) => [
+    index("notification_user_idx").on(t.userId),
+    index("notification_read_idx").on(t.isRead),
+    index("notification_type_idx").on(t.notificationType),
+    index("notification_created_idx").on(t.createdAt),
+    index("notification_activity_idx").on(t.activityId),
+    index("notification_event_idx").on(t.eventId),
+  ],
+);
+
+// Notification Preferences table
+export const notificationPreferences = createTable(
+  "notification_preference",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    userId: text("user_id")
+      .notNull()
+      .unique()
+      .references(() => user.id, { onDelete: "cascade" }),
+    // In-app preferences (enabled by default)
+    mentionsEnabled: boolean("mentions_enabled").default(true).notNull(),
+    statusChangesEnabled: boolean("status_changes_enabled")
+      .default(true)
+      .notNull(),
+    commentsEnabled: boolean("comments_enabled").default(true).notNull(),
+    cfpDeadlinesEnabled: boolean("cfp_deadlines_enabled")
+      .default(true)
+      .notNull(),
+    cfpDeadlineDaysBefore: integer("cfp_deadline_days_before")
+      .default(7)
+      .notNull(),
+    // Future: email preferences (disabled by default)
+    emailMentionsEnabled: boolean("email_mentions_enabled")
+      .default(false)
+      .notNull(),
+    emailStatusChangesEnabled: boolean("email_status_changes_enabled")
+      .default(false)
+      .notNull(),
+    emailCommentsEnabled: boolean("email_comments_enabled")
+      .default(false)
+      .notNull(),
+    emailCfpDeadlinesEnabled: boolean("email_cfp_deadlines_enabled")
+      .default(false)
+      .notNull(),
+    // Future: Slack preferences (disabled by default)
+    slackMentionsEnabled: boolean("slack_mentions_enabled")
+      .default(false)
+      .notNull(),
+    slackStatusChangesEnabled: boolean("slack_status_changes_enabled")
+      .default(false)
+      .notNull(),
+    slackCommentsEnabled: boolean("slack_comments_enabled")
+      .default(false)
+      .notNull(),
+    slackCfpDeadlinesEnabled: boolean("slack_cfp_deadlines_enabled")
+      .default(false)
+      .notNull(),
+    slackWebhookUrl: text("slack_webhook_url"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (t) => [index("notification_preference_user_idx").on(t.userId)],
+);
+
 // Better Auth tables
 export const user = createTable("user", {
   id: text("id").primaryKey(),
@@ -342,13 +446,15 @@ export const verification = createTable("verification", {
 });
 
 // Relations
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ one, many }) => ({
   account: many(account),
   session: many(session),
   talks: many(talks),
   proposals: many(proposals),
   activities: many(activities),
   mentions: many(mentions),
+  notifications: many(notifications),
+  notificationPreferences: one(notificationPreferences),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -363,6 +469,7 @@ export const eventsRelations = relations(events, ({ many }) => ({
   proposals: many(proposals),
   scores: many(eventScores),
   activities: many(activities),
+  notifications: many(notifications),
 }));
 
 export const talksRelations = relations(talks, ({ one, many }) => ({
@@ -457,3 +564,32 @@ export const mentionsRelations = relations(mentions, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(user, {
+    fields: [notifications.userId],
+    references: [user.id],
+  }),
+  actor: one(user, {
+    fields: [notifications.actorId],
+    references: [user.id],
+  }),
+  activity: one(activities, {
+    fields: [notifications.activityId],
+    references: [activities.id],
+  }),
+  event: one(events, {
+    fields: [notifications.eventId],
+    references: [events.id],
+  }),
+}));
+
+export const notificationPreferencesRelations = relations(
+  notificationPreferences,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [notificationPreferences.userId],
+      references: [user.id],
+    }),
+  }),
+);

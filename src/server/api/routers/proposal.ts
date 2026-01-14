@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { activities, proposals } from "~/server/db/schema";
+import { createNotification } from "~/server/services/notification";
 
 const statusEnum = z.enum([
   "draft",
@@ -82,13 +83,41 @@ export const proposalRouter = createTRPCRouter({
         oldStatus !== input.status &&
         updatedProposal
       ) {
-        await ctx.db.insert(activities).values({
-          proposalId: updatedProposal.id,
-          userId: ctx.session.user.id,
-          activityType: "status_change",
-          oldStatus,
-          newStatus: input.status,
-        });
+        const statusActivity = await ctx.db
+          .insert(activities)
+          .values({
+            proposalId: updatedProposal.id,
+            userId: ctx.session.user.id,
+            activityType: "status_change",
+            oldStatus,
+            newStatus: input.status,
+          })
+          .returning();
+
+        // Create notification for proposal owner (if different from updater)
+        if (updatedProposal.userId !== ctx.session.user.id) {
+          // Get full proposal details for notification message
+          const proposalDetails = await ctx.db.query.proposals.findFirst({
+            where: eq(proposals.id, updatedProposal.id),
+            with: {
+              talk: { columns: { title: true } },
+              event: { columns: { name: true } },
+            },
+          });
+
+          if (proposalDetails) {
+            await createNotification({
+              db: ctx.db,
+              userId: updatedProposal.userId,
+              notificationType: "status_change",
+              title: `${ctx.session.user.name} updated your proposal`,
+              message: `Changed status from ${oldStatus} to ${input.status} for "${proposalDetails.talk.title}" at ${proposalDetails.event.name}`,
+              linkUrl: `/proposals/${updatedProposal.id}`,
+              actorId: ctx.session.user.id,
+              activityId: statusActivity[0]?.id,
+            });
+          }
+        }
       }
 
       return updatedProposal;
