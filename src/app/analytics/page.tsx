@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 
 export const metadata: Metadata = {
   title: "Analytics",
@@ -97,6 +98,7 @@ export default async function AnalyticsPage() {
                 <span className="hidden text-gray-600 text-sm sm:inline">
                   {session.user.name}
                 </span>
+                <NotificationBell />
                 <form>
                   <Button
                     formAction={async () => {

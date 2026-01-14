@@ -9,6 +9,7 @@ import { TagBadge } from "~/components/tag-badge";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { EditTalkButton } from "./_components/edit-talk-button";
 import { TalkActivityFeed } from "./_components/talk-activity-feed";
 
@@ -75,6 +76,7 @@ export default async function TalkDetailPage({
                 <span className="hidden text-gray-600 text-sm sm:inline">
                   {session.user.name}
                 </span>
+                <NotificationBell />
                 <form>
                   <Button
                     formAction={async () => {

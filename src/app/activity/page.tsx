@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { HydrateClient } from "~/trpc/server";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { ActivityFeed } from "~/components/activity/activity-feed";
 
 export default async function ActivityPage() {
@@ -33,6 +34,7 @@ export default async function ActivityPage() {
                 <span className="hidden text-gray-600 text-sm sm:inline">
                   {session.user.name}
                 </span>
+                <NotificationBell />
                 <form>
                   <Button
                     formAction={async () => {
