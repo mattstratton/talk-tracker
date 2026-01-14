@@ -11,6 +11,7 @@ import { api, HydrateClient } from "~/trpc/server";
 import { NotificationBell } from "~/components/notifications/notification-bell";
 import { EditEventButton } from "./_components/edit-event-button";
 import { EventScoring } from "./_components/event-scoring";
+import { EventParticipation } from "./_components/event-participation";
 import { EventActivityFeed } from "./_components/event-activity-feed";
 
 export default async function EventDetailPage({
@@ -205,6 +206,10 @@ export default async function EventDetailPage({
 
           <div className="mb-8">
             <EventScoring eventId={eventId} eventName={event.name} />
+          </div>
+
+          <div className="mb-8">
+            <EventParticipation eventId={eventId} eventName={event.name} />
           </div>
 
           <Card className="border-gray-200">

@@ -1,6 +1,7 @@
 import { activityRouter } from "~/server/api/routers/activity";
 import { appSettingsRouter } from "~/server/api/routers/appSettings";
 import { eventRouter } from "~/server/api/routers/event";
+import { eventParticipationRouter } from "~/server/api/routers/eventParticipation";
 import { eventScoreRouter } from "~/server/api/routers/eventScore";
 import { notificationRouter } from "~/server/api/routers/notification";
 import { proposalRouter } from "~/server/api/routers/proposal";
@@ -18,6 +19,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   activity: activityRouter,
   event: eventRouter,
+  eventParticipation: eventParticipationRouter,
   talk: talkRouter,
   proposal: proposalRouter,
   scoringCategory: scoringCategoryRouter,

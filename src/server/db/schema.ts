@@ -455,6 +455,7 @@ export const userRelations = relations(user, ({ one, many }) => ({
   mentions: many(mentions),
   notifications: many(notifications),
   notificationPreferences: one(notificationPreferences),
+  eventParticipations: many(eventParticipations),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -470,6 +471,7 @@ export const eventsRelations = relations(events, ({ many }) => ({
   scores: many(eventScores),
   activities: many(activities),
   notifications: many(notifications),
+  participations: many(eventParticipations),
 }));
 
 export const talksRelations = relations(talks, ({ one, many }) => ({
@@ -590,6 +592,54 @@ export const notificationPreferencesRelations = relations(
     user: one(user, {
       fields: [notificationPreferences.userId],
       references: [user.id],
+    }),
+  }),
+);
+
+// Event participation tracking
+export const eventParticipations = createTable(
+  "event_participation",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    eventId: integer("event_id")
+      .notNull()
+      .references(() => events.id, { onDelete: "cascade" }),
+    participationType: text("participation_type", {
+      enum: ["speak", "sponsor", "attend", "exhibit", "volunteer"],
+    }).notNull(),
+    status: text("status", {
+      enum: ["interested", "applied", "confirmed", "not_going"],
+    })
+      .notNull()
+      .default("interested"),
+    notes: text(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => [
+    index("event_participation_user_idx").on(t.userId),
+    index("event_participation_event_idx").on(t.eventId),
+    index("event_participation_type_idx").on(t.participationType),
+  ],
+);
+
+export const eventParticipationsRelations = relations(
+  eventParticipations,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [eventParticipations.userId],
+      references: [user.id],
+    }),
+    event: one(events, {
+      fields: [eventParticipations.eventId],
+      references: [events.id],
     }),
   }),
 );
