@@ -51,7 +51,7 @@ export const talks = createTable(
     description: text("description"),
     createdById: text("created_by_id")
       .notNull()
-      .references(() => user.id),
+      .references(() => user.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),
@@ -78,7 +78,7 @@ export const proposals = createTable(
       .references(() => events.id, { onDelete: "cascade" }),
     userId: text("user_id")
       .notNull()
-      .references(() => user.id),
+      .references(() => user.id, { onDelete: "cascade" }),
     status: text("status", {
       enum: ["draft", "submitted", "accepted", "rejected", "confirmed"],
     })

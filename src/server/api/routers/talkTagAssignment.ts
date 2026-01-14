@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { talkTagAssignments } from "~/server/db/schema";
+import { talkTagAssignments, talks } from "~/server/db/schema";
 
 export const talkTagAssignmentRouter = createTRPCRouter({
   getByTalk: protectedProcedure
@@ -25,6 +25,26 @@ export const talkTagAssignmentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Check talk ownership
+      const talk = await ctx.db.query.talks.findFirst({
+        where: eq(talks.id, input.talkId),
+        columns: { createdById: true },
+      });
+
+      if (!talk) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Talk not found",
+        });
+      }
+
+      if (talk.createdById !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to modify tags for this talk",
+        });
+      }
+
       // Check if assignment already exists
       const existing = await ctx.db.query.talkTagAssignments.findFirst({
         where: and(
@@ -63,6 +83,26 @@ export const talkTagAssignmentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Check talk ownership
+      const talk = await ctx.db.query.talks.findFirst({
+        where: eq(talks.id, input.talkId),
+        columns: { createdById: true },
+      });
+
+      if (!talk) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Talk not found",
+        });
+      }
+
+      if (talk.createdById !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to modify tags for this talk",
+        });
+      }
+
       await ctx.db
         .delete(talkTagAssignments)
         .where(
@@ -81,6 +121,26 @@ export const talkTagAssignmentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Check talk ownership
+      const talk = await ctx.db.query.talks.findFirst({
+        where: eq(talks.id, input.talkId),
+        columns: { createdById: true },
+      });
+
+      if (!talk) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Talk not found",
+        });
+      }
+
+      if (talk.createdById !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to modify tags for this talk",
+        });
+      }
+
       // Delete all existing assignments for this talk
       await ctx.db
         .delete(talkTagAssignments)

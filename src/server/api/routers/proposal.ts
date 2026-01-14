@@ -66,21 +66,34 @@ export const proposalRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
 
-      // If status is being updated, fetch the existing proposal first
-      let oldStatus:
+      // Fetch existing proposal to check ownership and get old status
+      const existing = await ctx.db.query.proposals.findFirst({
+        where: eq(proposals.id, id),
+        columns: { status: true, userId: true },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Proposal not found",
+        });
+      }
+
+      // Check ownership
+      if (existing.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to update this proposal",
+        });
+      }
+
+      const oldStatus = existing.status as
         | "draft"
         | "submitted"
         | "accepted"
         | "rejected"
         | "confirmed"
         | undefined;
-      if (input.status) {
-        const existing = await ctx.db.query.proposals.findFirst({
-          where: eq(proposals.id, id),
-          columns: { status: true },
-        });
-        oldStatus = existing?.status as typeof oldStatus;
-      }
 
       // Update the proposal
       const result = await ctx.db
@@ -148,6 +161,26 @@ export const proposalRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      // Check ownership before deleting
+      const existing = await ctx.db.query.proposals.findFirst({
+        where: eq(proposals.id, input.id),
+        columns: { userId: true },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Proposal not found",
+        });
+      }
+
+      if (existing.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to delete this proposal",
+        });
+      }
+
       await ctx.db.delete(proposals).where(eq(proposals.id, input.id));
     }),
 

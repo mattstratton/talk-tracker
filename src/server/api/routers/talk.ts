@@ -46,6 +46,27 @@ export const talkRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
+
+      // Check ownership before updating
+      const existing = await ctx.db.query.talks.findFirst({
+        where: eq(talks.id, id),
+        columns: { createdById: true },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Talk not found",
+        });
+      }
+
+      if (existing.createdById !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to update this talk",
+        });
+      }
+
       const result = await ctx.db
         .update(talks)
         .set(data)
@@ -54,8 +75,8 @@ export const talkRouter = createTRPCRouter({
 
       if (!result[0]) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Talk not found",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update talk",
         });
       }
 
@@ -65,6 +86,26 @@ export const talkRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      // Check ownership before deleting
+      const existing = await ctx.db.query.talks.findFirst({
+        where: eq(talks.id, input.id),
+        columns: { createdById: true },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Talk not found",
+        });
+      }
+
+      if (existing.createdById !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You don't have permission to delete this talk",
+        });
+      }
+
       await ctx.db.delete(talks).where(eq(talks.id, input.id));
     }),
 
