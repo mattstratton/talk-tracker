@@ -22,6 +22,10 @@ export const env = createEnv({
         : z.string().optional(),
     DATABASE_URL: z.string().url(),
     DATABASE_SCHEMA: z.string().default("talk_tracker"),
+    CRON_SECRET:
+      process.env.NODE_ENV === "production"
+        ? z.string()
+        : z.string().optional(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -48,6 +52,7 @@ export const env = createEnv({
       process.env.BETTER_AUTH_GOOGLE_CLIENT_SECRET,
     DATABASE_URL: process.env.DATABASE_URL,
     DATABASE_SCHEMA: process.env.DATABASE_SCHEMA,
+    CRON_SECRET: process.env.CRON_SECRET,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**
