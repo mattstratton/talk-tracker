@@ -11,6 +11,7 @@ import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
 import { RecentActivityWidget } from "~/app/_components/recent-activity-widget";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -75,6 +76,7 @@ export default async function Home() {
                 <span className="hidden text-gray-600 text-sm sm:inline">
                   {session.user.name}
                 </span>
+                <NotificationBell />
                 <form>
                   <Button
                     formAction={async () => {
