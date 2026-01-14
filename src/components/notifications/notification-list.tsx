@@ -14,16 +14,90 @@ export function NotificationList() {
     });
 
   const markAsReadMutation = api.notification.markAsRead.useMutation({
-    onSuccess: () => {
-      void utils.notification.getUnreadCount.invalidate();
+    onMutate: async ({ id }) => {
+      // Cancel any outgoing refetches
+      await utils.notification.getRecent.cancel();
+      await utils.notification.getUnreadCount.cancel();
+
+      // Snapshot the previous value
+      const previousNotifications = utils.notification.getRecent.getData();
+      const previousCount = utils.notification.getUnreadCount.getData();
+
+      // Optimistically update to the new value
+      utils.notification.getRecent.setData({ limit: 10 }, (old) => {
+        if (!old) return old;
+        return old.map((notification) =>
+          notification.id === id
+            ? { ...notification, isRead: true, readAt: new Date() }
+            : notification,
+        );
+      });
+
+      utils.notification.getUnreadCount.setData(undefined, (old) => {
+        return Math.max(0, (old ?? 0) - 1);
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousNotifications, previousCount };
+    },
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousNotifications) {
+        utils.notification.getRecent.setData(
+          { limit: 10 },
+          context.previousNotifications,
+        );
+      }
+      if (context?.previousCount !== undefined) {
+        utils.notification.getUnreadCount.setData(undefined, context.previousCount);
+      }
+    },
+    onSettled: () => {
       void utils.notification.getRecent.invalidate();
+      void utils.notification.getUnreadCount.invalidate();
     },
   });
 
   const markAllAsReadMutation = api.notification.markAllAsRead.useMutation({
-    onSuccess: () => {
-      void utils.notification.getUnreadCount.invalidate();
+    onMutate: async () => {
+      // Cancel any outgoing refetches
+      await utils.notification.getRecent.cancel();
+      await utils.notification.getUnreadCount.cancel();
+
+      // Snapshot the previous value
+      const previousNotifications = utils.notification.getRecent.getData();
+      const previousCount = utils.notification.getUnreadCount.getData();
+
+      // Optimistically update to the new value
+      utils.notification.getRecent.setData({ limit: 10 }, (old) => {
+        if (!old) return old;
+        return old.map((notification) => ({
+          ...notification,
+          isRead: true,
+          readAt: new Date(),
+        }));
+      });
+
+      utils.notification.getUnreadCount.setData(undefined, 0);
+
+      // Return a context object with the snapshotted value
+      return { previousNotifications, previousCount };
+    },
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousNotifications) {
+        utils.notification.getRecent.setData(
+          { limit: 10 },
+          context.previousNotifications,
+        );
+      }
+      if (context?.previousCount !== undefined) {
+        utils.notification.getUnreadCount.setData(undefined, context.previousCount);
+      }
+    },
+    onSettled: () => {
       void utils.notification.getRecent.invalidate();
+      void utils.notification.getUnreadCount.invalidate();
     },
   });
 
