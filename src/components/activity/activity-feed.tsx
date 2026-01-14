@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { ActivityItem } from "./activity-item";
 import { api } from "~/trpc/react";
+import { ActivityItem } from "./activity-item";
 
 interface ActivityFeedProps {
   proposalId?: number;
@@ -79,9 +79,9 @@ export function ActivityFeed({
       <div className="divide-y divide-gray-200">
         {data.items.map((activity) => (
           <ActivityItem
-            key={activity.id}
             activity={activity}
             currentUserId={currentUserId}
+            key={activity.id}
             onUpdate={() => void refetch()}
           />
         ))}
@@ -90,9 +90,9 @@ export function ActivityFeed({
       {data.nextCursor && (
         <div className="flex justify-center border-t p-4">
           <Button
-            variant="outline"
-            onClick={() => setCursor(data.nextCursor)}
             disabled={isLoading}
+            onClick={() => setCursor(data.nextCursor)}
+            variant="outline"
           >
             {isLoading ? "Loading..." : "Load more"}
           </Button>

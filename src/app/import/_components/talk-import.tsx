@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import {
+  AlertCircle,
+  CheckCircle,
+  Download,
+  Upload,
+  XCircle,
+} from "lucide-react";
 import Papa from "papaparse";
-import { Upload, Download, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "~/trpc/react";
@@ -24,7 +30,10 @@ export function TalkImport() {
   const [parsedData, setParsedData] = useState<TalkRow[]>([]);
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const [importing, setImporting] = useState(false);
-  const [importResult, setImportResult] = useState<{ success: number; failed: number } | null>(null);
+  const [importResult, setImportResult] = useState<{
+    success: number;
+    failed: number;
+  } | null>(null);
 
   const bulkImportMutation = api.talk.bulkImport.useMutation();
 
@@ -93,7 +102,9 @@ export function TalkImport() {
 
     setImporting(true);
     try {
-      const result = await bulkImportMutation.mutateAsync({ talks: parsedData });
+      const result = await bulkImportMutation.mutateAsync({
+        talks: parsedData,
+      });
       setImportResult(result);
       if (result.failed === 0) {
         setParsedData([]);
@@ -124,14 +135,16 @@ export function TalkImport() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base sm:text-lg">Upload Talks CSV</CardTitle>
+          <CardTitle className="text-base sm:text-lg">
+            Upload Talks CSV
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-gray-600 text-sm">
               Upload a CSV file with talk information to bulk import
             </p>
-            <Button size="sm" variant="outline" onClick={downloadTemplate}>
+            <Button onClick={downloadTemplate} size="sm" variant="outline">
               <Download className="mr-2 h-4 w-4" />
               Download Template
             </Button>
@@ -147,27 +160,28 @@ export function TalkImport() {
           >
             <input {...getInputProps()} />
             <Upload className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-gray-600 text-sm">
               {isDragActive
                 ? "Drop the CSV file here"
                 : "Drag and drop a CSV file here, or click to select"}
             </p>
-            <p className="mt-1 text-xs text-gray-500">CSV files only</p>
+            <p className="mt-1 text-gray-500 text-xs">CSV files only</p>
           </div>
 
           {parsedData.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-medium">
-                  Parsed {parsedData.length} talk{parsedData.length !== 1 ? "s" : ""}
+                <p className="font-medium text-sm">
+                  Parsed {parsedData.length} talk
+                  {parsedData.length !== 1 ? "s" : ""}
                 </p>
                 {errors.length === 0 ? (
-                  <div className="flex items-center gap-1 text-sm text-green-600">
+                  <div className="flex items-center gap-1 text-green-600 text-sm">
                     <CheckCircle className="h-4 w-4" />
                     Ready to import
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1 text-sm text-red-600">
+                  <div className="flex items-center gap-1 text-red-600 text-sm">
                     <XCircle className="h-4 w-4" />
                     {errors.length} error{errors.length !== 1 ? "s" : ""}
                   </div>
@@ -175,14 +189,14 @@ export function TalkImport() {
               </div>
 
               {errors.length > 0 && (
-                <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+                <div className="rounded-lg border border-red-200 bg-red-50 p-4">
                   <div className="flex items-start gap-2">
                     <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
                     <div className="flex-1">
                       <h4 className="font-medium text-red-900 text-sm">
                         Validation Errors
                       </h4>
-                      <ul className="mt-2 space-y-1 text-sm text-red-700">
+                      <ul className="mt-2 space-y-1 text-red-700 text-sm">
                         {errors.slice(0, 5).map((error, i) => (
                           <li key={i}>
                             Row {error.row}, {error.field}: {error.message}
@@ -190,7 +204,8 @@ export function TalkImport() {
                         ))}
                         {errors.length > 5 && (
                           <li className="text-red-600">
-                            ...and {errors.length - 5} more error{errors.length - 5 !== 1 ? "s" : ""}
+                            ...and {errors.length - 5} more error
+                            {errors.length - 5 !== 1 ? "s" : ""}
                           </li>
                         )}
                       </ul>
@@ -203,10 +218,10 @@ export function TalkImport() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                      <th className="px-4 py-2 text-left font-medium text-gray-500 text-xs">
                         Title
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                      <th className="px-4 py-2 text-left font-medium text-gray-500 text-xs">
                         Abstract
                       </th>
                     </tr>
@@ -214,8 +229,10 @@ export function TalkImport() {
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {parsedData.slice(0, 10).map((row, i) => (
                       <tr key={i}>
-                        <td className="px-4 py-2 text-sm text-gray-900">{row.title}</td>
-                        <td className="px-4 py-2 max-w-md text-sm text-gray-600 truncate">
+                        <td className="px-4 py-2 text-gray-900 text-sm">
+                          {row.title}
+                        </td>
+                        <td className="max-w-md truncate px-4 py-2 text-gray-600 text-sm">
                           {row.abstract}
                         </td>
                       </tr>
@@ -223,52 +240,73 @@ export function TalkImport() {
                   </tbody>
                 </table>
                 {parsedData.length > 10 && (
-                  <div className="bg-gray-50 px-4 py-2 text-center text-xs text-gray-500">
-                    ...and {parsedData.length - 10} more row{parsedData.length - 10 !== 1 ? "s" : ""}
+                  <div className="bg-gray-50 px-4 py-2 text-center text-gray-500 text-xs">
+                    ...and {parsedData.length - 10} more row
+                    {parsedData.length - 10 !== 1 ? "s" : ""}
                   </div>
                 )}
               </div>
 
               <div className="flex items-center justify-between">
                 <Button
-                  variant="outline"
                   onClick={() => {
                     setParsedData([]);
                     setErrors([]);
                     setImportResult(null);
                   }}
+                  variant="outline"
                 >
                   Clear
                 </Button>
                 <Button
-                  onClick={handleImport}
                   disabled={errors.length > 0 || importing}
+                  onClick={handleImport}
                 >
-                  {importing ? "Importing..." : `Import ${parsedData.length} Talk${parsedData.length !== 1 ? "s" : ""}`}
+                  {importing
+                    ? "Importing..."
+                    : `Import ${parsedData.length} Talk${parsedData.length !== 1 ? "s" : ""}`}
                 </Button>
               </div>
             </div>
           )}
 
           {importResult && (
-            <div className={`rounded-lg border p-4 ${
-              importResult.failed === 0 ? "bg-green-50 border-green-200" : "bg-yellow-50 border-yellow-200"
-            }`}>
+            <div
+              className={`rounded-lg border p-4 ${
+                importResult.failed === 0
+                  ? "border-green-200 bg-green-50"
+                  : "border-yellow-200 bg-yellow-50"
+              }`}
+            >
               <div className="flex items-start gap-2">
-                <CheckCircle className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
-                  importResult.failed === 0 ? "text-green-600" : "text-yellow-600"
-                }`} />
+                <CheckCircle
+                  className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
+                    importResult.failed === 0
+                      ? "text-green-600"
+                      : "text-yellow-600"
+                  }`}
+                />
                 <div>
-                  <h4 className={`font-medium text-sm ${
-                    importResult.failed === 0 ? "text-green-900" : "text-yellow-900"
-                  }`}>
+                  <h4
+                    className={`font-medium text-sm ${
+                      importResult.failed === 0
+                        ? "text-green-900"
+                        : "text-yellow-900"
+                    }`}
+                  >
                     Import Complete
                   </h4>
-                  <p className={`mt-1 text-sm ${
-                    importResult.failed === 0 ? "text-green-700" : "text-yellow-700"
-                  }`}>
-                    Successfully imported {importResult.success} talk{importResult.success !== 1 ? "s" : ""}
-                    {importResult.failed > 0 && `, ${importResult.failed} failed`}
+                  <p
+                    className={`mt-1 text-sm ${
+                      importResult.failed === 0
+                        ? "text-green-700"
+                        : "text-yellow-700"
+                    }`}
+                  >
+                    Successfully imported {importResult.success} talk
+                    {importResult.success !== 1 ? "s" : ""}
+                    {importResult.failed > 0 &&
+                      `, ${importResult.failed} failed`}
                   </p>
                 </div>
               </div>

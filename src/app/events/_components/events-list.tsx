@@ -37,7 +37,26 @@ interface Event {
     meetsThreshold: boolean;
     threshold: number;
   };
+  participations?: Array<{
+    id: number;
+    participationType: string;
+    status: string;
+  }>;
 }
+
+const participationTypeLabels: Record<string, string> = {
+  speak: "Speaking",
+  sponsor: "Sponsoring",
+  attend: "Attending",
+  exhibit: "Exhibiting",
+  volunteer: "Volunteering",
+};
+
+const statusColors: Record<string, string> = {
+  interested: "bg-gray-100 text-gray-700",
+  confirmed: "bg-green-100 text-green-700",
+  not_going: "bg-red-100 text-red-700",
+};
 
 export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
   const [open, setOpen] = useState(false);
@@ -53,7 +72,8 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
   const [notes, setNotes] = useState("");
   const utils = api.useUtils();
 
-  const { data: events = initialEvents } = api.event.getAllWithScores.useQuery();
+  const { data: events = initialEvents } =
+    api.event.getAllWithScores.useQuery();
 
   const resetForm = () => {
     setEditingEvent(null);
@@ -256,9 +276,9 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                   id="cfpUrl"
                   name="cfpUrl"
                   onChange={(e) => setCfpUrl(e.target.value)}
+                  placeholder="https://..."
                   type="url"
                   value={cfpUrl}
-                  placeholder="https://..."
                 />
               </div>
               <div>
@@ -267,9 +287,9 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                   id="conferenceWebsite"
                   name="conferenceWebsite"
                   onChange={(e) => setConferenceWebsite(e.target.value)}
+                  placeholder="https://..."
                   type="url"
                   value={conferenceWebsite}
-                  placeholder="https://..."
                 />
               </div>
               <div>
@@ -322,6 +342,23 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
                           {urgency.label}
                         </span>
                       )}
+                      {event.participations &&
+                        event.participations.length > 0 && (
+                          <>
+                            {event.participations.map((p) => (
+                              <span
+                                className={`rounded-full px-2 py-1 font-semibold text-xs ${
+                                  statusColors[p.status] ||
+                                  "bg-gray-100 text-gray-700"
+                                }`}
+                                key={p.id}
+                              >
+                                {participationTypeLabels[p.participationType] ||
+                                  p.participationType}
+                              </span>
+                            ))}
+                          </>
+                        )}
                       {event.scoreInfo &&
                         event.scoreInfo.completionCount > 0 && (
                           <>

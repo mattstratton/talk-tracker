@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -149,7 +149,7 @@ export function EventScoring({ eventId, eventName }: EventScoringProps) {
   return (
     <Card className="border-gray-200">
       <CardHeader>
-        <CardTitle className="text-base sm:text-lg text-gray-900">
+        <CardTitle className="text-base text-gray-900 sm:text-lg">
           Event Score
         </CardTitle>
         <CardDescription>
@@ -200,7 +200,7 @@ export function EventScoring({ eventId, eventName }: EventScoringProps) {
             </div>
           )}
 
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog onOpenChange={setOpen} open={open}>
             <DialogTrigger asChild>
               <Button>
                 {summary?.isComplete ? "Edit Scores" : "Score Event"}
@@ -210,13 +210,13 @@ export function EventScoring({ eventId, eventName }: EventScoringProps) {
               <DialogHeader>
                 <DialogTitle>Score Event: {eventName}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 {categories.map((category) => {
                   const currentScore = getCategoryScore(category.id);
                   return (
                     <div
-                      key={category.id}
                       className="space-y-3 border-b pb-4 last:border-0"
+                      key={category.id}
                     >
                       <div className="flex items-center justify-between">
                         <Label className="font-semibold text-base">
@@ -228,10 +228,10 @@ export function EventScoring({ eventId, eventName }: EventScoringProps) {
                       </div>
 
                       <Select
-                        value={currentScore}
                         onValueChange={(value) =>
                           handleScoreChange(category.id, value)
                         }
+                        value={currentScore}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select score" />
@@ -280,19 +280,19 @@ export function EventScoring({ eventId, eventName }: EventScoringProps) {
 
                       <div>
                         <Label
-                          htmlFor={`notes-${category.id}`}
                           className="text-sm"
+                          htmlFor={`notes-${category.id}`}
                         >
                           Notes (optional)
                         </Label>
                         <Textarea
                           id={`notes-${category.id}`}
-                          value={getCategoryNotes(category.id)}
                           onChange={(e) =>
                             handleNotesChange(category.id, e.target.value)
                           }
                           placeholder="Additional context..."
                           rows={2}
+                          value={getCategoryNotes(category.id)}
                         />
                       </div>
 
@@ -307,9 +307,9 @@ export function EventScoring({ eventId, eventName }: EventScoringProps) {
                 })}
 
                 <Button
-                  type="submit"
                   className="w-full"
                   disabled={upsertBatch.isPending}
+                  type="submit"
                 >
                   {upsertBatch.isPending ? "Saving..." : "Save Scores"}
                 </Button>
@@ -323,12 +323,10 @@ export function EventScoring({ eventId, eventName }: EventScoringProps) {
               <div className="space-y-1 text-sm">
                 {summary.scores.map((score) => (
                   <div
-                    key={score.id}
                     className="flex items-center justify-between py-1"
+                    key={score.id}
                   >
-                    <span className="text-gray-700">
-                      {score.category.name}
-                    </span>
+                    <span className="text-gray-700">{score.category.name}</span>
                     <span className="text-gray-600">
                       {score.score} × {score.category.weight} ={" "}
                       {score.score * score.category.weight}

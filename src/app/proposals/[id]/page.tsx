@@ -3,12 +3,12 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
-import { NotificationBell } from "~/components/notifications/notification-bell";
 import { EditProposalButton } from "./_components/edit-proposal-button";
 import { ProposalActivityFeed } from "./_components/proposal-activity-feed";
 
@@ -102,7 +102,7 @@ export default async function ProposalDetailPage({
 
           <div className="mb-6 sm:mb-8">
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <h2 className="font-semibold text-2xl sm:text-3xl text-gray-900">
+              <h2 className="font-semibold text-2xl text-gray-900 sm:text-3xl">
                 Proposal Details
               </h2>
               <span
@@ -120,7 +120,7 @@ export default async function ProposalDetailPage({
             <Card className="border-gray-200">
               <CardContent className="p-4">
                 <div className="text-gray-600 text-xs">Talk Type</div>
-                <div className="font-medium capitalize text-gray-900">
+                <div className="font-medium text-gray-900 capitalize">
                   {proposal.talkType}
                 </div>
               </CardContent>
@@ -149,7 +149,7 @@ export default async function ProposalDetailPage({
               <CardContent className="p-4">
                 <div className="text-gray-600 text-xs">Talk</div>
                 <Link href={`/talks/${proposal.talk.id}`}>
-                  <div className="font-medium text-blue-600 hover:text-blue-700 truncate">
+                  <div className="truncate font-medium text-blue-600 hover:text-blue-700">
                     {proposal.talk.title}
                   </div>
                 </Link>
@@ -160,7 +160,7 @@ export default async function ProposalDetailPage({
           <div className="mb-8 grid gap-6 lg:grid-cols-2">
             <Card className="border-gray-200">
               <CardHeader>
-                <CardTitle className="text-base sm:text-lg text-gray-900">
+                <CardTitle className="text-base text-gray-900 sm:text-lg">
                   Event Details
                 </CardTitle>
               </CardHeader>
@@ -205,7 +205,7 @@ export default async function ProposalDetailPage({
 
             <Card className="border-gray-200">
               <CardHeader>
-                <CardTitle className="text-base sm:text-lg text-gray-900">
+                <CardTitle className="text-base text-gray-900 sm:text-lg">
                   Talk Details
                 </CardTitle>
               </CardHeader>
@@ -231,7 +231,7 @@ export default async function ProposalDetailPage({
           {proposal.notes && (
             <Card className="border-gray-200">
               <CardHeader>
-                <CardTitle className="text-base sm:text-lg text-gray-900">
+                <CardTitle className="text-base text-gray-900 sm:text-lg">
                   Notes
                 </CardTitle>
               </CardHeader>
@@ -245,14 +245,14 @@ export default async function ProposalDetailPage({
 
           <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
                 Activity
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ProposalActivityFeed
-                proposalId={proposalId}
                 currentUserId={session.user.id}
+                proposalId={proposalId}
               />
             </CardContent>
           </Card>

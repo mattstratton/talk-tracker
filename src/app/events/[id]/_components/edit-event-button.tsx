@@ -74,7 +74,7 @@ export function EditEventButton({ event }: EditEventButtonProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline">
           Edit Event
@@ -142,9 +142,9 @@ export function EditEventButton({ event }: EditEventButtonProps) {
               id="cfpUrl"
               name="cfpUrl"
               onChange={(e) => setCfpUrl(e.target.value)}
+              placeholder="https://..."
               type="url"
               value={cfpUrl}
-              placeholder="https://..."
             />
           </div>
           <div>
@@ -153,9 +153,9 @@ export function EditEventButton({ event }: EditEventButtonProps) {
               id="conferenceWebsite"
               name="conferenceWebsite"
               onChange={(e) => setConferenceWebsite(e.target.value)}
+              placeholder="https://..."
               type="url"
               value={conferenceWebsite}
-              placeholder="https://..."
             />
           </div>
           <div>

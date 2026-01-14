@@ -58,7 +58,13 @@ export const proposalRouter = createTRPCRouter({
       const { id, ...data } = input;
 
       // If status is being updated, fetch the existing proposal first
-      let oldStatus: "draft" | "submitted" | "accepted" | "rejected" | "confirmed" | undefined;
+      let oldStatus:
+        | "draft"
+        | "submitted"
+        | "accepted"
+        | "rejected"
+        | "confirmed"
+        | undefined;
       if (input.status) {
         const existing = await ctx.db.query.proposals.findFirst({
           where: eq(proposals.id, id),

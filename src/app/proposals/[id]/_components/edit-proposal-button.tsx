@@ -78,7 +78,7 @@ export function EditProposalButton({ proposal }: EditProposalButtonProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline">
           Edit Proposal

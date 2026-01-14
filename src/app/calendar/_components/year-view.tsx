@@ -1,15 +1,15 @@
 "use client";
 
 import {
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
   eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
   format,
   isSameMonth,
-  setMonth,
   parseISO,
+  setMonth,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
 
 type Event = {
@@ -20,6 +20,11 @@ type Event = {
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;
+  participations?: Array<{
+    id: number;
+    participationType: string;
+    status: string;
+  }>;
 };
 
 interface YearViewProps {
@@ -28,11 +33,7 @@ interface YearViewProps {
   onMonthClick: (date: Date) => void;
 }
 
-export function YearView({
-  currentDate,
-  events,
-  onMonthClick,
-}: YearViewProps) {
+export function YearView({ currentDate, events, onMonthClick }: YearViewProps) {
   const months = Array.from({ length: 12 }, (_, i) => i);
 
   // Group events by date, including spanning events
@@ -60,15 +61,13 @@ export function YearView({
     const monthStart = startOfMonth(monthDate);
     const monthEnd = endOfMonth(monthDate);
 
-    let count = 0;
+    const count = 0;
     const uniqueEvents = new Set<number>();
 
     events.forEach((event) => {
       if (event.startDate) {
         const eventStart = new Date(event.startDate);
-        const eventEnd = event.endDate
-          ? new Date(event.endDate)
-          : eventStart;
+        const eventEnd = event.endDate ? new Date(event.endDate) : eventStart;
 
         // Check if event overlaps with this month
         if (eventStart <= monthEnd && eventEnd >= monthStart) {
@@ -92,8 +91,8 @@ export function YearView({
 
     return (
       <div
-        key={monthIndex}
         className="cursor-pointer rounded-lg border bg-white p-3 transition-shadow hover:shadow-md"
+        key={monthIndex}
         onClick={() => onMonthClick(monthDate)}
       >
         <div className="mb-2 flex items-center justify-between">
@@ -111,10 +110,7 @@ export function YearView({
         <div className="grid grid-cols-7 gap-1">
           {/* Day headers */}
           {["S", "M", "T", "W", "T", "F", "S"].map((day, i) => (
-            <div
-              key={i}
-              className="text-center text-gray-500 text-xs"
-            >
+            <div className="text-center text-gray-500 text-xs" key={i}>
               {day}
             </div>
           ))}
@@ -127,10 +123,10 @@ export function YearView({
 
             return (
               <div
-                key={dateKey}
                 className={`flex h-6 w-6 items-center justify-center text-xs ${
                   isCurrentMonth ? "text-gray-900" : "text-gray-300"
                 }`}
+                key={dateKey}
               >
                 <div className="relative">
                   {format(day, "d")}

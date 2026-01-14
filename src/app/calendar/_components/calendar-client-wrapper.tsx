@@ -1,14 +1,18 @@
 "use client";
 
+import { addMonths, addYears, subMonths, subYears } from "date-fns";
+import { Download } from "lucide-react";
 import { useState } from "react";
-import { addMonths, subMonths, addYears, subYears } from "date-fns";
+import { Button } from "~/components/ui/button";
 import { api } from "~/trpc/react";
-import { CalendarViewToggle } from "./calendar-view-toggle";
+import { CalendarLegend } from "./calendar-legend";
 import { CalendarNavigation } from "./calendar-navigation";
-import { MonthView } from "./month-view";
-import { YearView } from "./year-view";
-import { TimelineView } from "./timeline-view";
+import { CalendarViewToggle } from "./calendar-view-toggle";
 import { DayEventsPopover } from "./day-events-popover";
+import { exportToICalendar } from "./export-ical";
+import { MonthView } from "./month-view";
+import { TimelineView } from "./timeline-view";
+import { YearView } from "./year-view";
 
 type CalendarView = "month" | "year" | "timeline";
 
@@ -20,6 +24,12 @@ type Event = {
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;
+  conferenceWebsite?: string | null;
+  participations?: Array<{
+    id: number;
+    participationType: string;
+    status: string;
+  }>;
 };
 
 type Proposal = {
@@ -37,18 +47,29 @@ export function CalendarClientWrapper({
   initialEvents,
   initialProposals,
 }: CalendarClientWrapperProps) {
-  const [view, setView] = useState<CalendarView>("timeline");
+  // Load saved view from localStorage, default to month
+  const [view, setView] = useState<CalendarView>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("calendarView");
+      return (saved as CalendarView) || "month";
+    }
+    return "month";
+  });
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedEvents, setSelectedEvents] = useState<Event[]>([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   // Query for fresh data with optimistic updates
-  const { data: events = initialEvents } = api.event.getAll.useQuery();
+  const { data: events = initialEvents } =
+    api.event.getAllWithScores.useQuery();
   const { data: proposals = initialProposals } = api.proposal.getAll.useQuery();
 
   const handleViewChange = (newView: CalendarView) => {
     setView(newView);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("calendarView", newView);
+    }
   };
 
   const handlePrevious = () => {
@@ -82,11 +103,19 @@ export function CalendarClientWrapper({
     setIsPopoverOpen(false);
   };
 
+  const handleExport = () => {
+    exportToICalendar(events);
+  };
+
   return (
     <div>
-      {/* View toggle */}
-      <div className="mb-6">
-        <CalendarViewToggle view={view} onViewChange={handleViewChange} />
+      {/* View toggle and export button */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <CalendarViewToggle onViewChange={handleViewChange} view={view} />
+        <Button onClick={handleExport} size="sm" variant="outline">
+          <Download className="mr-2 h-4 w-4" />
+          Export to iCal
+        </Button>
       </div>
 
       {/* Navigation (only for month and year views) */}
@@ -95,33 +124,43 @@ export function CalendarClientWrapper({
           <CalendarNavigation
             currentDate={currentDate}
             mode={view === "month" ? "month" : "year"}
-            onPrevious={handlePrevious}
             onNext={handleNext}
+            onPrevious={handlePrevious}
           />
         </div>
       )}
 
-      {/* Render appropriate view */}
-      {view === "month" && (
-        <MonthView
-          currentDate={currentDate}
-          events={events}
-          proposals={proposals}
-          onDayClick={handleDayClick}
-        />
-      )}
+      {/* Calendar and Legend Layout */}
+      <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+        {/* Main Calendar View */}
+        <div className="min-w-0">
+          {view === "month" && (
+            <MonthView
+              currentDate={currentDate}
+              events={events}
+              onDayClick={handleDayClick}
+              proposals={proposals}
+            />
+          )}
 
-      {view === "year" && (
-        <YearView
-          currentDate={currentDate}
-          events={events}
-          onMonthClick={handleMonthClick}
-        />
-      )}
+          {view === "year" && (
+            <YearView
+              currentDate={currentDate}
+              events={events}
+              onMonthClick={handleMonthClick}
+            />
+          )}
 
-      {view === "timeline" && (
-        <TimelineView events={events} proposals={proposals} />
-      )}
+          {view === "timeline" && (
+            <TimelineView events={events} proposals={proposals} />
+          )}
+        </div>
+
+        {/* Legend Sidebar */}
+        <div className="lg:sticky lg:top-6 lg:self-start">
+          <CalendarLegend />
+        </div>
+      </div>
 
       {/* Day events popover */}
       <DayEventsPopover

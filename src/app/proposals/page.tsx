@@ -1,15 +1,15 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
-import { NotificationBell } from "~/components/notifications/notification-bell";
 import { ProposalsList } from "./_components/proposals-list";
 
 export const metadata: Metadata = {
@@ -71,7 +71,7 @@ export default async function ProposalsPage() {
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-1 font-semibold text-xl sm:text-2xl text-gray-900">
+            <h2 className="mb-1 font-semibold text-gray-900 text-xl sm:text-2xl">
               Proposals
             </h2>
             <p className="text-gray-600 text-sm">
@@ -81,7 +81,9 @@ export default async function ProposalsPage() {
 
           <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">All Proposals</CardTitle>
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
+                All Proposals
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ProposalsList

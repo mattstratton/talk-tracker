@@ -1,8 +1,8 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   Sheet,
@@ -42,7 +42,7 @@ export function Nav() {
             </SheetHeader>
             <nav className="mt-6 flex flex-col gap-2">
               {navItems.map((item) => (
-                <Link key={item.href} href={item.href}>
+                <Link href={item.href} key={item.href}>
                   <Button
                     className={`w-full justify-start ${
                       pathname === item.href ? "text-gray-900" : ""
@@ -59,9 +59,9 @@ export function Nav() {
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex gap-1">
+      <nav className="hidden gap-1 md:flex">
         {navItems.map((item) => (
-          <Link key={item.href} href={item.href}>
+          <Link href={item.href} key={item.href}>
             <Button
               className={`whitespace-nowrap ${
                 pathname === item.href ? "text-gray-900" : ""

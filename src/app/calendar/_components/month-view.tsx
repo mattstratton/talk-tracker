@@ -1,15 +1,15 @@
 "use client";
 
 import {
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
   eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
   format,
   isSameMonth,
   isWithinInterval,
   parseISO,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
 import { MonthGridCell } from "./month-grid-cell";
 
@@ -21,6 +21,11 @@ type Event = {
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;
+  participations?: Array<{
+    id: number;
+    participationType: string;
+    status: string;
+  }>;
 };
 
 type Proposal = {
@@ -52,7 +57,10 @@ export function MonthView({
 
   // Group events by date, including spanning events
   const eventsByDate = new Map<string, Event[]>();
+  const cfpDeadlinesByDate = new Map<string, Event[]>();
+
   events.forEach((event) => {
+    // Add events to their date ranges
     if (event.startDate) {
       const start = parseISO(event.startDate);
       const end = event.endDate ? parseISO(event.endDate) : start;
@@ -68,6 +76,16 @@ export function MonthView({
         eventsByDate.get(dateKey)!.push(event);
       });
     }
+
+    // Add CFP deadlines separately
+    if (event.cfpDeadline) {
+      const deadline = parseISO(event.cfpDeadline);
+      const dateKey = format(deadline, "yyyy-MM-dd");
+      if (!cfpDeadlinesByDate.has(dateKey)) {
+        cfpDeadlinesByDate.set(dateKey, []);
+      }
+      cfpDeadlinesByDate.get(dateKey)!.push(event);
+    }
   });
 
   const dayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -78,8 +96,8 @@ export function MonthView({
       <div className="grid grid-cols-7 border-b">
         {dayHeaders.map((day) => (
           <div
-            key={day}
             className="border-r p-2 text-center font-semibold text-gray-700 text-sm last:border-r-0"
+            key={day}
           >
             {day}
           </div>
@@ -91,17 +109,19 @@ export function MonthView({
         {days.map((day, index) => {
           const dateKey = format(day, "yyyy-MM-dd");
           const dayEvents = eventsByDate.get(dateKey) || [];
+          const dayCfpDeadlines = cfpDeadlinesByDate.get(dateKey) || [];
           const isCurrentMonth = isSameMonth(day, currentDate);
 
           return (
             <MonthGridCell
-              key={dateKey}
+              cfpDeadlines={dayCfpDeadlines}
               date={day}
               events={dayEvents}
-              proposals={proposals}
               isCurrentMonth={isCurrentMonth}
-              onDayClick={onDayClick}
               isLastInRow={(index + 1) % 7 === 0}
+              key={dateKey}
+              onDayClick={onDayClick}
+              proposals={proposals}
             />
           );
         })}

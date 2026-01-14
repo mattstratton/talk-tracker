@@ -17,6 +17,25 @@ type Event = {
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;
+  participations?: Array<{
+    id: number;
+    participationType: string;
+    status: string;
+  }>;
+};
+
+const participationTypeLabels: Record<string, string> = {
+  speak: "Speaking",
+  sponsor: "Sponsoring",
+  attend: "Attending",
+  exhibit: "Exhibiting",
+  volunteer: "Volunteering",
+};
+
+const statusColors: Record<string, string> = {
+  interested: "bg-gray-100 text-gray-700",
+  confirmed: "bg-green-100 text-green-700",
+  not_going: "bg-red-100 text-red-700",
 };
 
 interface DayEventsPopoverProps {
@@ -71,12 +90,10 @@ export function DayEventsPopover({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog onOpenChange={onClose} open={isOpen}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>
-            Events on {format(date, "MMMM d, yyyy")}
-          </DialogTitle>
+          <DialogTitle>Events on {format(date, "MMMM d, yyyy")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3">
@@ -85,13 +102,29 @@ export function DayEventsPopover({
 
             return (
               <Link
-                key={event.id}
-                href={`/events/${event.id}`}
                 className="block rounded-lg border p-3 transition-colors hover:bg-gray-50"
+                href={`/events/${event.id}`}
+                key={event.id}
                 onClick={onClose}
               >
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <h4 className="font-semibold text-gray-900">{event.name}</h4>
+                  {event.participations && event.participations.length > 0 && (
+                    <>
+                      {event.participations.map((p) => (
+                        <span
+                          className={`rounded px-2 py-0.5 font-medium text-xs ${
+                            statusColors[p.status] ||
+                            "bg-gray-100 text-gray-700"
+                          }`}
+                          key={p.id}
+                        >
+                          {participationTypeLabels[p.participationType] ||
+                            p.participationType}
+                        </span>
+                      ))}
+                    </>
+                  )}
                   {cfpStatus && (
                     <span
                       className={`rounded px-2 py-0.5 text-xs ${cfpStatus.color}`}

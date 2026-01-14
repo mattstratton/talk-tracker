@@ -49,9 +49,7 @@ export function ScoringCategoriesSettings({
   initialCategories,
 }: ScoringCategoriesSettingsProps) {
   const [open, setOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(
-    null,
-  );
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const utils = api.useUtils();
 
   // Form state
@@ -146,7 +144,7 @@ export function ScoringCategoriesSettings({
   return (
     <Card className="border-gray-200">
       <CardHeader>
-        <CardTitle className="text-base sm:text-lg text-gray-900">
+        <CardTitle className="text-base text-gray-900 sm:text-lg">
           Scoring Categories
         </CardTitle>
         <CardDescription>
@@ -158,11 +156,11 @@ export function ScoringCategoriesSettings({
       <CardContent>
         <div className="mb-4">
           <Dialog
-            open={open}
             onOpenChange={(isOpen) => {
               setOpen(isOpen);
               if (!isOpen) resetForm();
             }}
+            open={open}
           >
             <DialogTrigger asChild>
               <Button disabled={categories.length >= 10}>
@@ -177,22 +175,22 @@ export function ScoringCategoriesSettings({
                   {editingCategory ? "Edit Category" : "Add Category"}
                 </DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <Label htmlFor="name">Category Name *</Label>
                   <Input
                     id="name"
-                    value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g., Travel Required"
                     required
+                    value={name}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="weight">Weight (1-10) *</Label>
-                    <Select value={weight} onValueChange={setWeight}>
+                    <Select onValueChange={setWeight} value={weight}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -200,14 +198,13 @@ export function ScoringCategoriesSettings({
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((w) => {
                           const isUsed = categories.some(
                             (c) =>
-                              c.weight === w &&
-                              c.id !== editingCategory?.id,
+                              c.weight === w && c.id !== editingCategory?.id,
                           );
                           return (
                             <SelectItem
+                              disabled={isUsed}
                               key={w}
                               value={w.toString()}
-                              disabled={isUsed}
                             >
                               {w} {isUsed ? "(in use)" : ""}
                             </SelectItem>
@@ -223,8 +220,8 @@ export function ScoringCategoriesSettings({
                   <div>
                     <Label htmlFor="displayOrder">Display Order (1-10) *</Label>
                     <Select
-                      value={displayOrder}
                       onValueChange={setDisplayOrder}
+                      value={displayOrder}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -247,10 +244,10 @@ export function ScoringCategoriesSettings({
                     <Label htmlFor="score9">Score 9 (Excellent) *</Label>
                     <Textarea
                       id="score9"
-                      value={score9Desc}
                       onChange={(e) => setScore9Desc(e.target.value)}
                       placeholder="e.g., Local/No travel required"
                       required
+                      value={score9Desc}
                     />
                   </div>
 
@@ -258,10 +255,10 @@ export function ScoringCategoriesSettings({
                     <Label htmlFor="score3">Score 3 (Good) *</Label>
                     <Textarea
                       id="score3"
-                      value={score3Desc}
                       onChange={(e) => setScore3Desc(e.target.value)}
                       placeholder="e.g., Domestic travel"
                       required
+                      value={score3Desc}
                     />
                   </div>
 
@@ -269,10 +266,10 @@ export function ScoringCategoriesSettings({
                     <Label htmlFor="score1">Score 1 (Fair) *</Label>
                     <Textarea
                       id="score1"
-                      value={score1Desc}
                       onChange={(e) => setScore1Desc(e.target.value)}
                       placeholder="e.g., International travel"
                       required
+                      value={score1Desc}
                     />
                   </div>
 
@@ -280,15 +277,15 @@ export function ScoringCategoriesSettings({
                     <Label htmlFor="score0">Score 0 (Not Feasible) *</Label>
                     <Textarea
                       id="score0"
-                      value={score0Desc}
                       onChange={(e) => setScore0Desc(e.target.value)}
                       placeholder="e.g., Not feasible to attend"
                       required
+                      value={score0Desc}
                     />
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button className="w-full" type="submit">
                   {editingCategory ? "Update Category" : "Create Category"}
                 </Button>
               </form>
@@ -303,7 +300,7 @@ export function ScoringCategoriesSettings({
         ) : (
           <div className="space-y-3">
             {categories.map((category) => (
-              <div key={category.id} className="rounded-lg border p-4">
+              <div className="rounded-lg border p-4" key={category.id}>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">

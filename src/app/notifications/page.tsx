@@ -1,13 +1,13 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Metadata } from "next";
 
 import { Nav } from "~/components/nav";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { Button } from "~/components/ui/button";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { HydrateClient } from "~/trpc/server";
-import { NotificationBell } from "~/components/notifications/notification-bell";
 import { NotificationFeed } from "./_components/notification-feed";
 
 export const metadata: Metadata = {
@@ -63,7 +63,7 @@ export default async function NotificationsPage() {
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-1 font-semibold text-xl sm:text-2xl text-gray-900">
+            <h2 className="mb-1 font-semibold text-gray-900 text-xl sm:text-2xl">
               Notifications
             </h2>
             <p className="text-gray-600 text-sm">

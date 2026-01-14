@@ -14,7 +14,9 @@ export const appSettingsRouter = createTRPCRouter({
     });
 
     return {
-      threshold: setting ? parseInt(setting.value) : parseInt(DEFAULT_THRESHOLD),
+      threshold: setting
+        ? parseInt(setting.value)
+        : parseInt(DEFAULT_THRESHOLD),
       description:
         setting?.description ?? "Minimum score to recommend submission",
     };

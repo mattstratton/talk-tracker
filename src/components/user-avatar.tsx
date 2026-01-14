@@ -40,10 +40,10 @@ export function UserAvatar({
   // Try to load the image, fall back to initials on error
   return (
     <img
-      src={image}
       alt={name}
       className={`rounded-full ${sizeClass} ${className}`}
       onError={() => setImageError(true)}
+      src={image}
     />
   );
 }

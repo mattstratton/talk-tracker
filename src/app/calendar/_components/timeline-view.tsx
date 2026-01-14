@@ -12,6 +12,25 @@ type Event = {
   location: string | null;
   cfpDeadline: string | null;
   description: string | null;
+  participations?: Array<{
+    id: number;
+    participationType: string;
+    status: string;
+  }>;
+};
+
+const participationTypeLabels: Record<string, string> = {
+  speak: "Speaking",
+  sponsor: "Sponsoring",
+  attend: "Attending",
+  exhibit: "Exhibiting",
+  volunteer: "Volunteering",
+};
+
+const statusColors: Record<string, string> = {
+  interested: "bg-gray-100 text-gray-700",
+  confirmed: "bg-green-100 text-green-700",
+  not_going: "bg-red-100 text-red-700",
 };
 
 type Proposal = {
@@ -141,11 +160,11 @@ export function TimelineView({ events, proposals }: TimelineViewProps) {
               const proposalCount = getProposalCount(event.id);
 
               return (
-                <Link key={event.id} href={`/events/${event.id}`}>
+                <Link href={`/events/${event.id}`} key={event.id}>
                   <Card className="border-gray-200 transition-shadow hover:shadow-md">
                     <CardContent className="p-3 sm:p-4">
                       <div className="flex items-start gap-3 sm:gap-4">
-                        <div className="flex-shrink-0 w-16 sm:w-20 text-center">
+                        <div className="w-16 flex-shrink-0 text-center sm:w-20">
                           <div className="font-semibold text-gray-900 text-xl sm:text-2xl">
                             {new Date(event.startDate!).getDate()}
                             {event.endDate &&
@@ -181,6 +200,24 @@ export function TimelineView({ events, proposals }: TimelineViewProps) {
                                 {cfpStatus.label}
                               </span>
                             )}
+                            {event.participations &&
+                              event.participations.length > 0 && (
+                                <>
+                                  {event.participations.map((p) => (
+                                    <span
+                                      className={`rounded px-2 py-0.5 font-medium text-xs ${
+                                        statusColors[p.status] ||
+                                        "bg-gray-100 text-gray-700"
+                                      }`}
+                                      key={p.id}
+                                    >
+                                      {participationTypeLabels[
+                                        p.participationType
+                                      ] || p.participationType}
+                                    </span>
+                                  ))}
+                                </>
+                              )}
                           </div>
                           <div className="space-y-1 text-gray-600 text-xs sm:text-sm">
                             {event.location && (

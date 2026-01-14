@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
 type NavigationMode = "month" | "year";
@@ -27,23 +27,23 @@ export function CalendarNavigation({
   return (
     <div className="flex items-center justify-between">
       <Button
+        aria-label={`Previous ${mode}`}
         onClick={onPrevious}
         size="icon"
         type="button"
         variant="outline"
-        aria-label={`Previous ${mode}`}
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
 
-      <h2 className="text-xl font-semibold">{displayText}</h2>
+      <h2 className="font-semibold text-xl">{displayText}</h2>
 
       <Button
+        aria-label={`Next ${mode}`}
         onClick={onNext}
         size="icon"
         type="button"
         variant="outline"
-        aria-label={`Next ${mode}`}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

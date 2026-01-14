@@ -9,15 +9,15 @@ export function ImportTabs() {
   const [activeTab, setActiveTab] = useState("events");
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab}>
+    <Tabs onValueChange={setActiveTab} value={activeTab}>
       <TabsList className="grid w-full max-w-md grid-cols-2">
         <TabsTrigger value="events">Events</TabsTrigger>
         <TabsTrigger value="talks">Talks</TabsTrigger>
       </TabsList>
-      <TabsContent value="events" className="mt-6">
+      <TabsContent className="mt-6" value="events">
         <EventImport />
       </TabsContent>
-      <TabsContent value="talks" className="mt-6">
+      <TabsContent className="mt-6" value="talks">
         <TalkImport />
       </TabsContent>
     </Tabs>

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
+import { Bell, Calendar, Check, GitBranch, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { Bell, MessageSquare, GitBranch, Calendar, Check } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import { api } from "~/trpc/react";
-import { formatDistanceToNow } from "date-fns";
 
 function getNotificationIcon(type: string) {
   switch (type) {
@@ -92,7 +92,8 @@ export function NotificationFeed() {
     }
   };
 
-  const allNotifications = data?.pages.flatMap((page) => page.notifications) ?? [];
+  const allNotifications =
+    data?.pages.flatMap((page) => page.notifications) ?? [];
 
   if (isLoading) {
     return (
@@ -109,7 +110,7 @@ export function NotificationFeed() {
       <Card>
         <CardContent className="py-12 text-center">
           <p className="text-red-600">Error loading notifications</p>
-          <p className="text-sm text-gray-500 mt-2">{error.message}</p>
+          <p className="mt-2 text-gray-500 text-sm">{error.message}</p>
         </CardContent>
       </Card>
     );
@@ -120,27 +121,27 @@ export function NotificationFeed() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-2">
           <Button
+            onClick={() => setUnreadOnly(false)}
             size="sm"
             variant={!unreadOnly ? "default" : "outline"}
-            onClick={() => setUnreadOnly(false)}
           >
             All
           </Button>
           <Button
+            onClick={() => setUnreadOnly(true)}
             size="sm"
             variant={unreadOnly ? "default" : "outline"}
-            onClick={() => setUnreadOnly(true)}
           >
             Unread
           </Button>
         </div>
         <Button
-          size="sm"
-          variant="outline"
-          onClick={handleMarkAllAsRead}
           disabled={
             markAllAsReadMutation.isPending || allNotifications.length === 0
           }
+          onClick={handleMarkAllAsRead}
+          size="sm"
+          variant="outline"
         >
           <Check className="mr-2 h-4 w-4" />
           Mark all as read
@@ -152,11 +153,9 @@ export function NotificationFeed() {
           <CardContent className="py-12 text-center">
             <Bell className="mx-auto h-12 w-12 text-gray-400" />
             <p className="mt-4 text-gray-600">
-              {unreadOnly
-                ? "No unread notifications"
-                : "No notifications yet"}
+              {unreadOnly ? "No unread notifications" : "No notifications yet"}
             </p>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-gray-500 text-sm">
               {unreadOnly
                 ? "You're all caught up!"
                 : "You'll see notifications here when you get mentioned, when proposal statuses change, and more."}
@@ -168,15 +167,17 @@ export function NotificationFeed() {
           <div className="space-y-2">
             {allNotifications.map((notification) => (
               <Link
-                key={notification.id}
                 href={notification.linkUrl}
+                key={notification.id}
                 onClick={() =>
                   handleNotificationClick(notification.id, notification.isRead)
                 }
               >
                 <Card
                   className={`transition-colors hover:bg-gray-50 ${
-                    !notification.isRead ? "border-l-4 border-l-blue-500 bg-blue-50" : ""
+                    !notification.isRead
+                      ? "border-l-4 border-l-blue-500 bg-blue-50"
+                      : ""
                   }`}
                 >
                   <CardContent className="flex gap-4 p-4">
@@ -185,7 +186,7 @@ export function NotificationFeed() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="font-medium text-gray-900 text-sm">
                             {notification.title}
                           </p>
@@ -195,19 +196,16 @@ export function NotificationFeed() {
                         </div>
                         {notification.actor && (
                           <div className="flex-shrink-0">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 font-medium text-gray-600 text-xs">
                               {notification.actor.name?.charAt(0).toUpperCase()}
                             </div>
                           </div>
                         )}
                       </div>
-                      <p className="mt-2 text-xs text-gray-500">
-                        {formatDistanceToNow(
-                          new Date(notification.createdAt),
-                          {
-                            addSuffix: true,
-                          },
-                        )}
+                      <p className="mt-2 text-gray-500 text-xs">
+                        {formatDistanceToNow(new Date(notification.createdAt), {
+                          addSuffix: true,
+                        })}
                       </p>
                     </div>
                   </CardContent>
@@ -217,13 +215,13 @@ export function NotificationFeed() {
           </div>
 
           {/* Infinite scroll trigger */}
-          <div ref={observerRef} className="py-4 text-center">
+          <div className="py-4 text-center" ref={observerRef}>
             {isFetchingNextPage ? (
-              <p className="text-sm text-gray-500">Loading more...</p>
+              <p className="text-gray-500 text-sm">Loading more...</p>
             ) : hasNextPage ? (
-              <p className="text-sm text-gray-400">Scroll for more</p>
+              <p className="text-gray-400 text-sm">Scroll for more</p>
             ) : allNotifications.length > 0 ? (
-              <p className="text-sm text-gray-400">No more notifications</p>
+              <p className="text-gray-400 text-sm">No more notifications</p>
             ) : null}
           </div>
         </>

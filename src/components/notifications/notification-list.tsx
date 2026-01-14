@@ -49,7 +49,10 @@ export function NotificationList() {
         );
       }
       if (context?.previousCount !== undefined) {
-        utils.notification.getUnreadCount.setData(undefined, context.previousCount);
+        utils.notification.getUnreadCount.setData(
+          undefined,
+          context.previousCount,
+        );
       }
     },
     onSettled: () => {
@@ -92,7 +95,10 @@ export function NotificationList() {
         );
       }
       if (context?.previousCount !== undefined) {
-        utils.notification.getUnreadCount.setData(undefined, context.previousCount);
+        utils.notification.getUnreadCount.setData(
+          undefined,
+          context.previousCount,
+        );
       }
     },
     onSettled: () => {
@@ -108,12 +114,14 @@ export function NotificationList() {
   };
 
   if (isLoading) {
-    return <div className="py-8 text-center text-sm text-gray-500">Loading...</div>;
+    return (
+      <div className="py-8 text-center text-gray-500 text-sm">Loading...</div>
+    );
   }
 
   if (!notifications || notifications.length === 0) {
     return (
-      <div className="py-8 text-center text-sm text-gray-500">
+      <div className="py-8 text-center text-gray-500 text-sm">
         No notifications yet
       </div>
     );
@@ -123,10 +131,10 @@ export function NotificationList() {
     <div className="mt-4">
       <div className="mb-4 flex justify-end">
         <Button
+          disabled={markAllAsReadMutation.isPending}
+          onClick={() => markAllAsReadMutation.mutate()}
           size="sm"
           variant="ghost"
-          onClick={() => markAllAsReadMutation.mutate()}
-          disabled={markAllAsReadMutation.isPending}
         >
           Mark all as read
         </Button>
@@ -135,8 +143,8 @@ export function NotificationList() {
       <div className="space-y-2">
         {notifications.map((notification) => (
           <Link
-            key={notification.id}
             href={notification.linkUrl}
+            key={notification.id}
             onClick={() => handleNotificationClick(notification.id)}
           >
             <div
@@ -147,26 +155,26 @@ export function NotificationList() {
               <div className="flex items-start gap-2">
                 {notification.actor && (
                   <UserAvatar
-                    name={notification.actor.name}
                     image={notification.actor.image}
+                    name={notification.actor.name}
                     size="sm"
                   />
                 )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-gray-900 text-sm">
                     {notification.title}
                   </p>
-                  <p className="mt-0.5 text-xs text-gray-600">
+                  <p className="mt-0.5 text-gray-600 text-xs">
                     {notification.message}
                   </p>
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-gray-500 text-xs">
                     {formatDistanceToNow(new Date(notification.createdAt), {
                       addSuffix: true,
                     })}
                   </p>
                 </div>
                 {!notification.isRead && (
-                  <div className="h-2 w-2 rounded-full bg-blue-500 flex-shrink-0" />
+                  <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                 )}
               </div>
             </div>

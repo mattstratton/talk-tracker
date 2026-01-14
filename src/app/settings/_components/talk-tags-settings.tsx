@@ -87,9 +87,7 @@ export function TalkTagsSettings({ initialTags }: TalkTagsSettingsProps) {
 
   const handleDelete = (id: number) => {
     if (
-      confirm(
-        "Delete this tag? It will be removed from all talks that use it.",
-      )
+      confirm("Delete this tag? It will be removed from all talks that use it.")
     ) {
       deleteTag.mutate({ id });
     }
@@ -125,30 +123,28 @@ export function TalkTagsSettings({ initialTags }: TalkTagsSettingsProps) {
       <CardContent>
         <div className="mb-4">
           <Dialog
-            open={open}
             onOpenChange={(isOpen) => {
               setOpen(isOpen);
               if (!isOpen) resetForm();
             }}
+            open={open}
           >
             <DialogTrigger asChild>
               <Button>Add Tag</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>
-                  {editingTag ? "Edit Tag" : "Add Tag"}
-                </DialogTitle>
+                <DialogTitle>{editingTag ? "Edit Tag" : "Add Tag"}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <Label htmlFor="name">Tag Name *</Label>
                   <Input
                     id="name"
-                    value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g., Kubernetes, Beginner-Friendly, DevOps"
                     required
+                    value={name}
                   />
                 </div>
 
@@ -156,19 +152,19 @@ export function TalkTagsSettings({ initialTags }: TalkTagsSettingsProps) {
                   <Label htmlFor="color">Color</Label>
                   <div className="flex items-center gap-2">
                     <Input
+                      className="h-10 w-20"
                       id="color"
+                      onChange={(e) => setColor(e.target.value)}
                       type="color"
                       value={color}
-                      onChange={(e) => setColor(e.target.value)}
-                      className="h-10 w-20"
                     />
                     <Input
+                      className="flex-1"
+                      onChange={(e) => setColor(e.target.value)}
+                      pattern="^#[0-9A-Fa-f]{6}$"
+                      placeholder="#2563eb"
                       type="text"
                       value={color}
-                      onChange={(e) => setColor(e.target.value)}
-                      placeholder="#2563eb"
-                      pattern="^#[0-9A-Fa-f]{6}$"
-                      className="flex-1"
                     />
                   </div>
                   <p className="mt-1 text-gray-600 text-xs">
@@ -180,24 +176,24 @@ export function TalkTagsSettings({ initialTags }: TalkTagsSettingsProps) {
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
-                    value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Optional description of what this tag represents"
                     rows={3}
+                    value={description}
                   />
                 </div>
 
                 <div className="flex gap-2">
                   <Button
-                    type="submit"
                     disabled={createTag.isPending || updateTag.isPending}
+                    type="submit"
                   >
                     {editingTag ? "Update Tag" : "Create Tag"}
                   </Button>
                   <Button
+                    onClick={() => setOpen(false)}
                     type="button"
                     variant="outline"
-                    onClick={() => setOpen(false)}
                   >
                     Cancel
                   </Button>
@@ -215,8 +211,8 @@ export function TalkTagsSettings({ initialTags }: TalkTagsSettingsProps) {
           <div className="space-y-2">
             {tags.map((tag) => (
               <div
-                key={tag.id}
                 className="flex items-center gap-3 rounded-lg border p-3"
+                key={tag.id}
               >
                 <div
                   className="h-6 w-6 flex-shrink-0 rounded"
@@ -232,17 +228,17 @@ export function TalkTagsSettings({ initialTags }: TalkTagsSettingsProps) {
                 </div>
                 <div className="flex gap-2">
                   <Button
+                    onClick={() => handleEdit(tag)}
                     size="sm"
                     variant="outline"
-                    onClick={() => handleEdit(tag)}
                   >
                     Edit
                   </Button>
                   <Button
+                    disabled={deleteTag.isPending}
+                    onClick={() => handleDelete(tag.id)}
                     size="sm"
                     variant="outline"
-                    onClick={() => handleDelete(tag.id)}
-                    disabled={deleteTag.isPending}
                   >
                     Delete
                   </Button>

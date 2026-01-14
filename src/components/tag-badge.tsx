@@ -12,11 +12,11 @@ export function TagBadge({ tag, onClick, className = "" }: TagBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center rounded px-2 py-1 text-xs font-medium text-white ${className} ${
+      className={`inline-flex items-center rounded px-2 py-1 font-medium text-white text-xs ${className} ${
         onClick ? "cursor-pointer transition-opacity hover:opacity-80" : ""
       }`}
-      style={{ backgroundColor: bgColor }}
       onClick={onClick}
+      style={{ backgroundColor: bgColor }}
     >
       {tag.name}
     </span>

@@ -3,13 +3,13 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
+import { NotificationBell } from "~/components/notifications/notification-bell";
+import { TagBadge } from "~/components/tag-badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { TagBadge } from "~/components/tag-badge";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
-import { NotificationBell } from "~/components/notifications/notification-bell";
 import { EditTalkButton } from "./_components/edit-talk-button";
 import { TalkActivityFeed } from "./_components/talk-activity-feed";
 
@@ -109,7 +109,7 @@ export default async function TalkDetailPage({
           </div>
 
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-2 font-semibold text-2xl sm:text-3xl text-gray-900">
+            <h2 className="mb-2 font-semibold text-2xl text-gray-900 sm:text-3xl">
               {talk.title}
             </h2>
             <p className="text-gray-600 text-sm">by {talk.createdBy.name}</p>
@@ -160,7 +160,7 @@ export default async function TalkDetailPage({
           <div className="mb-8 grid gap-6 lg:grid-cols-2">
             <Card className="border-gray-200">
               <CardHeader>
-                <CardTitle className="text-base sm:text-lg text-gray-900">
+                <CardTitle className="text-base text-gray-900 sm:text-lg">
                   Abstract
                 </CardTitle>
               </CardHeader>
@@ -174,7 +174,7 @@ export default async function TalkDetailPage({
             {talk.description && (
               <Card className="border-gray-200">
                 <CardHeader>
-                  <CardTitle className="text-base sm:text-lg text-gray-900">
+                  <CardTitle className="text-base text-gray-900 sm:text-lg">
                     Description
                   </CardTitle>
                 </CardHeader>
@@ -189,7 +189,7 @@ export default async function TalkDetailPage({
 
           <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
                 Submission History
               </CardTitle>
             </CardHeader>
@@ -206,12 +206,9 @@ export default async function TalkDetailPage({
               ) : (
                 <div className="space-y-3">
                   {proposals.map((proposal) => (
-                    <Link
-                      key={proposal.id}
-                      href={`/proposals/${proposal.id}`}
-                    >
-                      <div className="flex flex-col gap-2 border-b py-3 last:border-0 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex-1 min-w-0">
+                    <Link href={`/proposals/${proposal.id}`} key={proposal.id}>
+                      <div className="flex flex-col gap-2 border-b py-3 transition-colors last:border-0 hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0 flex-1">
                           <h3 className="font-medium text-gray-900 text-sm">
                             {proposal.event.name}
                           </h3>
@@ -223,7 +220,7 @@ export default async function TalkDetailPage({
                         </div>
                         <div className="self-start sm:self-auto">
                           <span
-                            className={`inline-block rounded px-2 py-1 text-xs whitespace-nowrap ${getStatusColor(proposal.status)}`}
+                            className={`inline-block whitespace-nowrap rounded px-2 py-1 text-xs ${getStatusColor(proposal.status)}`}
                           >
                             {proposal.status}
                           </span>
@@ -238,14 +235,14 @@ export default async function TalkDetailPage({
 
           <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
                 Activity
               </CardTitle>
             </CardHeader>
             <CardContent>
               <TalkActivityFeed
-                talkId={talkId}
                 currentUserId={session.user.id}
+                talkId={talkId}
               />
             </CardContent>
           </Card>

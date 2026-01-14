@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -12,7 +12,7 @@ const participationTypeEnum = z.enum([
   "volunteer",
 ]);
 
-const statusEnum = z.enum(["interested", "applied", "confirmed", "not_going"]);
+const statusEnum = z.enum(["interested", "confirmed", "not_going"]);
 
 export const eventParticipationRouter = createTRPCRouter({
   // Create a new participation
@@ -22,6 +22,10 @@ export const eventParticipationRouter = createTRPCRouter({
         eventId: z.number(),
         participationType: participationTypeEnum,
         status: statusEnum.optional(),
+        budget: z.number().optional(),
+        sponsorshipTier: z.string().optional(),
+        boothSize: z.string().optional(),
+        details: z.string().optional(),
         notes: z.string().optional(),
       }),
     )
@@ -30,9 +34,12 @@ export const eventParticipationRouter = createTRPCRouter({
         .insert(eventParticipations)
         .values({
           eventId: input.eventId,
-          userId: ctx.session.user.id,
           participationType: input.participationType,
           status: input.status ?? "interested",
+          budget: input.budget ?? null,
+          sponsorshipTier: input.sponsorshipTier ?? null,
+          boothSize: input.boothSize ?? null,
+          details: input.details ?? null,
           notes: input.notes ?? null,
         })
         .returning();
@@ -46,6 +53,10 @@ export const eventParticipationRouter = createTRPCRouter({
         id: z.number(),
         participationType: participationTypeEnum.optional(),
         status: statusEnum.optional(),
+        budget: z.number().optional(),
+        sponsorshipTier: z.string().optional(),
+        boothSize: z.string().optional(),
+        details: z.string().optional(),
         notes: z.string().optional(),
       }),
     )
@@ -55,12 +66,7 @@ export const eventParticipationRouter = createTRPCRouter({
       const result = await ctx.db
         .update(eventParticipations)
         .set(data)
-        .where(
-          and(
-            eq(eventParticipations.id, id),
-            eq(eventParticipations.userId, ctx.session.user.id),
-          ),
-        )
+        .where(eq(eventParticipations.id, id))
         .returning();
       return result[0];
     }),
@@ -71,55 +77,24 @@ export const eventParticipationRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await ctx.db
         .delete(eventParticipations)
-        .where(
-          and(
-            eq(eventParticipations.id, input.id),
-            eq(eventParticipations.userId, ctx.session.user.id),
-          ),
-        );
+        .where(eq(eventParticipations.id, input.id));
     }),
 
-  // Get my participations for an event
-  getMyParticipations: protectedProcedure
-    .input(z.object({ eventId: z.number() }))
-    .query(async ({ ctx, input }) => {
-      return await ctx.db.query.eventParticipations.findMany({
-        where: and(
-          eq(eventParticipations.eventId, input.eventId),
-          eq(eventParticipations.userId, ctx.session.user.id),
-        ),
-        orderBy: (eventParticipations, { asc }) => [
-          asc(eventParticipations.createdAt),
-        ],
-      });
-    }),
-
-  // Get all participations for an event (team view)
-  getEventParticipations: protectedProcedure
+  // Get all participations for an event
+  getByEvent: protectedProcedure
     .input(z.object({ eventId: z.number() }))
     .query(async ({ ctx, input }) => {
       return await ctx.db.query.eventParticipations.findMany({
         where: eq(eventParticipations.eventId, input.eventId),
-        with: {
-          user: {
-            columns: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
-        },
         orderBy: (eventParticipations, { asc }) => [
           asc(eventParticipations.participationType),
-          asc(eventParticipations.createdAt),
         ],
       });
     }),
 
-  // Get all my participations across all events
-  getMyAllParticipations: protectedProcedure.query(async ({ ctx }) => {
+  // Get all participations across all events
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.query.eventParticipations.findMany({
-      where: eq(eventParticipations.userId, ctx.session.user.id),
       with: {
         event: true,
       },

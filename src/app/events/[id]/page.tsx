@@ -3,16 +3,16 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { Nav } from "~/components/nav";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
-import { NotificationBell } from "~/components/notifications/notification-bell";
 import { EditEventButton } from "./_components/edit-event-button";
-import { EventScoring } from "./_components/event-scoring";
-import { EventParticipation } from "./_components/event-participation";
 import { EventActivityFeed } from "./_components/event-activity-feed";
+import { EventParticipation } from "./_components/event-participation";
+import { EventScoring } from "./_components/event-scoring";
 
 export default async function EventDetailPage({
   params,
@@ -104,7 +104,7 @@ export default async function EventDetailPage({
           </div>
 
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-2 font-semibold text-2xl sm:text-3xl text-gray-900">
+            <h2 className="mb-2 font-semibold text-2xl text-gray-900 sm:text-3xl">
               {event.name}
             </h2>
             {event.description && (
@@ -151,10 +151,10 @@ export default async function EventDetailPage({
                   <div className="text-gray-600 text-xs">CFP URL</div>
                   <div className="font-medium text-gray-900">
                     <a
-                      href={event.cfpUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
+                      href={event.cfpUrl}
+                      rel="noopener noreferrer"
+                      target="_blank"
                     >
                       Submit Proposal →
                     </a>
@@ -170,10 +170,10 @@ export default async function EventDetailPage({
                   </div>
                   <div className="font-medium text-gray-900">
                     <a
-                      href={event.conferenceWebsite}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
+                      href={event.conferenceWebsite}
+                      rel="noopener noreferrer"
+                      target="_blank"
                     >
                       Visit Site →
                     </a>
@@ -214,7 +214,7 @@ export default async function EventDetailPage({
 
           <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
                 Proposals for this Event
               </CardTitle>
             </CardHeader>
@@ -231,12 +231,9 @@ export default async function EventDetailPage({
               ) : (
                 <div className="space-y-3">
                   {proposals.map((proposal) => (
-                    <Link
-                      key={proposal.id}
-                      href={`/proposals/${proposal.id}`}
-                    >
-                      <div className="flex flex-col gap-2 border-b py-3 last:border-0 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex-1 min-w-0">
+                    <Link href={`/proposals/${proposal.id}`} key={proposal.id}>
+                      <div className="flex flex-col gap-2 border-b py-3 transition-colors last:border-0 hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0 flex-1">
                           <h3 className="font-medium text-gray-900 text-sm">
                             {proposal.talk.title}
                           </h3>
@@ -246,7 +243,7 @@ export default async function EventDetailPage({
                         </div>
                         <div className="self-start sm:self-auto">
                           <span
-                            className={`inline-block rounded px-2 py-1 text-xs whitespace-nowrap ${getStatusColor(proposal.status)}`}
+                            className={`inline-block whitespace-nowrap rounded px-2 py-1 text-xs ${getStatusColor(proposal.status)}`}
                           >
                             {proposal.status}
                           </span>
@@ -261,14 +258,14 @@ export default async function EventDetailPage({
 
           <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
                 Activity
               </CardTitle>
             </CardHeader>
             <CardContent>
               <EventActivityFeed
-                eventId={eventId}
                 currentUserId={session.user.id}
+                eventId={eventId}
               />
             </CardContent>
           </Card>

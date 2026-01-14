@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { TagBadge } from "~/components/tag-badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { TagBadge } from "~/components/tag-badge";
 import { api } from "~/trpc/react";
 
 interface Tag {
@@ -68,14 +68,14 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
         <div className="flex flex-wrap gap-2">
           {allTags.map((tag) => (
             <label
-              key={tag.id}
               className="flex cursor-pointer items-center gap-2 rounded border p-2 transition-colors hover:bg-gray-50"
+              key={tag.id}
             >
               <input
-                type="checkbox"
                 checked={selectedTagIds.includes(tag.id)}
-                onChange={() => handleToggleTag(tag.id)}
                 className="h-4 w-4"
+                onChange={() => handleToggleTag(tag.id)}
+                type="checkbox"
               />
               <TagBadge tag={tag} />
             </label>
@@ -88,12 +88,12 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
           <div>
             <Label htmlFor="newTagName">New Tag Name *</Label>
             <Input
+              autoFocus
               id="newTagName"
-              value={newTagName}
               onChange={(e) => setNewTagName(e.target.value)}
               placeholder="e.g., Kubernetes, DevOps"
               required
-              autoFocus
+              value={newTagName}
             />
           </div>
 
@@ -101,41 +101,41 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
             <Label htmlFor="newTagColor">Color</Label>
             <div className="flex items-center gap-2">
               <Input
+                className="h-10 w-20"
                 id="newTagColor"
+                onChange={(e) => setNewTagColor(e.target.value)}
                 type="color"
                 value={newTagColor}
-                onChange={(e) => setNewTagColor(e.target.value)}
-                className="h-10 w-20"
               />
               <Input
+                className="flex-1"
+                onChange={(e) => setNewTagColor(e.target.value)}
+                pattern="^#[0-9A-Fa-f]{6}$"
+                placeholder="#2563eb"
                 type="text"
                 value={newTagColor}
-                onChange={(e) => setNewTagColor(e.target.value)}
-                placeholder="#2563eb"
-                pattern="^#[0-9A-Fa-f]{6}$"
-                className="flex-1"
               />
             </div>
           </div>
 
           <div className="flex gap-2">
             <Button
-              type="button"
-              size="sm"
               disabled={createTag.isPending || !newTagName.trim()}
               onClick={handleCreateTag}
+              size="sm"
+              type="button"
             >
               {createTag.isPending ? "Creating..." : "Create Tag"}
             </Button>
             <Button
-              type="button"
-              size="sm"
-              variant="outline"
               onClick={() => {
                 setIsCreating(false);
                 setNewTagName("");
                 setNewTagColor("#2563eb");
               }}
+              size="sm"
+              type="button"
+              variant="outline"
             >
               Cancel
             </Button>
@@ -143,10 +143,10 @@ export function TagSelector({ selectedTagIds, onChange }: TagSelectorProps) {
         </div>
       ) : (
         <Button
-          type="button"
-          size="sm"
-          variant="outline"
           onClick={() => setIsCreating(true)}
+          size="sm"
+          type="button"
+          variant="outline"
         >
           + Create New Tag
         </Button>

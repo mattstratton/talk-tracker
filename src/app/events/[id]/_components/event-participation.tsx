@@ -1,9 +1,10 @@
 "use client";
 
+import { DollarSign, Plus, X } from "lucide-react";
 import { useState } from "react";
-import { Plus, X, Users } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -29,60 +30,72 @@ const participationTypeLabels = {
 
 const statusLabels = {
   interested: "Interested",
-  applied: "Applied",
   confirmed: "Confirmed",
   not_going: "Not Going",
 };
 
 const statusColors = {
   interested: "bg-gray-100 text-gray-700",
-  applied: "bg-blue-100 text-blue-700",
   confirmed: "bg-green-100 text-green-700",
   not_going: "bg-red-100 text-red-700",
 };
 
-export function EventParticipation({ eventId, eventName }: EventParticipationProps) {
+export function EventParticipation({
+  eventId,
+  eventName,
+}: EventParticipationProps) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newParticipationType, setNewParticipationType] = useState<string>("");
   const [newStatus, setNewStatus] = useState<string>("interested");
+  const [newBudget, setNewBudget] = useState("");
+  const [newSponsorshipTier, setNewSponsorshipTier] = useState("");
+  const [newBoothSize, setNewBoothSize] = useState("");
+  const [newDetails, setNewDetails] = useState("");
   const [newNotes, setNewNotes] = useState("");
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editStatus, setEditStatus] = useState<string>("");
+  const [editBudget, setEditBudget] = useState("");
+  const [editSponsorshipTier, setEditSponsorshipTier] = useState("");
+  const [editBoothSize, setEditBoothSize] = useState("");
+  const [editDetails, setEditDetails] = useState("");
   const [editNotes, setEditNotes] = useState("");
 
   const utils = api.useUtils();
 
-  const { data: myParticipations, isLoading } =
-    api.eventParticipation.getMyParticipations.useQuery({ eventId });
-
-  const { data: teamParticipations } =
-    api.eventParticipation.getEventParticipations.useQuery({ eventId });
+  const { data: participations, isLoading } =
+    api.eventParticipation.getByEvent.useQuery({ eventId });
 
   const createMutation = api.eventParticipation.create.useMutation({
     onSuccess: () => {
-      void utils.eventParticipation.getMyParticipations.invalidate({ eventId });
-      void utils.eventParticipation.getEventParticipations.invalidate({ eventId });
+      void utils.eventParticipation.getByEvent.invalidate({ eventId });
       setShowAddForm(false);
-      setNewParticipationType("");
-      setNewStatus("interested");
-      setNewNotes("");
+      resetAddForm();
     },
   });
 
   const updateMutation = api.eventParticipation.update.useMutation({
     onSuccess: () => {
-      void utils.eventParticipation.getMyParticipations.invalidate({ eventId });
-      void utils.eventParticipation.getEventParticipations.invalidate({ eventId });
+      void utils.eventParticipation.getByEvent.invalidate({ eventId });
       setEditingId(null);
     },
   });
 
   const deleteMutation = api.eventParticipation.delete.useMutation({
     onSuccess: () => {
-      void utils.eventParticipation.getMyParticipations.invalidate({ eventId });
-      void utils.eventParticipation.getEventParticipations.invalidate({ eventId });
+      void utils.eventParticipation.getByEvent.invalidate({ eventId });
     },
   });
+
+  const resetAddForm = () => {
+    setNewParticipationType("");
+    setNewStatus("interested");
+    setNewBudget("");
+    setNewSponsorshipTier("");
+    setNewBoothSize("");
+    setNewDetails("");
+    setNewNotes("");
+  };
 
   const handleAdd = () => {
     if (!newParticipationType) return;
@@ -91,6 +104,10 @@ export function EventParticipation({ eventId, eventName }: EventParticipationPro
       eventId,
       participationType: newParticipationType as any,
       status: newStatus as any,
+      budget: newBudget ? parseInt(newBudget) : undefined,
+      sponsorshipTier: newSponsorshipTier || undefined,
+      boothSize: newBoothSize || undefined,
+      details: newDetails || undefined,
       notes: newNotes || undefined,
     });
   };
@@ -99,6 +116,10 @@ export function EventParticipation({ eventId, eventName }: EventParticipationPro
     updateMutation.mutate({
       id,
       status: editStatus as any,
+      budget: editBudget ? parseInt(editBudget) : undefined,
+      sponsorshipTier: editSponsorshipTier || undefined,
+      boothSize: editBoothSize || undefined,
+      details: editDetails || undefined,
       notes: editNotes || undefined,
     });
   };
@@ -112,250 +133,320 @@ export function EventParticipation({ eventId, eventName }: EventParticipationPro
   const startEdit = (participation: any) => {
     setEditingId(participation.id);
     setEditStatus(participation.status);
+    setEditBudget(participation.budget?.toString() || "");
+    setEditSponsorshipTier(participation.sponsorshipTier || "");
+    setEditBoothSize(participation.boothSize || "");
+    setEditDetails(participation.details || "");
     setEditNotes(participation.notes || "");
   };
 
   const cancelEdit = () => {
     setEditingId(null);
     setEditStatus("");
+    setEditBudget("");
+    setEditSponsorshipTier("");
+    setEditBoothSize("");
+    setEditDetails("");
     setEditNotes("");
   };
 
-  // Get team summary by participation type
-  const teamSummary = teamParticipations?.reduce((acc, p) => {
-    if (!acc[p.participationType]) {
-      acc[p.participationType] = [];
-    }
-    acc[p.participationType]!.push(p);
-    return acc;
-  }, {} as Record<string, any[]>);
+  const formatBudget = (cents: number | null) => {
+    if (!cents) return null;
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(cents / 100);
+  };
 
   if (isLoading) {
     return (
       <Card>
         <CardContent className="py-6">
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-gray-500 text-sm">Loading...</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* My Participation */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base sm:text-lg">My Participation</CardTitle>
-            {!showAddForm && (
-              <Button size="sm" onClick={() => setShowAddForm(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {showAddForm && (
-            <div className="rounded-lg border p-4 space-y-3">
-              <div>
-                <label className="text-sm font-medium">Participation Type</label>
-                <Select value={newParticipationType} onValueChange={setNewParticipationType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="speak">Speaking</SelectItem>
-                    <SelectItem value="sponsor">Sponsoring</SelectItem>
-                    <SelectItem value="attend">Attending</SelectItem>
-                    <SelectItem value="exhibit">Exhibiting</SelectItem>
-                    <SelectItem value="volunteer">Volunteering</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Status</label>
-                <Select value={newStatus} onValueChange={setNewStatus}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="interested">Interested</SelectItem>
-                    <SelectItem value="applied">Applied</SelectItem>
-                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                    <SelectItem value="not_going">Not Going</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Notes (optional)</label>
-                <Textarea
-                  value={newNotes}
-                  onChange={(e) => setNewNotes(e.target.value)}
-                  placeholder="Add any notes..."
-                  rows={2}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={handleAdd}
-                  disabled={!newParticipationType || createMutation.isPending}
-                >
-                  {createMutation.isPending ? "Adding..." : "Add"}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setShowAddForm(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base sm:text-lg">
+            Company Participation
+          </CardTitle>
+          {!showAddForm && (
+            <Button onClick={() => setShowAddForm(true)} size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              Add
+            </Button>
           )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {showAddForm && (
+          <div className="space-y-3 rounded-lg border p-4">
+            <div>
+              <label className="font-medium text-sm">Participation Type</label>
+              <Select
+                onValueChange={setNewParticipationType}
+                value={newParticipationType}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="speak">Speaking</SelectItem>
+                  <SelectItem value="sponsor">Sponsoring</SelectItem>
+                  <SelectItem value="attend">Attending</SelectItem>
+                  <SelectItem value="exhibit">Exhibiting</SelectItem>
+                  <SelectItem value="volunteer">Volunteering</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="font-medium text-sm">Status</label>
+              <Select onValueChange={setNewStatus} value={newStatus}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="interested">Interested</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="not_going">Not Going</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="font-medium text-sm">Budget (in cents)</label>
+              <Input
+                onChange={(e) => setNewBudget(e.target.value)}
+                placeholder="e.g., 50000 for $500.00"
+                type="number"
+                value={newBudget}
+              />
+            </div>
+            <div>
+              <label className="font-medium text-sm">
+                Sponsorship Tier (optional)
+              </label>
+              <Input
+                onChange={(e) => setNewSponsorshipTier(e.target.value)}
+                placeholder="e.g., Gold, Silver, Bronze"
+                value={newSponsorshipTier}
+              />
+            </div>
+            <div>
+              <label className="font-medium text-sm">
+                Booth Size (optional)
+              </label>
+              <Input
+                onChange={(e) => setNewBoothSize(e.target.value)}
+                placeholder="e.g., 10x10, 20x20"
+                value={newBoothSize}
+              />
+            </div>
+            <div>
+              <label className="font-medium text-sm">Details (optional)</label>
+              <Textarea
+                onChange={(e) => setNewDetails(e.target.value)}
+                placeholder="Additional details..."
+                rows={2}
+                value={newDetails}
+              />
+            </div>
+            <div>
+              <label className="font-medium text-sm">Notes (optional)</label>
+              <Textarea
+                onChange={(e) => setNewNotes(e.target.value)}
+                placeholder="Internal notes..."
+                rows={2}
+                value={newNotes}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                disabled={!newParticipationType || createMutation.isPending}
+                onClick={handleAdd}
+                size="sm"
+              >
+                {createMutation.isPending ? "Adding..." : "Add"}
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowAddForm(false);
+                  resetAddForm();
+                }}
+                size="sm"
+                variant="outline"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
 
-          {myParticipations && myParticipations.length > 0 ? (
-            <div className="space-y-3">
-              {myParticipations.map((participation) => (
-                <div
-                  key={participation.id}
-                  className="rounded-lg border p-4"
-                >
-                  {editingId === participation.id ? (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="text-sm font-medium">Status</label>
-                        <Select value={editStatus} onValueChange={setEditStatus}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="interested">Interested</SelectItem>
-                            <SelectItem value="applied">Applied</SelectItem>
-                            <SelectItem value="confirmed">Confirmed</SelectItem>
-                            <SelectItem value="not_going">Not Going</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium">Notes</label>
-                        <Textarea
-                          value={editNotes}
-                          onChange={(e) => setEditNotes(e.target.value)}
-                          rows={2}
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleUpdate(participation.id)}
-                          disabled={updateMutation.isPending}
-                        >
-                          {updateMutation.isPending ? "Saving..." : "Save"}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={cancelEdit}
-                        >
-                          Cancel
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
+        {participations && participations.length > 0 ? (
+          <div className="space-y-3">
+            {participations.map((participation) => (
+              <div className="rounded-lg border p-4" key={participation.id}>
+                {editingId === participation.id ? (
+                  <div className="space-y-3">
                     <div>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-900">
-                              {participationTypeLabels[participation.participationType as keyof typeof participationTypeLabels]}
-                            </span>
-                            <span
-                              className={`rounded px-2 py-0.5 text-xs ${
-                                statusColors[participation.status as keyof typeof statusColors]
-                              }`}
-                            >
-                              {statusLabels[participation.status as keyof typeof statusLabels]}
-                            </span>
-                          </div>
+                      <label className="font-medium text-sm">Status</label>
+                      <Select onValueChange={setEditStatus} value={editStatus}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="interested">Interested</SelectItem>
+                          <SelectItem value="confirmed">Confirmed</SelectItem>
+                          <SelectItem value="not_going">Not Going</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="font-medium text-sm">
+                        Budget (in cents)
+                      </label>
+                      <Input
+                        onChange={(e) => setEditBudget(e.target.value)}
+                        placeholder="e.g., 50000 for $500.00"
+                        type="number"
+                        value={editBudget}
+                      />
+                    </div>
+                    <div>
+                      <label className="font-medium text-sm">
+                        Sponsorship Tier
+                      </label>
+                      <Input
+                        onChange={(e) => setEditSponsorshipTier(e.target.value)}
+                        placeholder="e.g., Gold, Silver, Bronze"
+                        value={editSponsorshipTier}
+                      />
+                    </div>
+                    <div>
+                      <label className="font-medium text-sm">Booth Size</label>
+                      <Input
+                        onChange={(e) => setEditBoothSize(e.target.value)}
+                        placeholder="e.g., 10x10, 20x20"
+                        value={editBoothSize}
+                      />
+                    </div>
+                    <div>
+                      <label className="font-medium text-sm">Details</label>
+                      <Textarea
+                        onChange={(e) => setEditDetails(e.target.value)}
+                        rows={2}
+                        value={editDetails}
+                      />
+                    </div>
+                    <div>
+                      <label className="font-medium text-sm">Notes</label>
+                      <Textarea
+                        onChange={(e) => setEditNotes(e.target.value)}
+                        rows={2}
+                        value={editNotes}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        disabled={updateMutation.isPending}
+                        onClick={() => handleUpdate(participation.id)}
+                        size="sm"
+                      >
+                        {updateMutation.isPending ? "Saving..." : "Save"}
+                      </Button>
+                      <Button onClick={cancelEdit} size="sm" variant="outline">
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="font-medium text-gray-900">
+                            {
+                              participationTypeLabels[
+                                participation.participationType as keyof typeof participationTypeLabels
+                              ]
+                            }
+                          </span>
+                          <span
+                            className={`rounded px-2 py-0.5 text-xs ${
+                              statusColors[
+                                participation.status as keyof typeof statusColors
+                              ]
+                            }`}
+                          >
+                            {
+                              statusLabels[
+                                participation.status as keyof typeof statusLabels
+                              ]
+                            }
+                          </span>
+                        </div>
+                        <div className="space-y-1 text-gray-600 text-sm">
+                          {participation.budget && (
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="h-3 w-3" />
+                              <span>
+                                Budget: {formatBudget(participation.budget)}
+                              </span>
+                            </div>
+                          )}
+                          {participation.sponsorshipTier && (
+                            <div>Tier: {participation.sponsorshipTier}</div>
+                          )}
+                          {participation.boothSize && (
+                            <div>Booth: {participation.boothSize}</div>
+                          )}
+                          {participation.details && (
+                            <div className="mt-2 text-gray-700">
+                              {participation.details}
+                            </div>
+                          )}
                           {participation.notes && (
-                            <p className="mt-1 text-sm text-gray-600">
+                            <div className="mt-2 text-gray-500 italic">
                               {participation.notes}
-                            </p>
+                            </div>
                           )}
                         </div>
-                        <div className="flex gap-1">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => startEdit(participation)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleDelete(participation.id)}
-                            disabled={deleteMutation.isPending}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          onClick={() => startEdit(participation)}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          disabled={deleteMutation.isPending}
+                          onClick={() => handleDelete(participation.id)}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            !showAddForm && (
-              <p className="text-center text-sm text-gray-500 py-4">
-                No participation added yet. Click "Add" to get started.
-              </p>
-            )
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Team Participation */}
-      {teamSummary && Object.keys(teamSummary).length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-              <Users className="h-5 w-5" />
-              Team Participation
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {Object.entries(teamSummary).map(([type, participants]) => (
-                <div key={type}>
-                  <h4 className="mb-2 font-medium text-sm text-gray-900">
-                    {participationTypeLabels[type as keyof typeof participationTypeLabels]} ({participants.length})
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {participants.map((p: any) => (
-                      <div
-                        key={p.id}
-                        className="flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-1.5"
-                      >
-                        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-medium">
-                          {p.user.name?.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-sm text-gray-700">{p.user.name}</span>
-                        <span className={`rounded px-1.5 py-0.5 text-xs ${statusColors[p.status as keyof typeof statusColors]}`}>
-                          {statusLabels[p.status as keyof typeof statusLabels]}
-                        </span>
-                      </div>
-                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          !showAddForm && (
+            <p className="py-4 text-center text-gray-500 text-sm">
+              No participation plans yet. Click "Add" to get started.
+            </p>
+          )
+        )}
+      </CardContent>
+    </Card>
   );
 }

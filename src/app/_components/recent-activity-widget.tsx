@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { UserAvatar } from "~/components/user-avatar";
 import { api } from "~/trpc/react";
@@ -61,12 +61,12 @@ export function RecentActivityWidget() {
     <Card className="border-gray-200">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base sm:text-lg text-gray-900">
+          <CardTitle className="text-base text-gray-900 sm:text-lg">
             Recent Activity
           </CardTitle>
           <Link
+            className="text-blue-600 text-sm hover:text-blue-700"
             href="/activity"
-            className="text-sm text-blue-600 hover:text-blue-700"
           >
             View All
           </Link>
@@ -84,20 +84,20 @@ export function RecentActivityWidget() {
         ) : (
           <div className="space-y-3">
             {activities.map((activity) => (
-              <Link key={activity.id} href={getActivityLink(activity)}>
-                <div className="border-b pb-3 last:border-0 transition-colors hover:bg-gray-50">
+              <Link href={getActivityLink(activity)} key={activity.id}>
+                <div className="border-b pb-3 transition-colors last:border-0 hover:bg-gray-50">
                   <div className="flex items-start gap-2">
                     <div className="flex-shrink-0">
                       <UserAvatar
-                        name={activity.user.name}
                         image={activity.user.image}
+                        name={activity.user.name}
                         size="sm"
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       {activity.activityType === "status_change" ? (
                         <>
-                          <p className="text-sm text-gray-900">
+                          <p className="text-gray-900 text-sm">
                             <span className="font-medium">
                               {activity.user.name}
                             </span>{" "}
@@ -114,24 +114,24 @@ export function RecentActivityWidget() {
                               {activity.newStatus}
                             </span>
                           </p>
-                          <p className="mt-0.5 text-xs text-gray-600">
+                          <p className="mt-0.5 text-gray-600 text-xs">
                             {getEntityDescription(activity)}
                           </p>
                         </>
                       ) : (
                         <>
-                          <p className="text-sm text-gray-900">
+                          <p className="text-gray-900 text-sm">
                             <span className="font-medium">
                               {activity.user.name}
                             </span>{" "}
                             commented on {getCommentContext(activity)}
                           </p>
-                          <p className="mt-0.5 text-xs text-gray-600">
+                          <p className="mt-0.5 text-gray-600 text-xs">
                             {getEntityDescription(activity)}
                           </p>
                         </>
                       )}
-                      <p className="mt-0.5 text-xs text-gray-500">
+                      <p className="mt-0.5 text-gray-500 text-xs">
                         {formatDistanceToNow(new Date(activity.createdAt), {
                           addSuffix: true,
                         })}

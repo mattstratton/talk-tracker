@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { MentionTextarea } from "./mention-textarea";
 import { api } from "~/trpc/react";
+import { MentionTextarea } from "./mention-textarea";
 
 interface CommentFormProps {
   proposalId?: number;
@@ -43,22 +43,22 @@ export function CommentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form className="space-y-3" onSubmit={handleSubmit}>
       <div>
         <MentionTextarea
-          value={content}
+          disabled={createComment.isPending}
           onChange={setContent}
           placeholder="Add a comment... Type @ to mention someone"
           rows={3}
-          disabled={createComment.isPending}
+          value={content}
         />
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-gray-500 text-xs">
           Tip: Type @ to see team members you can mention
         </p>
       </div>
       <Button
-        type="submit"
         disabled={createComment.isPending || !content.trim()}
+        type="submit"
       >
         {createComment.isPending ? "Posting..." : "Post Comment"}
       </Button>

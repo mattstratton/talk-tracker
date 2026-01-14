@@ -1,5 +1,5 @@
 import { and, eq, gte, isNotNull, lte } from "drizzle-orm";
-import { db } from "~/server/db";
+import type { db } from "~/server/db";
 import { events, notifications, user } from "~/server/db/schema";
 import { createNotification } from "~/server/services/notification";
 

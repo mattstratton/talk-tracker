@@ -1,7 +1,7 @@
 "use client";
 
-import { CommentForm } from "~/components/activity/comment-form";
 import { ActivityFeed } from "~/components/activity/activity-feed";
+import { CommentForm } from "~/components/activity/comment-form";
 
 interface EventActivityFeedProps {
   eventId: number;
@@ -16,7 +16,7 @@ export function EventActivityFeed({
     <div className="space-y-6">
       <CommentForm eventId={eventId} />
       <div className="border-t">
-        <ActivityFeed eventId={eventId} currentUserId={currentUserId} />
+        <ActivityFeed currentUserId={currentUserId} eventId={eventId} />
       </div>
     </div>
   );

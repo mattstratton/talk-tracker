@@ -116,24 +116,35 @@ export function ProposalsList({
 
   // Get unique users from proposals
   const users = Array.from(
-    new Set(proposals.map((p) => JSON.stringify({ id: p.user.id, name: p.user.name })))
+    new Set(
+      proposals.map((p) =>
+        JSON.stringify({ id: p.user.id, name: p.user.name }),
+      ),
+    ),
   ).map((u) => JSON.parse(u) as { id: string; name: string });
 
   // Apply filters and sorting
   const filteredProposals = proposals
     .filter((proposal) => {
-      if (filterStatus !== "all" && proposal.status !== filterStatus) return false;
-      if (filterEvent !== "all" && proposal.eventId.toString() !== filterEvent) return false;
-      if (filterTalkType !== "all" && proposal.talkType !== filterTalkType) return false;
+      if (filterStatus !== "all" && proposal.status !== filterStatus)
+        return false;
+      if (filterEvent !== "all" && proposal.eventId.toString() !== filterEvent)
+        return false;
+      if (filterTalkType !== "all" && proposal.talkType !== filterTalkType)
+        return false;
       if (filterUser !== "all" && proposal.userId !== filterUser) return false;
       return true;
     })
     .sort((a, b) => {
       switch (sortBy) {
         case "date-desc":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         case "date-asc":
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         case "status":
           return a.status.localeCompare(b.status);
         case "event":
@@ -257,7 +268,9 @@ export function ProposalsList({
             size="sm"
             variant={filterUser === currentUserId ? "default" : "outline"}
           >
-            {filterUser === currentUserId ? "Showing My Proposals" : "Show My Proposals"}
+            {filterUser === currentUserId
+              ? "Showing My Proposals"
+              : "Show My Proposals"}
           </Button>
         </div>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3 lg:grid-cols-5">
@@ -503,7 +516,10 @@ export function ProposalsList({
       ) : (
         <div className="space-y-4">
           {filteredProposals.map((proposal) => (
-            <div className="rounded-lg border p-4 transition-shadow hover:shadow-md" key={proposal.id}>
+            <div
+              className="rounded-lg border p-4 transition-shadow hover:shadow-md"
+              key={proposal.id}
+            >
               <div className="flex items-start justify-between">
                 <Link className="flex-1" href={`/proposals/${proposal.id}`}>
                   <div className="flex-1">

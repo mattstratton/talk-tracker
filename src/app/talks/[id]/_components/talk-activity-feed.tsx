@@ -1,7 +1,7 @@
 "use client";
 
-import { CommentForm } from "~/components/activity/comment-form";
 import { ActivityFeed } from "~/components/activity/activity-feed";
+import { CommentForm } from "~/components/activity/comment-form";
 
 interface TalkActivityFeedProps {
   talkId: number;
@@ -16,7 +16,7 @@ export function TalkActivityFeed({
     <div className="space-y-6">
       <CommentForm talkId={talkId} />
       <div className="border-t">
-        <ActivityFeed talkId={talkId} currentUserId={currentUserId} />
+        <ActivityFeed currentUserId={currentUserId} talkId={talkId} />
       </div>
     </div>
   );

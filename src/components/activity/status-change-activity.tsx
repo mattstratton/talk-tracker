@@ -31,9 +31,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export function StatusChangeActivity({
-  activity,
-}: StatusChangeActivityProps) {
+export function StatusChangeActivity({ activity }: StatusChangeActivityProps) {
   if (!activity.oldStatus || !activity.newStatus) {
     return null;
   }
@@ -42,13 +40,13 @@ export function StatusChangeActivity({
     <div className="flex gap-3 p-4">
       <div className="flex-shrink-0">
         <UserAvatar
-          name={activity.user.name}
           image={activity.user.image}
+          name={activity.user.name}
           size="md"
         />
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-900">
+      <div className="min-w-0 flex-1">
+        <p className="text-gray-900 text-sm">
           <span className="font-medium">{activity.user.name}</span> changed
           status from{" "}
           <span className={`font-medium ${getStatusColor(activity.oldStatus)}`}>
@@ -59,7 +57,7 @@ export function StatusChangeActivity({
             {activity.newStatus}
           </span>
         </p>
-        <p className="mt-0.5 text-xs text-gray-500">
+        <p className="mt-0.5 text-gray-500 text-xs">
           {formatDistanceToNow(new Date(activity.createdAt), {
             addSuffix: true,
           })}

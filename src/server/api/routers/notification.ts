@@ -2,7 +2,7 @@ import { and, desc, eq, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { notifications, notificationPreferences } from "~/server/db/schema";
+import { notificationPreferences, notifications } from "~/server/db/schema";
 
 export const notificationRouter = createTRPCRouter({
   // Get unread notification count
@@ -77,7 +77,7 @@ export const notificationRouter = createTRPCRouter({
         },
       });
 
-      let nextCursor: number | undefined = undefined;
+      let nextCursor: number | undefined;
       if (items.length > input.limit) {
         const nextItem = items.pop();
         nextCursor = nextItem?.id;

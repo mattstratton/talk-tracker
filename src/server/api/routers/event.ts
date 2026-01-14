@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { events, eventScores, scoringCategories } from "~/server/db/schema";
+import { eventScores, events, scoringCategories } from "~/server/db/schema";
 
 export const eventRouter = createTRPCRouter({
   create: protectedProcedure
@@ -96,9 +96,7 @@ export const eventRouter = createTRPCRouter({
     const thresholdSetting = await ctx.db.query.appSettings.findFirst({
       where: (settings, { eq }) => eq(settings.key, "scoring_threshold"),
     });
-    const threshold = thresholdSetting
-      ? parseInt(thresholdSetting.value)
-      : 70;
+    const threshold = thresholdSetting ? parseInt(thresholdSetting.value) : 70;
 
     // Get all event scores
     const allScores = await ctx.db.query.eventScores.findMany({
@@ -107,12 +105,19 @@ export const eventRouter = createTRPCRouter({
       },
     });
 
-    // Map events to include score information
+    // Get all participations
+    const allParticipations = await ctx.db.query.eventParticipations.findMany();
+
+    // Map events to include score information and participations
     return allEvents.map((event) => {
       const scores = allScores.filter((s) => s.eventId === event.id);
       const totalScore = scores.reduce((sum, score) => {
         return sum + score.score * score.category.weight;
       }, 0);
+
+      const participations = allParticipations.filter(
+        (p) => p.eventId === event.id,
+      );
 
       return {
         ...event,
@@ -125,6 +130,7 @@ export const eventRouter = createTRPCRouter({
           meetsThreshold: totalScore >= threshold,
           threshold,
         },
+        participations,
       };
     });
   }),

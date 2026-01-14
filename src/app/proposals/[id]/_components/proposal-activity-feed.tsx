@@ -1,7 +1,7 @@
 "use client";
 
-import { CommentForm } from "~/components/activity/comment-form";
 import { ActivityFeed } from "~/components/activity/activity-feed";
+import { CommentForm } from "~/components/activity/comment-form";
 
 interface ProposalActivityFeedProps {
   proposalId: number;
@@ -16,7 +16,7 @@ export function ProposalActivityFeed({
     <div className="space-y-6">
       <CommentForm proposalId={proposalId} />
       <div className="border-t">
-        <ActivityFeed proposalId={proposalId} currentUserId={currentUserId} />
+        <ActivityFeed currentUserId={currentUserId} proposalId={proposalId} />
       </div>
     </div>
   );

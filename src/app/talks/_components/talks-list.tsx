@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { TagBadge } from "~/components/tag-badge";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -13,7 +14,6 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import { TagBadge } from "~/components/tag-badge";
 import { api } from "~/trpc/react";
 import { TagSelector } from "./tag-selector";
 
@@ -195,8 +195,8 @@ export function TalksList({ initialTalks }: { initialTalks: Talk[] }) {
                 />
               </div>
               <TagSelector
-                selectedTagIds={selectedTagIds}
                 onChange={setSelectedTagIds}
+                selectedTagIds={selectedTagIds}
               />
               <Button className="w-full" type="submit">
                 {editingTalk ? "Update Talk" : "Create Talk"}

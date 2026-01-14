@@ -1,7 +1,7 @@
 "use client";
 
-import { StatusChangeActivity } from "./status-change-activity";
 import { CommentActivity } from "./comment-activity";
+import { StatusChangeActivity } from "./status-change-activity";
 
 interface ActivityItemProps {
   activity: {

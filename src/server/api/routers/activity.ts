@@ -1,7 +1,8 @@
+import { TRPCError } from "@trpc/server";
 import { and, desc, eq, gt, like, sql } from "drizzle-orm";
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import type { db } from "~/server/db";
 import {
   activities,
   events,
@@ -10,9 +11,7 @@ import {
   talks,
   user,
 } from "~/server/db/schema";
-import { TRPCError } from "@trpc/server";
 import { createNotification } from "~/server/services/notification";
-import { db } from "~/server/db";
 
 type Database = typeof db;
 
@@ -201,7 +200,7 @@ export const activityRouter = createTRPCRouter({
         },
       });
 
-      let nextCursor: number | undefined = undefined;
+      let nextCursor: number | undefined;
       if (items.length > input.limit) {
         const nextItem = items.pop();
         nextCursor = nextItem?.id;
@@ -255,7 +254,7 @@ export const activityRouter = createTRPCRouter({
         },
       });
 
-      let nextCursor: number | undefined = undefined;
+      let nextCursor: number | undefined;
       if (items.length > input.limit) {
         const nextItem = items.pop();
         nextCursor = nextItem?.id;
@@ -309,7 +308,7 @@ export const activityRouter = createTRPCRouter({
         },
       });
 
-      let nextCursor: number | undefined = undefined;
+      let nextCursor: number | undefined;
       if (items.length > input.limit) {
         const nextItem = items.pop();
         nextCursor = nextItem?.id;
@@ -444,7 +443,7 @@ export const activityRouter = createTRPCRouter({
         },
       });
 
-      let nextCursor: number | undefined = undefined;
+      let nextCursor: number | undefined;
       if (items.length > input.limit) {
         const nextItem = items.pop();
         nextCursor = nextItem?.id;
@@ -524,15 +523,14 @@ export const activityRouter = createTRPCRouter({
         })
         .refine(
           (data) => {
-            const count = [
-              data.proposalId,
-              data.eventId,
-              data.talkId,
-            ].filter(Boolean).length;
+            const count = [data.proposalId, data.eventId, data.talkId].filter(
+              Boolean,
+            ).length;
             return count === 1;
           },
           {
-            message: "Exactly one of proposalId, eventId, or talkId must be provided",
+            message:
+              "Exactly one of proposalId, eventId, or talkId must be provided",
           },
         ),
     )
@@ -564,10 +562,7 @@ export const activityRouter = createTRPCRouter({
       const mentionedUserIds: string[] = [];
 
       if (usernames.length > 0) {
-        const mentionedUsers = await findUsersByEmailPrefix(
-          ctx.db,
-          usernames,
-        );
+        const mentionedUsers = await findUsersByEmailPrefix(ctx.db, usernames);
 
         if (mentionedUsers.length > 0) {
           await ctx.db.insert(mentions).values(
@@ -665,9 +660,7 @@ export const activityRouter = createTRPCRouter({
       }
 
       // Delete existing mentions
-      await ctx.db
-        .delete(mentions)
-        .where(eq(mentions.activityId, input.id));
+      await ctx.db.delete(mentions).where(eq(mentions.activityId, input.id));
 
       // Update the comment
       const result = await ctx.db
@@ -691,10 +684,7 @@ export const activityRouter = createTRPCRouter({
       // Re-parse @mentions and create new mention records
       const usernames = extractMentions(input.content);
       if (usernames.length > 0) {
-        const mentionedUsers = await findUsersByEmailPrefix(
-          ctx.db,
-          usernames,
-        );
+        const mentionedUsers = await findUsersByEmailPrefix(ctx.db, usernames);
 
         if (mentionedUsers.length > 0) {
           await ctx.db.insert(mentions).values(

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { MentionTextarea } from "./mention-textarea";
 import { UserAvatar } from "~/components/user-avatar";
 import { api } from "~/trpc/react";
+import { MentionTextarea } from "./mention-textarea";
 
 interface CommentActivityProps {
   activity: {
@@ -38,7 +38,7 @@ function highlightMentions(text: string) {
   return parts.map((part, i) => {
     if (part.startsWith("@")) {
       return (
-        <span key={i} className="font-medium text-blue-600">
+        <span className="font-medium text-blue-600" key={i}>
           {part}
         </span>
       );
@@ -94,37 +94,39 @@ export function CommentActivity({
     <div className="flex gap-3 p-4">
       <div className="flex-shrink-0">
         <UserAvatar
-          name={activity.user.name}
           image={activity.user.image}
+          name={activity.user.name}
           size="md"
         />
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900">{activity.user.name}</p>
+      <div className="min-w-0 flex-1">
+        <p className="font-medium text-gray-900 text-sm">
+          {activity.user.name}
+        </p>
         {isEditing ? (
           <div className="mt-2 space-y-2">
             <MentionTextarea
-              value={editContent}
+              disabled={updateComment.isPending}
               onChange={setEditContent}
               rows={3}
-              disabled={updateComment.isPending}
+              value={editContent}
             />
             <div className="flex gap-2">
               <Button
-                size="sm"
-                onClick={handleSave}
                 disabled={updateComment.isPending || !editContent.trim()}
+                onClick={handleSave}
+                size="sm"
               >
                 Save
               </Button>
               <Button
-                size="sm"
-                variant="outline"
+                disabled={updateComment.isPending}
                 onClick={() => {
                   setIsEditing(false);
                   setEditContent(activity.content ?? "");
                 }}
-                disabled={updateComment.isPending}
+                size="sm"
+                variant="outline"
               >
                 Cancel
               </Button>
@@ -132,10 +134,10 @@ export function CommentActivity({
           </div>
         ) : (
           <>
-            <p className="mt-1 whitespace-pre-wrap text-sm text-gray-700">
+            <p className="mt-1 whitespace-pre-wrap text-gray-700 text-sm">
               {highlightMentions(activity.content)}
             </p>
-            <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
+            <div className="mt-1 flex items-center gap-3 text-gray-500 text-xs">
               <span>
                 {formatDistanceToNow(new Date(activity.createdAt), {
                   addSuffix: true,
@@ -145,15 +147,15 @@ export function CommentActivity({
               {isOwner && (
                 <>
                   <button
-                    onClick={() => setIsEditing(true)}
                     className="text-blue-600 hover:text-blue-700"
+                    onClick={() => setIsEditing(true)}
                   >
                     Edit
                   </button>
                   <button
-                    onClick={handleDelete}
                     className="text-red-600 hover:text-red-700"
                     disabled={deleteComment.isPending}
+                    onClick={handleDelete}
                   >
                     Delete
                   </button>

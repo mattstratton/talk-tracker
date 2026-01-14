@@ -23,16 +23,16 @@ export function NotificationBell() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button size="sm" variant="ghost" className="relative">
+        <Button className="relative" size="sm" variant="ghost">
           <Bell className="h-5 w-5" />
           {unreadCount !== undefined && unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 font-semibold text-[10px] text-white">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:w-96">
+      <SheetContent className="w-full sm:w-96" side="right">
         <SheetHeader>
           <SheetTitle>Notifications</SheetTitle>
         </SheetHeader>

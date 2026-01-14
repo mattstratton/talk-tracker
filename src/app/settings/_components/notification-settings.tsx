@@ -62,7 +62,7 @@ export function NotificationSettings() {
           <CardTitle>Notification Preferences</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-sm text-gray-500">Loading...</div>
+          <div className="text-gray-500 text-sm">Loading...</div>
         </CardContent>
       </Card>
     );
@@ -75,7 +75,7 @@ export function NotificationSettings() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="mentionsEnabled"
@@ -172,21 +172,21 @@ export function NotificationSettings() {
                   </FormDescription>
                   <FormControl>
                     <Input
-                      type="number"
-                      min={1}
                       max={90}
+                      min={1}
+                      type="number"
                       {...field}
+                      className="w-32"
                       onChange={(e) =>
                         field.onChange(parseInt(e.target.value, 10))
                       }
-                      className="w-32"
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            <Button type="submit" disabled={updateMutation.isPending}>
+            <Button disabled={updateMutation.isPending} type="submit">
               {updateMutation.isPending ? "Saving..." : "Save Preferences"}
             </Button>
           </form>

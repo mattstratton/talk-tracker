@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { TagSelector } from "~/app/talks/_components/tag-selector";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-import { TagSelector } from "~/app/talks/_components/tag-selector";
 import { api } from "~/trpc/react";
 
 interface Talk {
@@ -75,7 +75,7 @@ export function EditTalkButton({ talk }: EditTalkButtonProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline">
           Edit Talk
@@ -120,8 +120,8 @@ export function EditTalkButton({ talk }: EditTalkButtonProps) {
           <div>
             <Label>Tags</Label>
             <TagSelector
-              selectedTagIds={selectedTagIds}
               onChange={setSelectedTagIds}
+              selectedTagIds={selectedTagIds}
             />
           </div>
           <Button className="w-full" type="submit">

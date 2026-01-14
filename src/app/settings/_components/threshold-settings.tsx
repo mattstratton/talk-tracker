@@ -45,7 +45,7 @@ export function ThresholdSettings({
   return (
     <Card className="border-gray-200">
       <CardHeader>
-        <CardTitle className="text-base sm:text-lg text-gray-900">
+        <CardTitle className="text-base text-gray-900 sm:text-lg">
           Scoring Threshold
         </CardTitle>
         <CardDescription>
@@ -53,24 +53,24 @@ export function ThresholdSettings({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <Label htmlFor="threshold">Threshold Score</Label>
             <Input
-              id="threshold"
-              type="number"
-              min="0"
-              max="900"
-              value={threshold}
-              onChange={(e) => setThreshold(e.target.value)}
               className="max-w-xs"
+              id="threshold"
+              max="900"
+              min="0"
+              onChange={(e) => setThreshold(e.target.value)}
+              type="number"
+              value={threshold}
             />
             <p className="mt-1 text-gray-600 text-sm">
               Events scoring at or above this value will be marked as
               recommended.
             </p>
           </div>
-          <Button type="submit" disabled={updateThreshold.isPending}>
+          <Button disabled={updateThreshold.isPending} type="submit">
             {updateThreshold.isPending ? "Saving..." : "Save Threshold"}
           </Button>
         </form>

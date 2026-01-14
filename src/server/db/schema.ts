@@ -455,7 +455,6 @@ export const userRelations = relations(user, ({ one, many }) => ({
   mentions: many(mentions),
   notifications: many(notifications),
   notificationPreferences: one(notificationPreferences),
-  eventParticipations: many(eventParticipations),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -601,9 +600,6 @@ export const eventParticipations = createTable(
   "event_participation",
   {
     id: integer().primaryKey().generatedByDefaultAsIdentity(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
     eventId: integer("event_id")
       .notNull()
       .references(() => events.id, { onDelete: "cascade" }),
@@ -611,11 +607,16 @@ export const eventParticipations = createTable(
       enum: ["speak", "sponsor", "attend", "exhibit", "volunteer"],
     }).notNull(),
     status: text("status", {
-      enum: ["interested", "applied", "confirmed", "not_going"],
+      enum: ["interested", "confirmed", "not_going"],
     })
       .notNull()
       .default("interested"),
-    notes: text(),
+    // Detailed planning fields
+    budget: integer("budget"), // Budget/cost in cents
+    sponsorshipTier: text("sponsorship_tier"), // e.g., "Gold", "Silver", "Bronze"
+    boothSize: text("booth_size"), // e.g., "10x10", "20x20"
+    details: text("details"), // General details field
+    notes: text("notes"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .$defaultFn(() => new Date())
       .notNull(),
@@ -624,7 +625,6 @@ export const eventParticipations = createTable(
     ),
   },
   (t) => [
-    index("event_participation_user_idx").on(t.userId),
     index("event_participation_event_idx").on(t.eventId),
     index("event_participation_type_idx").on(t.participationType),
   ],
@@ -633,10 +633,6 @@ export const eventParticipations = createTable(
 export const eventParticipationsRelations = relations(
   eventParticipations,
   ({ one }) => ({
-    user: one(user, {
-      fields: [eventParticipations.userId],
-      references: [user.id],
-    }),
     event: one(events, {
       fields: [eventParticipations.eventId],
       references: [events.id],

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import { db } from "~/server/db";
-import { notifications, notificationPreferences } from "~/server/db/schema";
+import type { db } from "~/server/db";
+import { notificationPreferences, notifications } from "~/server/db/schema";
 
 type Database = typeof db;
 

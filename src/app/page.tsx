@@ -1,17 +1,16 @@
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
-import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-
+import { RecentActivityWidget } from "~/app/_components/recent-activity-widget";
 import { SignInForm } from "~/components/auth/sign-in-form";
 import { Nav } from "~/components/nav";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
-import { RecentActivityWidget } from "~/app/_components/recent-activity-widget";
-import { NotificationBell } from "~/components/notifications/notification-bell";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -100,7 +99,7 @@ export default async function Home() {
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-1 font-semibold text-xl sm:text-2xl text-gray-900">
+            <h2 className="mb-1 font-semibold text-gray-900 text-xl sm:text-2xl">
               Dashboard
             </h2>
             <p className="text-gray-600 text-sm">
@@ -108,10 +107,12 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="mb-6 sm:mb-8 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mb-6 grid gap-3 sm:mb-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             <Card className="border-gray-200">
               <CardContent className="p-6">
-                <div className="mb-1 text-gray-500 text-sm">Total Proposals</div>
+                <div className="mb-1 text-gray-500 text-sm">
+                  Total Proposals
+                </div>
                 <div className="font-semibold text-3xl text-gray-900">
                   {proposals.length}
                 </div>
@@ -138,19 +139,16 @@ export default async function Home() {
           </div>
 
           {eventsWithDeadlines.length > 0 && (
-            <Card className="mb-6 sm:mb-8 border-gray-200">
+            <Card className="mb-6 border-gray-200 sm:mb-8">
               <CardHeader>
-                <CardTitle className="text-base sm:text-lg text-gray-900">
+                <CardTitle className="text-base text-gray-900 sm:text-lg">
                   Upcoming CFP Deadlines
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {eventsWithDeadlines.slice(0, 5).map((event) => (
-                    <Link
-                      key={event.id}
-                      href={`/events/${event.id}`}
-                    >
+                    <Link href={`/events/${event.id}`} key={event.id}>
                       <div
                         className="flex flex-col gap-2 border-l-2 py-3 pl-3 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between sm:pl-4"
                         style={{
@@ -162,9 +160,11 @@ export default async function Home() {
                                 : "#10b981",
                         }}
                       >
-                        <div className="flex-1 min-w-0">
+                        <div className="min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="font-medium text-gray-900 text-sm">{event.name}</h3>
+                            <h3 className="font-medium text-gray-900 text-sm">
+                              {event.name}
+                            </h3>
                             {event.scoreInfo &&
                               event.scoreInfo.completionCount > 0 && (
                                 <span
@@ -174,9 +174,7 @@ export default async function Home() {
                                       : "bg-gray-100 text-gray-700"
                                   }`}
                                 >
-                                  {event.scoreInfo.meetsThreshold
-                                    ? "✓"
-                                    : ""}
+                                  {event.scoreInfo.meetsThreshold ? "✓" : ""}
                                   {event.scoreInfo.totalScore}/
                                   {event.scoreInfo.maxScore}
                                 </span>
@@ -184,9 +182,7 @@ export default async function Home() {
                           </div>
                           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-gray-600 text-xs">
                             {event.location && (
-                              <span className="truncate">
-                                {event.location}
-                              </span>
+                              <span className="truncate">{event.location}</span>
                             )}
                             {event.startDate && (
                               <span>
@@ -226,24 +222,30 @@ export default async function Home() {
 
           <RecentActivityWidget />
 
-          <Card className="mb-6 sm:mb-8 border-gray-200">
+          <Card className="mb-6 border-gray-200 sm:mb-8">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
                 Recent Proposals
               </CardTitle>
             </CardHeader>
             <CardContent>
               {proposals.length === 0 ? (
-                <div className="py-8 sm:py-12 text-center">
+                <div className="py-8 text-center sm:py-12">
                   <p className="mb-4 text-gray-600 text-sm sm:text-base">
                     No proposals yet. Start by creating some talks and events.
                   </p>
                   <div className="flex flex-col gap-2 sm:flex-row sm:justify-center sm:gap-3">
                     <Link href="/talks">
-                      <Button className="w-full sm:w-auto" type="button">Create a Talk</Button>
+                      <Button className="w-full sm:w-auto" type="button">
+                        Create a Talk
+                      </Button>
                     </Link>
                     <Link href="/events">
-                      <Button className="w-full sm:w-auto" type="button" variant="outline">
+                      <Button
+                        className="w-full sm:w-auto"
+                        type="button"
+                        variant="outline"
+                      >
                         Add an Event
                       </Button>
                     </Link>
@@ -252,24 +254,20 @@ export default async function Home() {
               ) : (
                 <div className="space-y-3">
                   {proposals.slice(0, 10).map((proposal) => (
-                    <Link
-                      key={proposal.id}
-                      href={`/proposals/${proposal.id}`}
-                    >
-                      <div
-                        className="flex flex-col gap-2 border-b py-3 last:border-0 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="flex-1 min-w-0">
+                    <Link href={`/proposals/${proposal.id}`} key={proposal.id}>
+                      <div className="flex flex-col gap-2 border-b py-3 transition-colors last:border-0 hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0 flex-1">
                           <h3 className="font-medium text-gray-900 text-sm">
                             {proposal.talk.title}
                           </h3>
                           <p className="mt-0.5 text-gray-600 text-xs">
-                            {proposal.event.name} • {proposal.user.name} • {proposal.talkType}
+                            {proposal.event.name} • {proposal.user.name} •{" "}
+                            {proposal.talkType}
                           </p>
                         </div>
                         <div className="self-start sm:self-auto">
                           <span
-                            className={`inline-block rounded px-2 py-1 text-xs whitespace-nowrap ${
+                            className={`inline-block whitespace-nowrap rounded px-2 py-1 text-xs ${
                               proposal.status === "accepted"
                                 ? "bg-green-100 text-green-700"
                                 : proposal.status === "rejected"
