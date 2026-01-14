@@ -87,4 +87,41 @@ export const talkRouter = createTRPCRouter({
       orderBy: (talks, { desc }) => [desc(talks.createdAt)],
     });
   }),
+
+  bulkImport: protectedProcedure
+    .input(
+      z.object({
+        talks: z.array(
+          z.object({
+            title: z.string().min(1),
+            abstract: z.string().min(1),
+            description: z.string().optional(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      let successCount = 0;
+      let failedCount = 0;
+
+      for (const talk of input.talks) {
+        try {
+          await ctx.db.insert(talks).values({
+            title: talk.title,
+            abstract: talk.abstract,
+            description: talk.description ?? null,
+            createdById: ctx.session.user.id,
+          });
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to import talk: ${talk.title}`, error);
+          failedCount++;
+        }
+      }
+
+      return {
+        success: successCount,
+        failed: failedCount,
+      };
+    }),
 });

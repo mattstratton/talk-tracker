@@ -128,4 +128,52 @@ export const eventRouter = createTRPCRouter({
       };
     });
   }),
+
+  bulkImport: protectedProcedure
+    .input(
+      z.object({
+        events: z.array(
+          z.object({
+            name: z.string().min(1),
+            location: z.string().optional(),
+            startDate: z.string().optional(),
+            endDate: z.string().optional(),
+            cfpDeadline: z.string().optional(),
+            cfpUrl: z.string().optional(),
+            conferenceWebsite: z.string().optional(),
+            description: z.string().optional(),
+            notes: z.string().optional(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      let successCount = 0;
+      let failedCount = 0;
+
+      for (const event of input.events) {
+        try {
+          await ctx.db.insert(events).values({
+            name: event.name,
+            location: event.location ?? null,
+            startDate: event.startDate ?? null,
+            endDate: event.endDate ?? null,
+            cfpDeadline: event.cfpDeadline ?? null,
+            cfpUrl: event.cfpUrl ?? null,
+            conferenceWebsite: event.conferenceWebsite ?? null,
+            description: event.description ?? null,
+            notes: event.notes ?? null,
+          });
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to import event: ${event.name}`, error);
+          failedCount++;
+        }
+      }
+
+      return {
+        success: successCount,
+        failed: failedCount,
+      };
+    }),
 });
