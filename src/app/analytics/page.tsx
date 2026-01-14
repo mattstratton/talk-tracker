@@ -145,8 +145,8 @@ export default async function AnalyticsPage() {
             totalEvents={events.length}
             totalParticipationBudget={events.reduce((sum, event) => {
               const eventBudget =
-                event.participations?.reduce(
-                  (total, p) => total + (p.budget || 0),
+                (event as any).participations?.reduce(
+                  (total: number, p: any) => total + (p.budget || 0),
                   0,
                 ) || 0;
               return sum + eventBudget;
@@ -179,8 +179,8 @@ export default async function AnalyticsPage() {
 
           {/* Events Timeline and Spending */}
           <div className="mb-8 grid gap-6 lg:grid-cols-2">
-            <EventsTimeline events={events} />
-            <ParticipationSpending events={events} />
+            <EventsTimeline events={events as any} />
+            <ParticipationSpending events={events as any} />
           </div>
 
           {/* Talk Reuse Statistics */}
