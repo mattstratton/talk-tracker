@@ -20,7 +20,7 @@ describe("eventRouter", () => {
     try {
       await caller.event.create({
         name: "Test Conference",
-        date: "2026-06-15",
+        startDate: "2026-06-15",
         location: "San Francisco",
       });
       expect.fail("Should have thrown UNAUTHORIZED error");

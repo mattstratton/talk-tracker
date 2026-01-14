@@ -1,15 +1,13 @@
 import { headers } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-
+import { ActivityFeed } from "~/components/activity/activity-feed";
 import { Nav } from "~/components/nav";
+import { NotificationBell } from "~/components/notifications/notification-bell";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { HydrateClient } from "~/trpc/server";
-import { NotificationBell } from "~/components/notifications/notification-bell";
-import { ActivityFeed } from "~/components/activity/activity-feed";
 
 export default async function ActivityPage() {
   const session = await getSession();
@@ -58,7 +56,7 @@ export default async function ActivityPage() {
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-2 font-semibold text-2xl sm:text-3xl text-gray-900">
+            <h2 className="mb-2 font-semibold text-2xl text-gray-900 sm:text-3xl">
               Activity Feed
             </h2>
             <p className="text-gray-600 text-sm">
@@ -68,7 +66,7 @@ export default async function ActivityPage() {
 
           <Card className="border-gray-200">
             <CardHeader>
-              <CardTitle className="text-base sm:text-lg text-gray-900">
+              <CardTitle className="text-base text-gray-900 sm:text-lg">
                 All Activity
               </CardTitle>
             </CardHeader>
