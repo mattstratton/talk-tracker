@@ -7,6 +7,8 @@ import { Button } from "~/components/ui/button";
 import { auth } from "~/server/better-auth";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
+import { NotificationBell } from "~/components/notifications/notification-bell";
+import { NotificationSettings } from "./_components/notification-settings";
 import { ScoringCategoriesSettings } from "./_components/scoring-categories-settings";
 import { TalkTagsSettings } from "./_components/talk-tags-settings";
 import { ThresholdSettings } from "./_components/threshold-settings";
@@ -47,6 +49,7 @@ export default async function SettingsPage() {
                 <span className="hidden text-gray-600 text-sm sm:inline">
                   {session.user.name}
                 </span>
+                <NotificationBell />
                 <form>
                   <Button
                     formAction={async () => {
@@ -79,6 +82,7 @@ export default async function SettingsPage() {
           </div>
 
           <div className="space-y-8">
+            <NotificationSettings />
             <ThresholdSettings initialThreshold={threshold} />
             <ScoringCategoriesSettings initialCategories={categories} />
             <TalkTagsSettings initialTags={tags} />
