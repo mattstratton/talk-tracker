@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -43,6 +44,14 @@ export const talkTagAssignmentRouter = createTRPCRouter({
           tagId: input.tagId,
         })
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to assign tag to talk",
+        });
+      }
+
       return result[0];
     }),
 

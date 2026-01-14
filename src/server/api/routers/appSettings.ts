@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -41,6 +42,14 @@ export const appSettingsRouter = createTRPCRouter({
           .set({ value: input.threshold.toString() })
           .where(eq(appSettings.id, existing.id))
           .returning();
+
+        if (!result[0]) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "App setting not found",
+          });
+        }
+
         return result[0];
       } else {
         // Insert
@@ -52,6 +61,14 @@ export const appSettingsRouter = createTRPCRouter({
             description: "Minimum score to recommend submission",
           })
           .returning();
+
+        if (!result[0]) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create app setting",
+          });
+        }
+
         return result[0];
       }
     }),
@@ -86,12 +103,28 @@ export const appSettingsRouter = createTRPCRouter({
           })
           .where(eq(appSettings.id, existing.id))
           .returning();
+
+        if (!result[0]) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "App setting not found",
+          });
+        }
+
         return result[0];
       } else {
         const result = await ctx.db
           .insert(appSettings)
           .values(input)
           .returning();
+
+        if (!result[0]) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create app setting",
+          });
+        }
+
         return result[0];
       }
     }),

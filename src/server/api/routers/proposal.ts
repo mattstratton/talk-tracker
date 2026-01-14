@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -39,6 +40,14 @@ export const proposalRouter = createTRPCRouter({
           notes: input.notes ?? null,
         })
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create proposal",
+        });
+      }
+
       return result[0];
     }),
 
@@ -79,6 +88,13 @@ export const proposalRouter = createTRPCRouter({
         .set(data)
         .where(eq(proposals.id, id))
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Proposal not found",
+        });
+      }
 
       const updatedProposal = result[0];
 

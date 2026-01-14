@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -81,6 +82,14 @@ export const eventScoreRouter = createTRPCRouter({
           })
           .where(eq(eventScores.id, existing.id))
           .returning();
+
+        if (!result[0]) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Event score not found",
+          });
+        }
+
         return result[0];
       } else {
         // Insert new
@@ -93,6 +102,14 @@ export const eventScoreRouter = createTRPCRouter({
             notes: input.notes ?? null,
           })
           .returning();
+
+        if (!result[0]) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create event score",
+          });
+        }
+
         return result[0];
       }
     }),
@@ -130,6 +147,14 @@ export const eventScoreRouter = createTRPCRouter({
             })
             .where(eq(eventScores.id, existing.id))
             .returning();
+
+          if (!result[0]) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Event score not found",
+            });
+          }
+
           results.push(result[0]);
         } else {
           const result = await ctx.db
@@ -141,6 +166,14 @@ export const eventScoreRouter = createTRPCRouter({
               notes: scoreData.notes ?? null,
             })
             .returning();
+
+          if (!result[0]) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to create event score",
+            });
+          }
+
           results.push(result[0]);
         }
       }

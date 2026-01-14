@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -25,6 +26,14 @@ export const talkTagRouter = createTRPCRouter({
           description: input.description,
         })
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create talk tag",
+        });
+      }
+
       return result[0];
     }),
 
@@ -47,6 +56,14 @@ export const talkTagRouter = createTRPCRouter({
         .set(data)
         .where(eq(talkTags.id, id))
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Talk tag not found",
+        });
+      }
+
       return result[0];
     }),
 

@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -30,6 +31,14 @@ export const scoringCategoryRouter = createTRPCRouter({
           score0Description: input.score0Description,
         })
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create scoring category",
+        });
+      }
+
       return result[0];
     }),
 
@@ -53,6 +62,14 @@ export const scoringCategoryRouter = createTRPCRouter({
         .set(data)
         .where(eq(scoringCategories.id, id))
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Scoring category not found",
+        });
+      }
+
       return result[0];
     }),
 

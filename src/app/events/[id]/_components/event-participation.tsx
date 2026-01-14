@@ -20,7 +20,10 @@ interface EventParticipationProps {
   eventName: string;
 }
 
-const participationTypeLabels = {
+type ParticipationType = "speak" | "sponsor" | "attend" | "exhibit" | "volunteer";
+type ParticipationStatus = "interested" | "confirmed" | "not_going";
+
+const participationTypeLabels: Record<ParticipationType, string> = {
   speak: "Speaking",
   sponsor: "Sponsoring",
   attend: "Attending",
@@ -28,13 +31,13 @@ const participationTypeLabels = {
   volunteer: "Volunteering",
 };
 
-const statusLabels = {
+const statusLabels: Record<ParticipationStatus, string> = {
   interested: "Interested",
   confirmed: "Confirmed",
   not_going: "Not Going",
 };
 
-const statusColors = {
+const statusColors: Record<ParticipationStatus, string> = {
   interested: "bg-gray-100 text-gray-700",
   confirmed: "bg-green-100 text-green-700",
   not_going: "bg-red-100 text-red-700",
@@ -45,8 +48,8 @@ export function EventParticipation({
   eventName,
 }: EventParticipationProps) {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newParticipationType, setNewParticipationType] = useState<string>("");
-  const [newStatus, setNewStatus] = useState<string>("interested");
+  const [newParticipationType, setNewParticipationType] = useState<ParticipationType | "">("");
+  const [newStatus, setNewStatus] = useState<ParticipationStatus>("interested");
   const [newBudget, setNewBudget] = useState("");
   const [newSponsorshipTier, setNewSponsorshipTier] = useState("");
   const [newBoothSize, setNewBoothSize] = useState("");
@@ -54,7 +57,7 @@ export function EventParticipation({
   const [newNotes, setNewNotes] = useState("");
 
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editStatus, setEditStatus] = useState<string>("");
+  const [editStatus, setEditStatus] = useState<ParticipationStatus | "">("");
   const [editBudget, setEditBudget] = useState("");
   const [editSponsorshipTier, setEditSponsorshipTier] = useState("");
   const [editBoothSize, setEditBoothSize] = useState("");
@@ -100,11 +103,21 @@ export function EventParticipation({
   const handleAdd = () => {
     if (!newParticipationType) return;
 
+    let parsedBudget: number | undefined;
+    if (newBudget) {
+      const budget = parseInt(newBudget);
+      if (isNaN(budget) || budget < 0) {
+        alert("Budget must be a valid positive number");
+        return;
+      }
+      parsedBudget = budget;
+    }
+
     createMutation.mutate({
       eventId,
-      participationType: newParticipationType as any,
-      status: newStatus as any,
-      budget: newBudget ? parseInt(newBudget) : undefined,
+      participationType: newParticipationType,
+      status: newStatus,
+      budget: parsedBudget,
       sponsorshipTier: newSponsorshipTier || undefined,
       boothSize: newBoothSize || undefined,
       details: newDetails || undefined,
@@ -113,10 +126,20 @@ export function EventParticipation({
   };
 
   const handleUpdate = (id: number) => {
+    let parsedBudget: number | undefined;
+    if (editBudget) {
+      const budget = parseInt(editBudget);
+      if (isNaN(budget) || budget < 0) {
+        alert("Budget must be a valid positive number");
+        return;
+      }
+      parsedBudget = budget;
+    }
+
     updateMutation.mutate({
       id,
-      status: editStatus as any,
-      budget: editBudget ? parseInt(editBudget) : undefined,
+      status: editStatus || undefined,
+      budget: parsedBudget,
       sponsorshipTier: editSponsorshipTier || undefined,
       boothSize: editBoothSize || undefined,
       details: editDetails || undefined,
@@ -130,9 +153,18 @@ export function EventParticipation({
     }
   };
 
-  const startEdit = (participation: any) => {
+  const startEdit = (participation: {
+    id: number;
+    participationType: string;
+    status: string;
+    budget: number | null;
+    sponsorshipTier: string | null;
+    boothSize: string | null;
+    details: string | null;
+    notes: string | null;
+  }) => {
     setEditingId(participation.id);
-    setEditStatus(participation.status);
+    setEditStatus(participation.status as ParticipationStatus);
     setEditBudget(participation.budget?.toString() || "");
     setEditSponsorshipTier(participation.sponsorshipTier || "");
     setEditBoothSize(participation.boothSize || "");
@@ -189,7 +221,7 @@ export function EventParticipation({
             <div>
               <label className="font-medium text-sm">Participation Type</label>
               <Select
-                onValueChange={setNewParticipationType}
+                onValueChange={(value) => setNewParticipationType(value as ParticipationType)}
                 value={newParticipationType}
               >
                 <SelectTrigger>
@@ -206,7 +238,7 @@ export function EventParticipation({
             </div>
             <div>
               <label className="font-medium text-sm">Status</label>
-              <Select onValueChange={setNewStatus} value={newStatus}>
+              <Select onValueChange={(value) => setNewStatus(value as ParticipationStatus)} value={newStatus}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -294,7 +326,7 @@ export function EventParticipation({
                   <div className="space-y-3">
                     <div>
                       <label className="font-medium text-sm">Status</label>
-                      <Select onValueChange={setEditStatus} value={editStatus}>
+                      <Select onValueChange={(value) => setEditStatus(value as ParticipationStatus)} value={editStatus}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>

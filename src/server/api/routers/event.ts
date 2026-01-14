@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -34,6 +35,14 @@ export const eventRouter = createTRPCRouter({
           notes: input.notes ?? null,
         })
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create event",
+        });
+      }
+
       return result[0];
     }),
 
@@ -59,6 +68,14 @@ export const eventRouter = createTRPCRouter({
         .set(data)
         .where(eq(events.id, id))
         .returning();
+
+      if (!result[0]) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found",
+        });
+      }
+
       return result[0];
     }),
 
