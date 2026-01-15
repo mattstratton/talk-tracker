@@ -28,9 +28,9 @@ const participationTypeLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  interested: "bg-gray-100 text-gray-700",
-  confirmed: "bg-green-100 text-green-700",
-  not_going: "bg-red-100 text-red-700",
+  interested: "bg-muted text-muted-foreground",
+  confirmed: "bg-[#14D7C6] text-foreground",
+  not_going: "bg-[#FF7044] text-white",
 };
 
 type Proposal = {
@@ -75,7 +75,7 @@ export function TimelineView({ events, proposals }: TimelineViewProps) {
     eventDate.setHours(0, 0, 0, 0);
 
     if (eventDate < today) {
-      return { label: "Past", color: "bg-gray-100 text-gray-800" };
+      return { label: "Past", color: "bg-muted text-muted-foreground" };
     }
 
     const daysUntil = Math.ceil(
@@ -83,12 +83,12 @@ export function TimelineView({ events, proposals }: TimelineViewProps) {
     );
 
     if (daysUntil <= 30) {
-      return { label: "This Month", color: "bg-green-100 text-green-800" };
+      return { label: "This Month", color: "bg-[#14D7C6] text-foreground" };
     }
     if (daysUntil <= 90) {
-      return { label: "Next 3 Months", color: "bg-blue-100 text-blue-800" };
+      return { label: "Next 3 Months", color: "bg-[#755BFF] text-white" };
     }
-    return { label: "Future", color: "bg-purple-100 text-purple-800" };
+    return { label: "Future", color: "bg-[#F5FF80] text-foreground" };
   };
 
   const getCFPStatus = (cfpDeadline: string | null) => {

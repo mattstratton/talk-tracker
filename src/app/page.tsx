@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { RecentActivityWidget } from "~/app/_components/recent-activity-widget";
 import { SignInForm } from "~/components/auth/sign-in-form";
 import { AppHeader } from "~/components/app-header";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
@@ -61,7 +62,7 @@ export default async function Home() {
       <main className="min-h-screen bg-background">
         <AppHeader />
 
-        <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="container mx-auto max-w-full px-4 py-6 sm:px-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
             <h2 className="mb-1 font-semibold text-foreground text-xl sm:text-2xl">
               Dashboard
@@ -73,29 +74,29 @@ export default async function Home() {
 
           <div className="mb-6 grid gap-3 sm:mb-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             <Card className="border-border">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="mb-1 text-muted-foreground text-sm">
                   Total Proposals
                 </div>
-                <div className="font-semibold text-3xl text-foreground">
+                <div className="font-semibold text-2xl text-foreground sm:text-3xl">
                   {proposals.length}
                 </div>
               </CardContent>
             </Card>
 
             <Card className="border-border">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="mb-1 text-muted-foreground text-sm">Accepted</div>
-                <div className="font-semibold text-3xl" style={{ color: "#14D7C6" }}>
+                <div className="font-semibold text-2xl sm:text-3xl" style={{ color: "#14D7C6" }}>
                   {proposals.filter((p) => p.status === "accepted").length}
                 </div>
               </CardContent>
             </Card>
 
             <Card className="border-border">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="mb-1 text-muted-foreground text-sm">Pending</div>
-                <div className="font-semibold text-3xl" style={{ color: "#755BFF" }}>
+                <div className="font-semibold text-2xl sm:text-3xl" style={{ color: "#755BFF" }}>
                   {proposals.filter((p) => p.status === "submitted").length}
                 </div>
               </CardContent>

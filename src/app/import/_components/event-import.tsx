@@ -169,7 +169,7 @@ DevOpsDays Chicago,Chicago IL USA,2026-08-25,2026-08-26,2026-06-01,https://devop
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-gray-600 text-sm">
+            <p className="text-muted-foreground text-sm">
               Upload a CSV file with event information to bulk import
             </p>
             <Button onClick={downloadTemplate} size="sm" variant="outline">
@@ -180,20 +180,20 @@ DevOpsDays Chicago,Chicago IL USA,2026-08-25,2026-08-26,2026-06-01,https://devop
 
           <div
             {...getRootProps()}
-            className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
+            className={`cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition-colors sm:p-8 ${
               isDragActive
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-300 hover:border-gray-400"
+                ? "border-accent bg-accent/10"
+                : "border-border hover:border-accent"
             }`}
           >
             <input {...getInputProps()} />
-            <Upload className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-2 text-gray-600 text-sm">
+            <Upload className="mx-auto h-10 w-10 text-muted-foreground sm:h-12 sm:w-12" />
+            <p className="mt-2 text-foreground text-sm">
               {isDragActive
                 ? "Drop the CSV file here"
                 : "Drag and drop a CSV file here, or click to select"}
             </p>
-            <p className="mt-1 text-gray-500 text-xs">CSV files only</p>
+            <p className="mt-1 text-muted-foreground text-xs">CSV files only</p>
           </div>
 
           {parsedData.length > 0 && (
@@ -242,37 +242,37 @@ DevOpsDays Chicago,Chicago IL USA,2026-08-25,2026-08-26,2026-06-01,https://devop
                 </div>
               )}
 
-              <div className="overflow-x-auto rounded-lg border">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+              <div className="overflow-x-auto -mx-4 rounded-lg border sm:mx-0">
+                <table className="min-w-full divide-y divide-border">
+                  <thead className="bg-muted">
                     <tr>
-                      <th className="px-4 py-2 text-left font-medium text-gray-500 text-xs">
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground text-xs sm:px-4">
                         Name
                       </th>
-                      <th className="px-4 py-2 text-left font-medium text-gray-500 text-xs">
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground text-xs sm:px-4">
                         Location
                       </th>
-                      <th className="px-4 py-2 text-left font-medium text-gray-500 text-xs">
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground text-xs sm:px-4">
                         Start Date
                       </th>
-                      <th className="px-4 py-2 text-left font-medium text-gray-500 text-xs">
+                      <th className="px-3 py-2 text-left font-medium text-muted-foreground text-xs sm:px-4">
                         CFP Deadline
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 bg-white">
+                  <tbody className="divide-y divide-border bg-card">
                     {parsedData.slice(0, 10).map((row, i) => (
                       <tr key={i}>
-                        <td className="px-4 py-2 text-gray-900 text-sm">
+                        <td className="px-3 py-2 text-foreground text-sm sm:px-4">
                           {row.name}
                         </td>
-                        <td className="px-4 py-2 text-gray-600 text-sm">
+                        <td className="px-3 py-2 text-muted-foreground text-sm sm:px-4">
                           {row.location || "-"}
                         </td>
-                        <td className="px-4 py-2 text-gray-600 text-sm">
+                        <td className="px-3 py-2 text-muted-foreground text-sm sm:px-4">
                           {row.startDate || "-"}
                         </td>
-                        <td className="px-4 py-2 text-gray-600 text-sm">
+                        <td className="px-3 py-2 text-muted-foreground text-sm sm:px-4">
                           {row.cfpDeadline || "-"}
                         </td>
                       </tr>
@@ -280,7 +280,7 @@ DevOpsDays Chicago,Chicago IL USA,2026-08-25,2026-08-26,2026-06-01,https://devop
                   </tbody>
                 </table>
                 {parsedData.length > 10 && (
-                  <div className="bg-gray-50 px-4 py-2 text-center text-gray-500 text-xs">
+                  <div className="bg-muted px-4 py-2 text-center text-muted-foreground text-xs">
                     ...and {parsedData.length - 10} more row
                     {parsedData.length - 10 !== 1 ? "s" : ""}
                   </div>

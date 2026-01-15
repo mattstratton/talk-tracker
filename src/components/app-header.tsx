@@ -16,22 +16,24 @@ export async function AppHeader() {
 
   return (
     <div className="border-b border-border bg-card">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center">
-              <h1 className="font-bold text-foreground text-xl tracking-tight">
+      <div className="container mx-auto max-w-full px-4">
+        <div className="flex h-16 items-center justify-between gap-2 sm:gap-4">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-4 md:gap-6">
+            <Link href="/" className="flex shrink-0 items-center">
+              <h1 className="font-bold text-foreground text-lg tracking-tight sm:text-xl">
                 Talk Tracker
               </h1>
             </Link>
-            <Nav />
+            <div className="min-w-0 flex-1">
+              <Nav />
+            </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <span className="hidden text-muted-foreground text-sm sm:inline">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2 md:gap-4">
+            <span className="hidden text-muted-foreground text-xs sm:text-sm md:inline">
               {session.user.name}
             </span>
             <NotificationBell />
-            <form>
+            <form className="shrink-0">
               <Button
                 formAction={async () => {
                   "use server";
@@ -43,8 +45,10 @@ export async function AppHeader() {
                 size="sm"
                 type="submit"
                 variant="outline"
+                className="text-xs sm:text-sm"
               >
-                Sign out
+                <span className="hidden sm:inline">Sign out</span>
+                <span className="sm:hidden">Out</span>
               </Button>
             </form>
           </div>

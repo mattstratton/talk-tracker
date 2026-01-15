@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AppHeader } from "~/components/app-header";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { getSession } from "~/server/better-auth/server";
 import { api, HydrateClient } from "~/trpc/server";
@@ -89,7 +90,7 @@ export default async function AnalyticsPage() {
       <main className="min-h-screen bg-background">
         <AppHeader />
 
-        <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="container mx-auto max-w-full px-4 sm:px-6 py-6 sm:py-8">
           {/* Overall Analytics Overview */}
           <AnalyticsOverview
             acceptedProposals={

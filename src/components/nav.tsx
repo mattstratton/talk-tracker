@@ -59,9 +59,9 @@ export function Nav() {
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden gap-1 md:flex">
+      <nav className="hidden gap-1 overflow-x-auto md:flex lg:overflow-visible">
         {navItems.map((item) => (
-          <Link href={item.href} key={item.href}>
+          <Link href={item.href} key={item.href} className="shrink-0">
             <Button
               className={`whitespace-nowrap ${
                 pathname === item.href ? "text-foreground" : ""

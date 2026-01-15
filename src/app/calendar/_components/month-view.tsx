@@ -91,12 +91,12 @@ export function MonthView({
   const dayHeaders = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <div className="rounded-lg border bg-white">
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
       {/* Day headers */}
-      <div className="grid grid-cols-7 border-b">
+      <div className="grid grid-cols-7 border-b border-border">
         {dayHeaders.map((day) => (
           <div
-            className="border-r p-2 text-center font-semibold text-gray-700 text-sm last:border-r-0"
+            className="border-r border-border p-1.5 text-center font-semibold text-foreground text-xs last:border-r-0 sm:p-2 sm:text-sm"
             key={day}
           >
             {day}

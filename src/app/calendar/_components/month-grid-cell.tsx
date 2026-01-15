@@ -130,9 +130,9 @@ export function MonthGridCell({
 
   return (
     <div
-      className={`min-h-24 border-r border-b p-2 transition-colors hover:bg-gray-50 ${
+      className={`min-h-24 border-r border-b border-border p-1.5 transition-colors hover:bg-muted sm:p-2 ${
         isLastInRow ? "border-r-0" : ""
-      } ${isCurrentMonth ? "bg-white" : "bg-gray-50"} ${
+      } ${isCurrentMonth ? "bg-card" : "bg-muted/30"} ${
         totalItems > 0 ? "cursor-pointer" : ""
       }`}
       onClick={() => {
@@ -148,13 +148,18 @@ export function MonthGridCell({
       }}
     >
       <div
-        className={`mb-1 text-right text-sm ${
+        className={`mb-1 text-right text-xs sm:text-sm ${
           isToday(date)
-            ? "ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 font-semibold text-white"
+            ? "ml-auto flex h-5 w-5 items-center justify-center rounded-full font-semibold text-white sm:h-6 sm:w-6"
             : isCurrentMonth
-              ? "text-gray-900"
-              : "text-gray-400"
+              ? "text-foreground"
+              : "text-muted-foreground"
         }`}
+        style={
+          isToday(date)
+            ? { backgroundColor: "#755BFF" }
+            : undefined
+        }
       >
         {format(date, "d")}
       </div>
@@ -163,28 +168,28 @@ export function MonthGridCell({
       <div className="space-y-0.5">
         {/* Events (circle indicators) */}
         {visibleEvents.map((event) => (
-          <div className="flex items-center gap-1" key={`event-${event.id}`}>
+          <div className="flex min-w-0 items-center gap-1" key={`event-${event.id}`}>
             <div
-              className={`h-2 w-2 flex-shrink-0 rounded-full ${getEventColor(event)}`}
+              className={`h-1.5 w-1.5 flex-shrink-0 rounded-full sm:h-2 sm:w-2 ${getEventColor(event)}`}
             />
-            <span className="truncate text-gray-700 text-xs">{event.name}</span>
+            <span className="min-w-0 truncate text-foreground text-[10px] sm:text-xs">{event.name}</span>
           </div>
         ))}
 
         {/* CFP Deadlines (square indicators) */}
         {visibleCfpDeadlines.map((event) => (
-          <div className="flex items-center gap-1" key={`cfp-${event.id}`}>
+          <div className="flex min-w-0 items-center gap-1" key={`cfp-${event.id}`}>
             <div
-              className={`h-2 w-2 flex-shrink-0 ${getCfpUrgencyColor(event)}`}
+              className={`h-1.5 w-1.5 flex-shrink-0 sm:h-2 sm:w-2 ${getCfpUrgencyColor(event)}`}
             />
-            <span className="truncate text-gray-700 text-xs">
+            <span className="min-w-0 truncate text-foreground text-[10px] sm:text-xs">
               CFP: {event.name}
             </span>
           </div>
         ))}
 
         {remainingCount > 0 && (
-          <div className="text-gray-600 text-xs">+{remainingCount} more</div>
+          <div className="text-muted-foreground text-[10px] sm:text-xs">+{remainingCount} more</div>
         )}
       </div>
     </div>

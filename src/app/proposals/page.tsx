@@ -31,7 +31,7 @@ export default async function ProposalsPage() {
       <main className="min-h-screen bg-background">
         <AppHeader />
 
-        <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="container mx-auto max-w-full px-4 sm:px-6 py-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
             <h2 className="mb-1 font-semibold text-foreground text-xl sm:text-2xl">
               Proposals

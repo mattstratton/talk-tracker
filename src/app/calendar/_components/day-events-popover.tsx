@@ -33,9 +33,9 @@ const participationTypeLabels: Record<string, string> = {
 };
 
 const statusColors: Record<string, string> = {
-  interested: "bg-gray-100 text-gray-700",
-  confirmed: "bg-green-100 text-green-700",
-  not_going: "bg-red-100 text-red-700",
+  interested: "bg-muted text-muted-foreground",
+  confirmed: "bg-[#14D7C6] text-foreground",
+  not_going: "bg-[#FF7044] text-white",
 };
 
 interface DayEventsPopoverProps {
@@ -66,26 +66,26 @@ export function DayEventsPopover({
     );
 
     if (daysUntil < 0) {
-      return { label: "CFP Closed", color: "bg-gray-100 text-gray-600" };
+      return { label: "CFP Closed", color: "bg-muted text-muted-foreground" };
     }
     if (daysUntil === 0) {
-      return { label: "CFP Due Today!", color: "bg-red-500 text-white" };
+      return { label: "CFP Due Today!", color: "bg-[#FF7044] text-white" };
     }
     if (daysUntil <= 7) {
       return {
         label: `CFP: ${daysUntil}d left`,
-        color: "bg-red-100 text-red-800",
+        color: "bg-[#FF7044] text-white",
       };
     }
     if (daysUntil <= 30) {
       return {
         label: `CFP: ${daysUntil}d left`,
-        color: "bg-yellow-100 text-yellow-800",
+        color: "bg-[#F5FF80] text-foreground",
       };
     }
     return {
       label: `CFP: ${daysUntil}d left`,
-      color: "bg-green-100 text-green-800",
+      color: "bg-[#14D7C6] text-foreground",
     };
   };
 
@@ -102,20 +102,20 @@ export function DayEventsPopover({
 
             return (
               <Link
-                className="block rounded-lg border p-3 transition-colors hover:bg-gray-50"
+                className="block rounded-lg border border-border bg-card p-3 transition-colors hover:bg-muted"
                 href={`/events/${event.id}`}
                 key={event.id}
                 onClick={onClose}
               >
                 <div className="mb-2 flex flex-wrap items-center gap-2">
-                  <h4 className="font-semibold text-gray-900">{event.name}</h4>
+                  <h4 className="min-w-0 flex-1 font-semibold text-foreground break-words">{event.name}</h4>
                   {event.participations && event.participations.length > 0 && (
                     <>
                       {event.participations.map((p) => (
                         <span
-                          className={`rounded px-2 py-0.5 font-medium text-xs ${
+                          className={`shrink-0 rounded px-2 py-0.5 font-medium text-xs ${
                             statusColors[p.status] ||
-                            "bg-gray-100 text-gray-700"
+                            "bg-muted text-muted-foreground"
                           }`}
                           key={p.id}
                         >
@@ -127,7 +127,7 @@ export function DayEventsPopover({
                   )}
                   {cfpStatus && (
                     <span
-                      className={`rounded px-2 py-0.5 text-xs ${cfpStatus.color}`}
+                      className={`shrink-0 rounded px-2 py-0.5 text-xs ${cfpStatus.color}`}
                     >
                       {cfpStatus.label}
                     </span>
@@ -135,11 +135,11 @@ export function DayEventsPopover({
                 </div>
 
                 {event.location && (
-                  <p className="mb-1 text-gray-600 text-sm">{event.location}</p>
+                  <p className="mb-1 text-muted-foreground text-sm break-words">{event.location}</p>
                 )}
 
                 {event.cfpDeadline && (
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     CFP Deadline:{" "}
                     {new Date(event.cfpDeadline).toLocaleDateString("en-US", {
                       month: "short",

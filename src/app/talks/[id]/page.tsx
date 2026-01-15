@@ -62,7 +62,7 @@ export default async function TalkDetailPage({
       <main className="min-h-screen bg-background">
         <AppHeader />
 
-        <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="container mx-auto max-w-full px-4 sm:px-6 py-6 sm:py-8">
           <div className="mb-6 flex items-center justify-between">
             <Link href="/talks">
               <Button size="sm" variant="ghost">
