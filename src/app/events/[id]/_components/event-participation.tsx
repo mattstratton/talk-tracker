@@ -105,12 +105,13 @@ export function EventParticipation({
 
     let parsedBudget: number | undefined;
     if (newBudget) {
-      const budget = parseInt(newBudget);
+      const budget = parseFloat(newBudget);
       if (isNaN(budget) || budget < 0) {
         alert("Budget must be a valid positive number");
         return;
       }
-      parsedBudget = budget;
+      // Convert dollars to cents for storage
+      parsedBudget = Math.round(budget * 100);
     }
 
     createMutation.mutate({
@@ -128,12 +129,13 @@ export function EventParticipation({
   const handleUpdate = (id: number) => {
     let parsedBudget: number | undefined;
     if (editBudget) {
-      const budget = parseInt(editBudget);
+      const budget = parseFloat(editBudget);
       if (isNaN(budget) || budget < 0) {
         alert("Budget must be a valid positive number");
         return;
       }
-      parsedBudget = budget;
+      // Convert dollars to cents for storage
+      parsedBudget = Math.round(budget * 100);
     }
 
     updateMutation.mutate({
@@ -165,7 +167,8 @@ export function EventParticipation({
   }) => {
     setEditingId(participation.id);
     setEditStatus(participation.status as ParticipationStatus);
-    setEditBudget(participation.budget?.toString() || "");
+    // Convert cents to dollars for editing
+    setEditBudget(participation.budget ? (participation.budget / 100).toString() : "");
     setEditSponsorshipTier(participation.sponsorshipTier || "");
     setEditBoothSize(participation.boothSize || "");
     setEditDetails(participation.details || "");
@@ -250,10 +253,10 @@ export function EventParticipation({
               </Select>
             </div>
             <div>
-              <label className="font-medium text-sm">Budget (in cents)</label>
+              <label className="font-medium text-sm">Budget</label>
               <Input
                 onChange={(e) => setNewBudget(e.target.value)}
-                placeholder="e.g., 50000 for $500.00"
+                placeholder="e.g., 5000"
                 type="number"
                 value={newBudget}
               />
@@ -339,11 +342,11 @@ export function EventParticipation({
                     </div>
                     <div>
                       <label className="font-medium text-sm">
-                        Budget (in cents)
+                        Budget
                       </label>
                       <Input
                         onChange={(e) => setEditBudget(e.target.value)}
-                        placeholder="e.g., 50000 for $500.00"
+                        placeholder="e.g., 5000"
                         type="number"
                         value={editBudget}
                       />
