@@ -115,13 +115,13 @@ export function NotificationList() {
 
   if (isLoading) {
     return (
-      <div className="py-8 text-center text-gray-500 text-sm">Loading...</div>
+      <div className="py-8 text-center text-muted-foreground text-sm">Loading...</div>
     );
   }
 
   if (!notifications || notifications.length === 0) {
     return (
-      <div className="py-8 text-center text-gray-500 text-sm">
+      <div className="py-8 text-center text-muted-foreground text-sm">
         No notifications yet
       </div>
     );
@@ -148,8 +148,8 @@ export function NotificationList() {
             onClick={() => handleNotificationClick(notification.id)}
           >
             <div
-              className={`rounded-lg border p-3 transition-colors hover:bg-gray-50 ${
-                notification.isRead ? "bg-white" : "bg-blue-50"
+              className={`rounded-lg border border-border p-3 transition-colors hover:bg-muted ${
+                notification.isRead ? "bg-card" : "bg-[#755BFF]/10"
               }`}
             >
               <div className="flex items-start gap-2">
@@ -161,20 +161,20 @@ export function NotificationList() {
                   />
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-gray-900 text-sm">
+                  <p className="font-medium text-foreground text-sm">
                     {notification.title}
                   </p>
-                  <p className="mt-0.5 text-gray-600 text-xs">
+                  <p className="mt-0.5 text-muted-foreground text-xs">
                     {notification.message}
                   </p>
-                  <p className="mt-1 text-gray-500 text-xs">
+                  <p className="mt-1 text-muted-foreground text-xs">
                     {formatDistanceToNow(new Date(notification.createdAt), {
                       addSuffix: true,
                     })}
                   </p>
                 </div>
                 {!notification.isRead && (
-                  <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
+                  <div className="h-2 w-2 flex-shrink-0 rounded-full" style={{ backgroundColor: "#755BFF" }} />
                 )}
               </div>
             </div>

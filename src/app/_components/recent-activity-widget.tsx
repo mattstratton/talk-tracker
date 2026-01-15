@@ -10,15 +10,15 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case "accepted":
     case "confirmed":
-      return "text-green-700";
+      return "text-[#14D7C6]"; // Teal
     case "rejected":
-      return "text-red-700";
+      return "text-[#FF7044]"; // Tiger Blood
     case "submitted":
-      return "text-blue-700";
+      return "text-[#755BFF]"; // Vivid Purple
     case "draft":
-      return "text-gray-700";
+      return "text-muted-foreground";
     default:
-      return "text-gray-700";
+      return "text-muted-foreground";
   }
 };
 
@@ -58,15 +58,16 @@ export function RecentActivityWidget() {
   };
 
   return (
-    <Card className="border-gray-200">
+    <Card className="border-border">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base text-gray-900 sm:text-lg">
+          <CardTitle className="text-base text-foreground sm:text-lg">
             Recent Activity
           </CardTitle>
           <Link
-            className="text-blue-600 text-sm hover:text-blue-700"
+            className="text-sm hover:opacity-80"
             href="/activity"
+            style={{ color: "#755BFF" }}
           >
             View All
           </Link>
@@ -74,18 +75,18 @@ export function RecentActivityWidget() {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="py-4 text-center text-gray-500 text-sm">
+          <div className="py-4 text-center text-muted-foreground text-sm">
             Loading...
           </div>
         ) : !activities || activities.length === 0 ? (
-          <div className="py-4 text-center text-gray-500 text-sm">
+          <div className="py-4 text-center text-muted-foreground text-sm">
             No activity yet
           </div>
         ) : (
           <div className="space-y-3">
             {activities.map((activity) => (
               <Link href={getActivityLink(activity)} key={activity.id}>
-                <div className="border-b pb-3 transition-colors last:border-0 hover:bg-gray-50">
+                <div className="border-b border-border pb-3 transition-colors last:border-0 hover:bg-muted">
                   <div className="flex items-start gap-2">
                     <div className="flex-shrink-0">
                       <UserAvatar
@@ -97,7 +98,7 @@ export function RecentActivityWidget() {
                     <div className="min-w-0 flex-1">
                       {activity.activityType === "status_change" ? (
                         <>
-                          <p className="text-gray-900 text-sm">
+                          <p className="text-foreground text-sm">
                             <span className="font-medium">
                               {activity.user.name}
                             </span>{" "}
@@ -114,24 +115,24 @@ export function RecentActivityWidget() {
                               {activity.newStatus}
                             </span>
                           </p>
-                          <p className="mt-0.5 text-gray-600 text-xs">
+                          <p className="mt-0.5 text-muted-foreground text-xs">
                             {getEntityDescription(activity)}
                           </p>
                         </>
                       ) : (
                         <>
-                          <p className="text-gray-900 text-sm">
+                          <p className="text-foreground text-sm">
                             <span className="font-medium">
                               {activity.user.name}
                             </span>{" "}
                             commented on {getCommentContext(activity)}
                           </p>
-                          <p className="mt-0.5 text-gray-600 text-xs">
+                          <p className="mt-0.5 text-muted-foreground text-xs">
                             {getEntityDescription(activity)}
                           </p>
                         </>
                       )}
-                      <p className="mt-0.5 text-gray-500 text-xs">
+                      <p className="mt-0.5 text-muted-foreground text-xs">
                         {formatDistanceToNow(new Date(activity.createdAt), {
                           addSuffix: true,
                         })}

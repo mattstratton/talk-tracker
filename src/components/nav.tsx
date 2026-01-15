@@ -45,7 +45,7 @@ export function Nav() {
                 <Link href={item.href} key={item.href}>
                   <Button
                     className={`w-full justify-start ${
-                      pathname === item.href ? "text-gray-900" : ""
+                      pathname === item.href ? "text-foreground" : ""
                     }`}
                     variant="ghost"
                   >
@@ -64,7 +64,7 @@ export function Nav() {
           <Link href={item.href} key={item.href}>
             <Button
               className={`whitespace-nowrap ${
-                pathname === item.href ? "text-gray-900" : ""
+                pathname === item.href ? "text-foreground" : ""
               }`}
               size="sm"
               type="button"

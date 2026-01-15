@@ -30,7 +30,7 @@ export function UserAvatar({
   if (!image || imageError) {
     return (
       <div
-        className={`flex items-center justify-center rounded-full bg-gray-200 font-medium text-gray-600 ${sizeClass} ${className}`}
+        className={`flex items-center justify-center rounded-full bg-muted font-medium text-muted-foreground ${sizeClass} ${className}`}
       >
         {initial}
       </div>

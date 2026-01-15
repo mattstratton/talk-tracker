@@ -38,7 +38,7 @@ function highlightMentions(text: string) {
   return parts.map((part, i) => {
     if (part.startsWith("@")) {
       return (
-        <span className="font-medium text-blue-600" key={i}>
+        <span className="font-medium" key={i} style={{ color: "#755BFF" }}>
           {part}
         </span>
       );
@@ -100,7 +100,7 @@ export function CommentActivity({
         />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="font-medium text-gray-900 text-sm">
+        <p className="font-medium text-foreground text-sm">
           {activity.user.name}
         </p>
         {isEditing ? (
@@ -134,10 +134,10 @@ export function CommentActivity({
           </div>
         ) : (
           <>
-            <p className="mt-1 whitespace-pre-wrap text-gray-700 text-sm">
+            <p className="mt-1 whitespace-pre-wrap text-foreground text-sm">
               {highlightMentions(activity.content)}
             </p>
-            <div className="mt-1 flex items-center gap-3 text-gray-500 text-xs">
+            <div className="mt-1 flex items-center gap-3 text-muted-foreground text-xs">
               <span>
                 {formatDistanceToNow(new Date(activity.createdAt), {
                   addSuffix: true,
@@ -147,13 +147,15 @@ export function CommentActivity({
               {isOwner && (
                 <>
                   <button
-                    className="text-blue-600 hover:text-blue-700"
+                    className="hover:opacity-80"
+                    style={{ color: "#755BFF" }}
                     onClick={() => setIsEditing(true)}
                   >
                     Edit
                   </button>
                   <button
-                    className="text-red-600 hover:text-red-700"
+                    className="hover:opacity-80"
+                    style={{ color: "#FF7044" }}
                     disabled={deleteComment.isPending}
                     onClick={handleDelete}
                   >

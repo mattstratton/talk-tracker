@@ -51,7 +51,7 @@ export function ActivityFeed({
   if (isLoading && !cursor) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-gray-500">Loading activities...</div>
+        <div className="text-muted-foreground">Loading activities...</div>
       </div>
     );
   }
@@ -59,7 +59,7 @@ export function ActivityFeed({
   if (error) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-red-600">
+        <div style={{ color: "#FF7044" }}>
           Error loading activities: {error.message}
         </div>
       </div>
@@ -69,14 +69,14 @@ export function ActivityFeed({
   if (!data?.items || data.items.length === 0) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-gray-500">No activity yet</div>
+        <div className="text-muted-foreground">No activity yet</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-0">
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-border">
         {data.items.map((activity) => (
           <ActivityItem
             activity={activity}

@@ -162,15 +162,15 @@ export function MentionTextarea({
 
       {showSuggestions && filteredUsers.length > 0 && (
         <div
-          className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
+          className="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-[6px] border border-border bg-card shadow-lg"
           ref={suggestionsRef}
         >
           {filteredUsers.map((user, index) => (
             <button
               className={`flex w-full items-center gap-3 px-3 py-2 text-left transition-colors ${
                 index === selectedIndex
-                  ? "bg-blue-50 text-blue-900"
-                  : "hover:bg-gray-50"
+                  ? "bg-accent text-accent-foreground"
+                  : "hover:bg-muted"
               }`}
               key={user.id}
               onClick={() => insertMention(user)}
@@ -178,10 +178,10 @@ export function MentionTextarea({
             >
               <UserAvatar image={user.image} name={user.name} size="sm" />
               <div className="min-w-0 flex-1">
-                <div className="font-medium text-gray-900 text-sm">
+                <div className="font-medium text-foreground text-sm">
                   {user.name}
                 </div>
-                <div className="truncate text-gray-500 text-xs">
+                <div className="truncate text-muted-foreground text-xs">
                   @{user.username}
                 </div>
               </div>

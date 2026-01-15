@@ -50,30 +50,30 @@ export default async function TalkDetailPage({
     switch (status) {
       case "accepted":
       case "confirmed":
-        return "bg-green-100 text-green-700";
+        return "bg-[#14D7C6] text-foreground"; // Teal
       case "rejected":
-        return "bg-red-100 text-red-700";
+        return "bg-[#FF7044] text-white"; // Tiger Blood
       case "submitted":
-        return "bg-blue-100 text-blue-700";
+        return "bg-[#755BFF] text-white"; // Vivid Purple
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-muted text-muted-foreground";
     }
   };
 
   return (
     <HydrateClient>
-      <main className="min-h-screen bg-gray-50">
-        <div className="border-b bg-white">
+      <main className="min-h-screen bg-background">
+        <div className="border-b border-border bg-card">
           <div className="container mx-auto px-4">
             <div className="flex h-16 items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <Nav />
-                <h1 className="font-semibold text-gray-900 text-lg sm:text-xl">
+                <h1 className="font-semibold text-foreground text-lg sm:text-xl">
                   Talk Tracker
                 </h1>
               </div>
               <div className="flex items-center gap-2 sm:gap-4">
-                <span className="hidden text-gray-600 text-sm sm:inline">
+                <span className="hidden text-muted-foreground text-sm sm:inline">
                   {session.user.name}
                 </span>
                 <NotificationBell />
@@ -109,10 +109,10 @@ export default async function TalkDetailPage({
           </div>
 
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-2 font-semibold text-2xl text-gray-900 sm:text-3xl">
+            <h2 className="mb-2 font-semibold text-2xl text-foreground sm:text-3xl">
               {talk.title}
             </h2>
-            <p className="text-gray-600 text-sm">by {talk.createdBy.name}</p>
+            <p className="text-muted-foreground text-sm">by {talk.createdBy.name}</p>
             {talk.talkTagAssignments.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {talk.talkTagAssignments.map((assignment) => (
@@ -123,34 +123,34 @@ export default async function TalkDetailPage({
           </div>
 
           <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="border-gray-200">
+            <Card className="border-border">
               <CardContent className="p-4">
-                <div className="text-gray-600 text-xs">Total Submissions</div>
-                <div className="font-semibold text-2xl text-gray-900">
+                <div className="text-muted-foreground text-xs">Total Submissions</div>
+                <div className="font-semibold text-2xl text-foreground">
                   {proposals.length}
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-gray-200">
+            <Card className="border-border">
               <CardContent className="p-4">
-                <div className="text-gray-600 text-xs">Accepted</div>
+                <div className="text-muted-foreground text-xs">Accepted</div>
                 <div className="font-semibold text-2xl text-green-600">
                   {acceptedCount}
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-gray-200">
+            <Card className="border-border">
               <CardContent className="p-4">
-                <div className="text-gray-600 text-xs">Rejected</div>
+                <div className="text-muted-foreground text-xs">Rejected</div>
                 <div className="font-semibold text-2xl text-red-600">
                   {proposals.filter((p) => p.status === "rejected").length}
                 </div>
               </CardContent>
             </Card>
-            <Card className="border-gray-200">
+            <Card className="border-border">
               <CardContent className="p-4">
-                <div className="text-gray-600 text-xs">Acceptance Rate</div>
-                <div className="font-semibold text-2xl text-gray-900">
+                <div className="text-muted-foreground text-xs">Acceptance Rate</div>
+                <div className="font-semibold text-2xl text-foreground">
                   {acceptanceRate.toFixed(0)}%
                 </div>
               </CardContent>
@@ -158,28 +158,28 @@ export default async function TalkDetailPage({
           </div>
 
           <div className="mb-8 grid gap-6 lg:grid-cols-2">
-            <Card className="border-gray-200">
+            <Card className="border-border">
               <CardHeader>
-                <CardTitle className="text-base text-gray-900 sm:text-lg">
+                <CardTitle className="text-base text-foreground sm:text-lg">
                   Abstract
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="whitespace-pre-wrap text-gray-700 text-sm">
+                <p className="whitespace-pre-wrap text-foreground text-sm">
                   {talk.abstract}
                 </p>
               </CardContent>
             </Card>
 
             {talk.description && (
-              <Card className="border-gray-200">
+              <Card className="border-border">
                 <CardHeader>
-                  <CardTitle className="text-base text-gray-900 sm:text-lg">
+                  <CardTitle className="text-base text-foreground sm:text-lg">
                     Description
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-wrap text-gray-700 text-sm">
+                  <p className="whitespace-pre-wrap text-foreground text-sm">
                     {talk.description}
                   </p>
                 </CardContent>
@@ -187,16 +187,16 @@ export default async function TalkDetailPage({
             )}
           </div>
 
-          <Card className="border-gray-200">
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="text-base text-gray-900 sm:text-lg">
+              <CardTitle className="text-base text-foreground sm:text-lg">
                 Submission History
               </CardTitle>
             </CardHeader>
             <CardContent>
               {proposals.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="mb-4 text-gray-600">
+                  <p className="mb-4 text-muted-foreground">
                     This talk hasn't been submitted to any events yet.
                   </p>
                   <Link href="/proposals">
@@ -207,12 +207,12 @@ export default async function TalkDetailPage({
                 <div className="space-y-3">
                   {proposals.map((proposal) => (
                     <Link href={`/proposals/${proposal.id}`} key={proposal.id}>
-                      <div className="flex flex-col gap-2 border-b py-3 transition-colors last:border-0 hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex flex-col gap-2 border-b py-3 transition-colors last:border-0 hover:bg-background sm:flex-row sm:items-center sm:justify-between">
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-medium text-gray-900 text-sm">
+                          <h3 className="font-medium text-foreground text-sm">
                             {proposal.event.name}
                           </h3>
-                          <p className="mt-0.5 text-gray-600 text-xs">
+                          <p className="mt-0.5 text-muted-foreground text-xs">
                             {proposal.user.name} • {proposal.talkType}
                             {proposal.submissionDate &&
                               ` • Submitted ${proposal.submissionDate}`}
@@ -233,9 +233,9 @@ export default async function TalkDetailPage({
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200">
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="text-base text-gray-900 sm:text-lg">
+              <CardTitle className="text-base text-foreground sm:text-lg">
                 Activity
               </CardTitle>
             </CardHeader>

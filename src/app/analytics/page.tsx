@@ -68,40 +68,40 @@ export default async function AnalyticsPage() {
   });
 
   const getAcceptanceRateColor = (rate: number) => {
-    if (rate >= 75) return "text-green-600";
-    if (rate >= 50) return "text-yellow-600";
-    if (rate > 0) return "text-orange-600";
-    return "text-gray-600";
+    if (rate >= 75) return "text-[#14D7C6]"; // Teal
+    if (rate >= 50) return "text-[#F5FF80]"; // Electric Yellow
+    if (rate > 0) return "text-[#FF7044]"; // Tiger Blood
+    return "text-muted-foreground";
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "accepted":
       case "confirmed":
-        return "bg-green-100 text-green-800";
+        return "bg-[#14D7C6] text-foreground"; // Teal
       case "rejected":
-        return "bg-red-100 text-red-800";
+        return "bg-[#FF7044] text-white"; // Tiger Blood
       case "submitted":
-        return "bg-blue-100 text-blue-800";
+        return "bg-[#755BFF] text-white"; // Vivid Purple
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-muted-foreground";
     }
   };
 
   return (
     <HydrateClient>
-      <main className="min-h-screen bg-gray-50">
-        <div className="border-b bg-white">
+      <main className="min-h-screen bg-background">
+        <div className="border-b border-border bg-card">
           <div className="container mx-auto px-4">
             <div className="flex h-16 items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <Nav />
-                <h1 className="font-semibold text-gray-900 text-lg sm:text-xl">
+                <h1 className="font-semibold text-foreground text-lg sm:text-xl">
                   Talk Tracker
                 </h1>
               </div>
               <div className="flex items-center gap-2 sm:gap-4">
-                <span className="hidden text-gray-600 text-sm sm:inline">
+                <span className="hidden text-muted-foreground text-sm sm:inline">
                   {session.user.name}
                 </span>
                 <NotificationBell />
@@ -189,19 +189,19 @@ export default async function AnalyticsPage() {
           </div>
 
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-1 font-semibold text-gray-900 text-xl sm:text-2xl">
+            <h2 className="mb-1 font-semibold text-foreground text-xl sm:text-2xl">
               Talk Analytics
             </h2>
-            <p className="text-gray-600 text-sm">
+            <p className="text-muted-foreground text-sm">
               Track which talks are most successful and identify your strongest
               content
             </p>
           </div>
 
           {sortedTalkStats.length === 0 ? (
-            <Card className="border-gray-200">
+            <Card className="border-border">
               <CardContent className="py-12 text-center">
-                <p className="mb-4 text-gray-600">
+                <p className="mb-4 text-muted-foreground">
                   No talks yet. Create some talks and submit them to events to
                   see analytics!
                 </p>
@@ -214,14 +214,14 @@ export default async function AnalyticsPage() {
             <div className="space-y-4">
               {sortedTalkStats.map((talk) => (
                 <Link href={`/talks/${talk.id}`} key={talk.id}>
-                  <Card className="border-gray-200 transition-shadow hover:shadow-md">
+                  <Card className="border-border transition-shadow hover:shadow-md">
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <CardTitle className="text-gray-900 text-lg">
+                          <CardTitle className="text-foreground text-lg">
                             {talk.title}
                           </CardTitle>
-                          <p className="mt-1 text-gray-600 text-sm">
+                          <p className="mt-1 text-muted-foreground text-sm">
                             by {talk.createdBy.name}
                           </p>
                         </div>
@@ -233,12 +233,12 @@ export default async function AnalyticsPage() {
                               >
                                 {talk.acceptanceRate.toFixed(0)}%
                               </div>
-                              <p className="text-gray-600 text-xs">
+                              <p className="text-muted-foreground text-xs">
                                 acceptance rate
                               </p>
                             </>
                           ) : (
-                            <p className="text-gray-600 text-sm">
+                            <p className="text-muted-foreground text-sm">
                               Not submitted yet
                             </p>
                           )}
@@ -248,22 +248,22 @@ export default async function AnalyticsPage() {
                     <CardContent>
                       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
                         <div>
-                          <p className="text-gray-600 text-xs">
+                          <p className="text-muted-foreground text-xs">
                             Total Submissions
                           </p>
-                          <p className="font-semibold text-gray-900 text-lg sm:text-xl">
+                          <p className="font-semibold text-foreground text-lg sm:text-xl">
                             {talk.totalSubmissions}
                           </p>
                         </div>
                         <div>
-                          <p className="text-gray-600 text-xs">Accepted</p>
-                          <p className="font-semibold text-green-600 text-lg sm:text-xl">
+                          <p className="text-muted-foreground text-xs">Accepted</p>
+                          <p className="font-semibold text-lg sm:text-xl" style={{ color: "#14D7C6" }}>
                             {talk.acceptedCount}
                           </p>
                         </div>
                         <div>
-                          <p className="text-gray-600 text-xs">Rejected</p>
-                          <p className="font-semibold text-lg text-red-600 sm:text-xl">
+                          <p className="text-muted-foreground text-xs">Rejected</p>
+                          <p className="font-semibold text-lg sm:text-xl" style={{ color: "#FF7044" }}>
                             {
                               talk.events.filter((e) => e.status === "rejected")
                                 .length
@@ -271,8 +271,8 @@ export default async function AnalyticsPage() {
                           </p>
                         </div>
                         <div>
-                          <p className="text-gray-600 text-xs">Pending</p>
-                          <p className="font-semibold text-blue-600 text-lg sm:text-xl">
+                          <p className="text-muted-foreground text-xs">Pending</p>
+                          <p className="font-semibold text-lg sm:text-xl" style={{ color: "#755BFF" }}>
                             {
                               talk.events.filter(
                                 (e) =>
@@ -286,7 +286,7 @@ export default async function AnalyticsPage() {
 
                       {talk.events.length > 0 && (
                         <div>
-                          <h4 className="mb-2 font-medium text-gray-900 text-sm">
+                          <h4 className="mb-2 font-medium text-foreground text-sm">
                             Submitted to:
                           </h4>
                           <div className="flex flex-wrap gap-2">

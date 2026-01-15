@@ -18,18 +18,18 @@ export default async function ActivityPage() {
 
   return (
     <HydrateClient>
-      <main className="min-h-screen bg-gray-50">
-        <div className="border-b bg-white">
+      <main className="min-h-screen bg-background">
+        <div className="border-b border-border bg-card">
           <div className="container mx-auto px-4">
             <div className="flex h-16 items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <Nav />
-                <h1 className="font-semibold text-gray-900 text-lg sm:text-xl">
+                <h1 className="font-semibold text-foreground text-lg sm:text-xl">
                   Talk Tracker
                 </h1>
               </div>
               <div className="flex items-center gap-2 sm:gap-4">
-                <span className="hidden text-gray-600 text-sm sm:inline">
+                <span className="hidden text-muted-foreground text-sm sm:inline">
                   {session.user.name}
                 </span>
                 <NotificationBell />
@@ -56,17 +56,17 @@ export default async function ActivityPage() {
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
-            <h2 className="mb-2 font-semibold text-2xl text-gray-900 sm:text-3xl">
+            <h2 className="mb-2 font-semibold text-2xl text-foreground sm:text-3xl">
               Activity Feed
             </h2>
-            <p className="text-gray-600 text-sm">
+            <p className="text-muted-foreground text-sm">
               Recent comments and status changes across all proposals
             </p>
           </div>
 
-          <Card className="border-gray-200">
+          <Card className="border-border">
             <CardHeader>
-              <CardTitle className="text-base text-gray-900 sm:text-lg">
+              <CardTitle className="text-base text-foreground sm:text-lg">
                 All Activity
               </CardTitle>
             </CardHeader>

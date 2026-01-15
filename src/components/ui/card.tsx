@@ -6,9 +6,12 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
+        "flex flex-col gap-6 rounded-[6px] border bg-card py-6 text-card-foreground",
         className,
       )}
+      style={{
+        boxShadow: "6px 6px 0px 0px rgba(0, 0, 0, 1)", // 2D drop shadow per brand guidelines
+      }}
       data-slot="card"
       {...props}
     />

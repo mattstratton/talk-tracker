@@ -60,19 +60,19 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
   };
 
   const statusColors: Record<string, string> = {
-    interested: "bg-gray-100 text-gray-700",
-    confirmed: "bg-green-100 text-green-700",
-    not_going: "bg-red-100 text-red-700",
+    interested: "bg-muted text-muted-foreground",
+    confirmed: "bg-[#14D7C6] text-foreground",
+    not_going: "bg-[#FF7044] text-white",
   };
 
   if (eventsWithDates.length === 0) {
     return (
-      <Card className="border-gray-200">
+      <Card className="border-border">
         <CardHeader>
           <CardTitle>Events Timeline</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="py-8 text-center text-gray-600 text-sm">
+          <p className="py-8 text-center text-muted-foreground text-sm">
             No events with dates yet. Add event dates to see the timeline.
           </p>
         </CardContent>
@@ -81,7 +81,7 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
   }
 
   return (
-    <Card className="border-gray-200">
+    <Card className="border-border">
       <CardHeader>
         <CardTitle>Events Timeline</CardTitle>
       </CardHeader>
@@ -91,7 +91,7 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
             const quarterEvents = eventsByQuarter[quarter]!;
             return (
               <div key={quarter}>
-                <h3 className="mb-4 font-semibold text-gray-900 text-lg">
+                <h3 className="mb-4 font-semibold text-foreground text-lg">
                   {quarter}
                 </h3>
                 <div className="space-y-3">
@@ -101,13 +101,13 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
                       href={`/events/${event.id}`}
                       key={event.id}
                     >
-                      <div className="rounded-lg border border-gray-200 p-4 transition-all hover:border-gray-300 hover:shadow-sm">
+                      <div className="rounded-lg border border-border p-4 transition-all hover:border-accent hover:shadow-sm">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                           <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">
+                            <h4 className="font-medium text-foreground">
                               {event.name}
                             </h4>
-                            <div className="mt-1 flex flex-wrap gap-3 text-gray-600 text-sm">
+                            <div className="mt-1 flex flex-wrap gap-3 text-muted-foreground text-sm">
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
                                 <span>
@@ -136,7 +136,7 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
                                   <span
                                     className={`rounded-full px-2 py-1 font-semibold text-xs ${
                                       statusColors[p.status] ||
-                                      "bg-gray-100 text-gray-700"
+                                      "bg-muted text-muted-foreground"
                                     }`}
                                     key={p.id}
                                   >
