@@ -90,7 +90,7 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
 
   const createEvent = api.event.create.useMutation({
     onSuccess: () => {
-      void utils.event.getAll.invalidate();
+      void utils.event.getAllWithScores.invalidate();
       setOpen(false);
       resetForm();
     },
@@ -98,7 +98,7 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
 
   const updateEvent = api.event.update.useMutation({
     onSuccess: () => {
-      void utils.event.getAll.invalidate();
+      void utils.event.getAllWithScores.invalidate();
       setOpen(false);
       resetForm();
     },
@@ -106,7 +106,7 @@ export function EventsList({ initialEvents }: { initialEvents: Event[] }) {
 
   const deleteEvent = api.event.delete.useMutation({
     onSuccess: () => {
-      void utils.event.getAll.invalidate();
+      void utils.event.getAllWithScores.invalidate();
     },
   });
 

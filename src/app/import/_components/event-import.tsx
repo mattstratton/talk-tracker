@@ -97,6 +97,9 @@ export function EventImport() {
       skipEmptyLines: true,
       complete: (results) => {
         const data = results.data;
+        console.log(`[CSV Parser] Parsed ${data.length} events from CSV`);
+        console.log("[CSV Parser] First event:", data[0]);
+        console.log("[CSV Parser] Last event:", data[data.length - 1]);
         setParsedData(data);
 
         // Validate all rows
@@ -148,7 +151,9 @@ export function EventImport() {
 
   const downloadTemplate = () => {
     const template = `name,location,startDate,endDate,cfpDeadline,cfpUrl,conferenceWebsite,description,notes
-DevOpsDays Chicago,Chicago IL USA,2026-08-25,2026-08-26,2026-06-01,https://devopsdays.org/chicago/cfp,https://devopsdays.org/chicago,"A conference about DevOps practices","Great community event"`;
+DevOpsDays Chicago,Chicago IL USA,2026-08-25,2026-08-26,2026-06-01,https://devopsdays.org/chicago/cfp,https://devopsdays.org/chicago,A conference about DevOps practices,Great community event
+KubeCon North America,Salt Lake City UT USA,2026-11-17,2026-11-20,2026-07-15,https://events.linuxfoundation.org/kubecon/,https://events.linuxfoundation.org/kubecon/,Major Kubernetes conference,
+AWS re:Invent,Las Vegas NV USA,2026-12-01,2026-12-05,2026-08-30,https://reinvent.awsevents.com/cfp/,https://reinvent.awsevents.com/,,High cost but great reach`;
 
     const blob = new Blob([template], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);

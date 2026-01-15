@@ -1,0 +1,62 @@
+name,location,startDate,endDate,cfpDeadline,cfpUrl,conferenceWebsite,description,notes
+PTC,"Honolulu, HI",2026-01-18,,,,https://www.ptc.org/ptc26,"Not really since I don't like PTC software, but I'll suck it up in order to go to Hawaii",For PTC (thingworx)
+Distributech,"San Diego, CA",2026-02-02,,,,https://www.distributech.com/,"Maybe... If we're going to push into utilities this is a must, but I think we would need a lot of work to focus our messaging on them",Utilities (especially power distribution) focused
+The Pragmatic Summit,San Francisco,2026-02-11,,,,https://www.pragmaticsummit.com/,,
+ProveIt!,"Dallas, Tx",2026-02-16,,,,https://www.proveitconference.com/,"It's a great forum for tools that have dramatic performance stats (like us), and attracts the kind of companies that are looking for 'real' performance.",
+CME Smart Manufacturing,"Surrey, BC",2026-03-05,,,,https://cme-mec.ca/connection/2026-cme-smart-manufacturing-conference/,"Not really, because it's too Canada-focused, but I added it as an excuse to go to BC",
+Gartner Data & Analytics Summit,"Orlando, FL",2026-03-09,,,https://www.gartner.com/en/contact/conference#exhibitor-contacts,https://www.gartner.com/en/conferences/na/data-analytics-us,,
+NVIDIA GTC AI Conference,"San Jose, CA",2026-03-16,,,,https://www.nvidia.com/gtc/?ncid=pa-srch-goog-156-prsp-rsa-en-us-1-l2&_bt=788438092204&_bk=ai%20conferences%202026&_bm=p&_bn=g&_bg=195900994011&gad_source=1&gad_campaignid=23370029440&gbraid=0AAAAAD4XAoHh7K6fWvtBLJy8yDRM02VZ1&gclid=Cj0KCQiApfjKBhC0ARIsAMiR_Ivnmxp-zZmHLI20hsgQQr7ZWVS60MR4MgXu6UaZlLxUU5PJF98fipIaAjllEALw_wcB,,"No prospectus or CFP URL, need to email them for more info"
+Scadafest,"Orlando, FL",2026-03-23,,,,https://scadafest.com/,"No, this is VTScada focused and we're not a great fit",For VTScada
+Entelec,"Galveston, TX",2026-04-06,,,,https://www.entelec.org/expo/,,
+HumanX 2026,"SF, CA",2026-04-06,,,https://humanx.co/become-a-speaker,https://humanx.co,,
+AI Engineer Europe,"London, UK",2026-04-08,,,,https://www.ai.engineer/europe,"Yes. Generally, the who's who of AI attend AI Eng conf",Reached out to swyx abt CFP
+Hannover Messe,"Hannover, DE",2026-04-20,,,,https://www.hannovermesse.de/en/,"For europe, this is THE manufacturing show.",
+Evo Expo,"Reading, PA",2026-04-22,,,,https://theevoexpo.com/,,
+AI Dev 26 x SF,"SF, CA",2026-04-28,,,,https://ai-dev.deeplearning.ai/,"No, low quality talks",Did a talk in AI Dev NYC. General talk quality at this event was rather low. 
+ACM: Building the Future of Agentic & AI Systems ,"San Jose, CA",2026-05-26,,2026-03-06,https://www.caisconf.org/pages/workshops/,https://www.caisconf.org/,,Workshop submissions available
+PG Data Conference 2026,Chicago,2026-06-04,,2026-01-05,https://sessionize.com/pg-data-2026,https://2026.pg-data.org/,,"Should submit a talk, not worth sponsoring probably"
+AI Con USA,"Seattle, WA",2026-06-07,,,https://www.techwell.com/software-conferences/be-a-speaker,https://aiconusa.techwell.com/,,
+Databricks Data + AI Summit,"SF, CA",2026-06-15,,2026-02-13,https://www.databricks.com/dataaisummit/call-for-presentations,https://www.databricks.com/dataaisummit,,
+Kubecon NA,"Salt Lake City, UT",2026-11-09,2026-11-12,,,https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america-2026/,,
+Posette 2026,Virtual,2026-06-16,,2026-02-01,https://posetteconf.com/2026/cfp/,https://posetteconf.com/2026,,
+Automate,"Chicago, IL",2026-06-22,,,,https://www.automateshow.com/,"Yes, these are the serious manufacturers that we should be targeting",
+AI Engineer World's Fair,"SF, CA",2026-06-30,,,,https://www.ai.engineer/worldsfair,"Yes. Generally, the who's who of AI attend AI Eng conf",Reached out to swyx abt CFP
+OT Scada Con,,2026-07-22,,,,,,
+IMTS,"Chicago, IL",2026-09-14,,,,https://www.imts.com/,,
+Ignition Community Conference,"Sacramento, CA",2026-09-22,,,,https://inductiveautomation.com/events/ignition-community-conference-sacramento-ca-09-22-2026,"Yes, partnership with Ignition is match made in heaven",For Ignition
+ISA Automation Summit,"Orlando, FL",2026-09-27,,,,https://ase.isa.org,"Yes, draws a very technical crowd that are dealing with the kind of problems timescaleDB solves",
+The AI Summit New York,"New York, NY",2026-12-09,,,,https://newyork.theaisummit.com/,,"Speaker quality is very low, don't see a place to submit talk proposals"
+AI Engineer Code Summit,"New York, NY",,,,,,"Yes. Generally, the who's who of AI attend AI Eng conf",Reached out to swyx abt CFP
+Claude Community Events,Everywhere,,,,https://docs.google.com/forms/d/e/1FAIpQLSeC68AFsUcuWEGN54BmDF2SlajpMuEtZoGivKdI7ECTvtU5hA/viewform,https://luma.com/claudecommunity?k=c&period=past,,2-4 hr meetup for local Claude developer commununity
+Cursor Community Events,Everywhere,,,,,https://luma.com/cursorcommunity?k=c,,Community-hosted meetups
+Adam Chan Meetups,SF + NYC,,,,,,,Adam Chan (formerly Weaviate) hosts meetups all the time in SF and NYC
+Company Ventures AI Review,NYC,,,,,https://www.aireview.nyc/,,"Company Ventures is a VC firm that does quarterly events revolving around AI, we spoke at 2 of their events"
+SPE (multiple),,,,,,https://www.spe.org/en/events/calendar/,"I think we should only do these if we're targeting O&G, because they don't want to see generic database info",Oil&Gas
+HiveMQ Connack,,,,,,,"Yes, HiveMQ is the TigerData of Data Brokers ",For HiveMQ
+CESMII Roadshow (multiple),,,,,,https://www.cesmii.org/organizer/cesmii/,,
+Rocky Mountain Manufacturing Expo,,,,,,https://nocomfg.com/expo/,,
+Cascadia.JS ,"Seattle, WA",2026-06-01,2026-06-02,2026-01-18,https://cascadiajs.com/2026/cfp,https://cascadiajs.com,,
+Graphanacon,"Barcelona, ES",2026-04-20,,2026-01-19,,,,
+PgDay Boston 2026,"Boston, MA",,,,,,,
+PyCascades 2026,"Vancouver, Canada",,,,,https://www.python.org/events/python-events/2032/,,
+PyCon 2026,"Long Beach, CA",,,,,https://us.pycon.org/2026/,,
+PyData Berlin,"Berlin, Germany",,,,,https://2026.pycon.de/,,
+ODSC East,"Boston, MA",,,,,,,
+ODSC West,,,,,,,,
+Data + AI Forum + Test Drive (Oracle),"Boston, MA",2025-02-11,2025-02-11,,,https://community.oracle.com/products/oracleanalytics/events/336-data-ai-forum-and-test-drive-boston,,
+Center for Data Science (NYU) ,"New York University, NY",,,,,,,
+Big Data & AI World London,"London, UK",2025-03-04,2025-03-05,,,https://www.techshowlondon.co.uk/big-data-ai-world,,
+MDS Fest 2026,,,,,,https://www.mdsfest.com/speakers,,
+CERN PGDay 2026 ,Europe/Zurich,2026-02-06,,,,https://home.cern/events/cern-pgday-2026,,
+Open Data Week NYC ,"NYC, NY ",2029-03-22,2026-03-29,,https://opendataweek.nyc/,,,
+NYC School of Data Day,"NYC, NY ",,,2026-01-31,https://schoolofdata.nyc/2026-cfp/,https://schoolofdata.nyc/,,
+Current,"New Orleans, LA",2026-10-29,2026-10-30,,,,,
+Snowflake Summit ,"SF, CA, ",2026-06-01,2026-06-04,,,https://www.snowflake.com/en/summit/,,
+NeurIPS ,"Sidney, Australia",2026-12-06,2026-12-12,,https://docs.google.com/document/u/1/d/e/2PACX-1vTIIpfIUs1oPgm47hg5NQ9dWCtK2twhNTAkfkggItdzukS85kf-ThFxxVXHhFuGtnZ5pfyC-Rw38xIm/pub,https://neurips.cc/,,
+PGConf.dev 2026,"Vancouver, BC, Canada",2026-05-19,2026-05-22,,https://2026.pgconf.dev/cfp,https://2026.pgconf.dev/,,
+Collide 26: Data Science Connect ,"Atlanta, GA",2026-10-01,2026-10-01,,,,,
+Smart Production Solutions,"Nuremberg, Germany",2026-11-24,,,,,,
+PGConf NYC,"New York, NY",,,,,,,
+Data Driven Oil & Gas USA 2026,Houston ,2026-09-01,,,,https://datadriven-og.com/,"Yes, for time series in O&G. Other companies attending are in our target list",
+AI in Oil and Gas Conference,Houston ,2026-04-08,,,,https://aioilandgas.energyconferencenetwork.com/,"Yes, for AI and specific industry focus on O&G",
+IOT Tech Expo North America,San Jose,2026-05-18,,,,https://www.iottechexpo.com/northamerica/,"Yes, good fit for IoT use case; tech vendors include IBM, AWS, Cribl, Couchbase besides several security software vendors (Fortinet, Druva, etc.)",

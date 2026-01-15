@@ -171,29 +171,38 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log(`[bulkImport] Starting import of ${input.events.length} events`);
       let successCount = 0;
       let failedCount = 0;
 
       for (const event of input.events) {
         try {
+          console.log(`[bulkImport] Attempting to import: ${event.name}`);
+
+          // Helper to convert empty strings to null
+          const toNullIfEmpty = (value: string | undefined) =>
+            value && value.trim() !== "" ? value : null;
+
           await ctx.db.insert(events).values({
             name: event.name,
-            location: event.location ?? null,
-            startDate: event.startDate ?? null,
-            endDate: event.endDate ?? null,
-            cfpDeadline: event.cfpDeadline ?? null,
-            cfpUrl: event.cfpUrl ?? null,
-            conferenceWebsite: event.conferenceWebsite ?? null,
-            description: event.description ?? null,
-            notes: event.notes ?? null,
+            location: toNullIfEmpty(event.location),
+            startDate: toNullIfEmpty(event.startDate),
+            endDate: toNullIfEmpty(event.endDate),
+            cfpDeadline: toNullIfEmpty(event.cfpDeadline),
+            cfpUrl: toNullIfEmpty(event.cfpUrl),
+            conferenceWebsite: toNullIfEmpty(event.conferenceWebsite),
+            description: toNullIfEmpty(event.description),
+            notes: toNullIfEmpty(event.notes),
           });
           successCount++;
+          console.log(`[bulkImport] Successfully imported: ${event.name}`);
         } catch (error) {
-          console.error(`Failed to import event: ${event.name}`, error);
+          console.error(`[bulkImport] Failed to import event: ${event.name}`, error);
           failedCount++;
         }
       }
 
+      console.log(`[bulkImport] Import complete: ${successCount} succeeded, ${failedCount} failed`);
       return {
         success: successCount,
         failed: failedCount,
