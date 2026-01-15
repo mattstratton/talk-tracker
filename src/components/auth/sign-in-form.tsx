@@ -21,10 +21,9 @@ export function SignInForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Welcome to Talk Tracker</CardTitle>
+        <CardTitle>Welcome to Prowl</CardTitle>
         <CardDescription>
-          Sign in with your Google account to track your conference talk
-          proposals
+          Sign in with your Google account to manage your conference presence
         </CardDescription>
       </CardHeader>
       <CardContent>

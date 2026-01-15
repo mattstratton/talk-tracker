@@ -7,11 +7,11 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
   title: {
-    default: "Talk Tracker - Conference Talk Proposal Manager",
-    template: "%s | Talk Tracker",
+    default: "Prowl - Conference Presence Manager",
+    template: "%s | Prowl",
   },
   description:
-    "Track your conference speaking engagements, manage reusable talk content, and evaluate which events to submit to using a Six Sigma weighted scoring matrix.",
+    "Prowl the conference circuit with your DevRel team. Manage speaking engagements, sponsorships, budget tracking, and event prioritization all in one place.",
   keywords: [
     "conference",
     "speaking",
@@ -20,6 +20,8 @@ export const metadata: Metadata = {
     "cfp",
     "devrel",
     "developer relations",
+    "sponsorship",
+    "event management",
     "six sigma",
     "scoring matrix",
   ],
@@ -28,26 +30,26 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://talk-tracker-lyart.vercel.app",
-    siteName: "Talk Tracker",
-    title: "Talk Tracker - Conference Talk Proposal Manager",
+    url: "https://prowl.vercel.app",
+    siteName: "Prowl",
+    title: "Prowl - Conference Presence Manager",
     description:
-      "Track your conference speaking engagements, manage reusable talk content, and evaluate which events to submit to using a Six Sigma weighted scoring matrix.",
+      "Prowl the conference circuit with your DevRel team. Manage speaking engagements, sponsorships, budget tracking, and event prioritization all in one place.",
     images: [
       {
-        url: "https://talk-tracker-lyart.vercel.app/og-image.png",
+        url: "https://prowl.vercel.app/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Talk Tracker",
+        alt: "Prowl",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Talk Tracker - Conference Talk Proposal Manager",
+    title: "Prowl - Conference Presence Manager",
     description:
-      "Track your conference speaking engagements, manage reusable talk content, and evaluate which events to submit to using a Six Sigma weighted scoring matrix.",
-    images: ["https://talk-tracker-lyart.vercel.app/og-image.png"],
+      "Prowl the conference circuit with your DevRel team. Manage speaking engagements, sponsorships, budget tracking, and event prioritization all in one place.",
+    images: ["https://prowl.vercel.app/og-image.png"],
     creator: "@mattstratton",
   },
   robots: {

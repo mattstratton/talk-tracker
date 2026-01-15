@@ -1,6 +1,6 @@
-# Talk Tracker
+# Prowl
 
-A conference talk proposal tracker for DevRel professionals and speakers. Track your speaking engagements, manage reusable talk content, and evaluate which events to submit to using a Six Sigma weighted scoring matrix.
+Prowl the conference circuit with your DevRel team. Manage your entire conference presence - from speaking engagements and sponsorships to budget tracking and event prioritization.
 
 ## Features
 
@@ -8,6 +8,8 @@ A conference talk proposal tracker for DevRel professionals and speakers. Track 
 - **Event Management** - Track conferences and events with dates, locations, CFP deadlines, and scoring
 - **Talk Library** - Create and maintain reusable talk content (titles, abstracts, descriptions)
 - **Proposal Tracking** - Submit proposals linking talks to events, track status through the pipeline
+- **Company Participation** - Track speaking, sponsorships, attending, exhibiting, and volunteering
+- **Budget Tracking** - Manage budgets per event participation with sponsorship tiers and booth details
 - **Six Sigma Scoring Matrix** - Evaluate events using customizable weighted categories (1-10 scale)
 - **Team Collaboration** - Multiple users can manage talks and proposals across your organization
 
@@ -46,8 +48,8 @@ Evaluate which events to submit to using a weighted decision matrix:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mattstratton/talk-tracker.git
-   cd talk-tracker
+   git clone https://github.com/mattstratton/prowl.git
+   cd prowl
    ```
 
 2. Install dependencies:
@@ -77,7 +79,7 @@ Evaluate which events to submit to using a weighted decision matrix:
 
 This app uses PostgreSQL with schema isolation. You'll need:
 - A PostgreSQL database (Timescale Cloud provides free tier)
-- Schema name: `talk_tracker` (configurable via `DATABASE_SCHEMA` env var)
+- Schema name: `prowl` (configurable via `DATABASE_SCHEMA` env var)
 - User with appropriate permissions
 
 See `CLAUDE.md` for detailed database configuration instructions.

@@ -21,7 +21,7 @@ export async function AppHeader() {
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-4 md:gap-6">
             <Link href="/" className="flex shrink-0 items-center">
               <h1 className="font-bold text-foreground text-lg tracking-tight sm:text-xl">
-                Talk Tracker
+                Prowl
               </h1>
             </Link>
             <div className="min-w-0 flex-1">

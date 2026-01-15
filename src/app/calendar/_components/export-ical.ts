@@ -115,7 +115,7 @@ export function exportToICalendar(events: Event[]) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "talk-tracker-events.ics";
+    link.download = "prowl-events.ics";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

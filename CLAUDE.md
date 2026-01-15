@@ -1,16 +1,19 @@
-# Talk Tracker
+# Prowl
 
-A conference talk proposal tracker for DevRel teams. Team members can manage their conference speaking engagements by creating reusable talk content (titles, abstracts) and tracking submissions to various events.
+Prowl the conference circuit with your DevRel team. Prowl helps you manage your entire conference presence - from speaking engagements and sponsorships to budget tracking and event prioritization.
 
 ## Product
 
-**Minimal features for v0/demo:**
+**Features:**
 - Google OAuth login for team members
 - Create and manage events/conferences (name, date, location)
 - Create and manage reusable talks (title, abstract, description)
 - Submit proposals linking a talk to an event
 - Track proposal status (Draft, Submitted, Accepted, Rejected, Confirmed)
 - Track talk type (Keynote, Regular session, Lightning talk, Workshop)
+- Track company participation (Speaking, Sponsoring, Attending, Exhibiting, Volunteering)
+- Budget tracking per event participation
+- Event scoring and prioritization matrix
 - View all proposals across the team
 - View individual team member's proposals
 
@@ -19,8 +22,8 @@ A conference talk proposal tracker for DevRel teams. Team members can manage the
 - **Framework:** Next.js 15 with App Router
 - **API:** tRPC for type-safe APIs
 - **Database:** PostgreSQL on Timescale Cloud
-  - Schema: `talk_tracker`
-  - User: `talk_tracker`
+  - Schema: `prowl`
+  - User: `prowl`
 - **ORM:** Drizzle
 - **Auth:** Better Auth with Google OAuth
 - **UI:** shadcn/ui + Tailwind CSS
