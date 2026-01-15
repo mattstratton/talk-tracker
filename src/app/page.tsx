@@ -59,40 +59,7 @@ export default async function Home() {
   return (
     <HydrateClient>
       <main className="min-h-screen bg-background">
-        <div className="border-b border-border bg-card">
-          <div className="container mx-auto px-4">
-            <div className="flex h-16 items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <Nav />
-                <h1 className="font-semibold text-foreground text-lg sm:text-xl">
-                  Talk Tracker
-                </h1>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-4">
-                <span className="hidden text-muted-foreground text-sm sm:inline">
-                  {session.user.name}
-                </span>
-                <NotificationBell />
-                <form>
-                  <Button
-                    formAction={async () => {
-                      "use server";
-                      await auth.api.signOut({
-                        headers: await headers(),
-                      });
-                      redirect("/");
-                    }}
-                    size="sm"
-                    type="submit"
-                    variant="outline"
-                  >
-                    Sign out
-                  </Button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AppHeader />
 
         <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="mb-6 sm:mb-8">
